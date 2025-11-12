@@ -1,0 +1,32 @@
+url: https://yourname.github.io/vdjmatchR/
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+navbar:
+  title: "vdjmatchR"
+  left:
+  - text: "Reference"
+    href: reference/index.html
+  - text: "Articles"
+    menu:
+    - text: "Getting started"
+      href: articles/getting-started.html
+    - text: "Scoring and scope"
+      href: articles/scoring-and-scope.html
+    - text: "Batch matching"
+      href: articles/batch-matching.html
+    - text: "Database management"
+      href: articles/database-management.html
+
+reference:
+- title: "Core functions"
+  contents:
+  - matches("^match_tcr")
+  - matches("^vdjdb_")
+- title: "Database object"
+  contents:
+  - "RDatabase"
+- title: "Helpers"
+  contents:
+  - matches("^filter_db")

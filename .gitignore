@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+/inst/
+/target/
+src/rust/target/
+**/*.o
+**/*.so
+**/*.dll
+**/*.dylib
+Cargo.lock

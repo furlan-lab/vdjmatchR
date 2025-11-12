@@ -1,0 +1,23 @@
+Package: vdjmatchR
+Type: Package
+Title: R Interface to VDJmatch (Rust)
+Version: 0.0.0.9000
+Authors@R: c(person(given = "vdjmatch",
+                    family = "Authors",
+                    email = "you@example.com",
+                    role = c("aut", "cre")))
+Description: R bindings to query TCR sequences using a Rust implementation derived from vdjmatch-rs, via extendr.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+SystemRequirements: Rust (>= 1.70), cargo
+LinkingTo: extendr
+Imports: methods
+Suggests: rextendr, knitr, rmarkdown, roxygen2, pkgdown
+Config/rextendr/version: 0.3.1
+
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+URL: https://github.com/yourname/vdjmatchR
+BugReports: https://github.com/yourname/vdjmatchR/issues
+Config/Needs/website: pkgdown

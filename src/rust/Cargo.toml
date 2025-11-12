@@ -1,0 +1,20 @@
+[package]
+name = "vdjmatchR"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+extendr-api = "0.6"
+rayon = "1"
+serde = { version = "1", features = ["derive"] }
+csv = "1"
+dirs = "5"
+reqwest = { version = "0.11", features = ["blocking", "rustls-tls"] }
+thiserror = "1"
+regex = "1"
+
+[build-dependencies]
+extendr-build = "0.6"

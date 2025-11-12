@@ -1,0 +1,57 @@
+---
+title: "Database management and filtering"
+author: "vdjmatchR Authors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\n  VignetteIndexEntry{Database management and filtering}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+---
+
+```r
+#| echo: false
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+This vignette covers downloading VDJdb and filtering it for common use cases.
+
+## Download or ensure database
+
+```r
+library(vdjmatchR)
+# Download if missing and return the path to the slim TSV
+path <- vdjdb_download(use_fat_db = FALSE)
+```
+
+## Load and inspect
+
+```r
+db <- RDatabase$new_from_file(path)
+db$len()
+```
+
+## Filter by species, gene, and VDJdb score
+
+```r
+# Human TRB, minimum VDJdb score 2
+fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
+```
+
+## Filter by epitope size
+
+```r
+# Keep epitopes with at least 5 unique CDR3 entries
+fdb2 <- filter_db_by_epitope_size(fdb, min_size = 5)
+```
+
+## Update database
+
+```r
+# Download/refresh both slim and full versions
+vdjdb_update_all()
+```
+
+## Reproducibility hints
+
+- Record the file path returned by `vdjdb_download()` and include it in your
+  analysis metadata.
+- Consider snapshotting the TSV file alongside your project for long-term
+  reproducibility.

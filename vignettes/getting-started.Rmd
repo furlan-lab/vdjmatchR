@@ -1,0 +1,82 @@
+---
+title: "Getting started with vdjmatchR"
+author: "vdjmatchR Authors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\n  VignetteIndexEntry{Getting started with vdjmatchR}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+---
+
+```r
+#| echo: false
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+## Installation
+
+- Install Rust (>= 1.70) from <https://rustup.rs>.
+- In R, install the helper package:
+
+```r
+install.packages("rextendr")
+```
+
+- Build and install this package (from the repo root):
+
+```r
+# in a shell
+R CMD INSTALL .
+```
+
+## Quick tour
+
+```r
+library(vdjmatchR)
+
+# Ensure/download the VDJdb slim file and load it
+path <- vdjdb_download(use_fat_db = FALSE)
+db <- RDatabase$new_from_file(path)
+
+# Optionally filter to human TRB with min score >= 2
+fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
+
+# Match a single clonotype, return a data.frame
+df <- match_tcr_df(
+  fdb,
+  cdr3 = "CASSLGQAYEQYF",
+  v_segment = "TRBV12-3",
+  j_segment = "TRBJ2-7",
+  scope = "0,0,0,0",
+  top_n = 5
+)
+print(df)
+
+# Batch matching of multiple clonotypes
+cdr3s <- c("CASSLGQAYEQYF", "CASSIRSSYEQYF")
+vs    <- c("TRBV12-3",      "TRBV7-9")
+js    <- c("TRBJ2-7",       "TRBJ2-7")
+res_many <- match_tcr_many_df(fdb, cdr3s, vs, js, scope = "0,0,0,0", top_n = 3)
+head(res_many)
+```
+
+## Search scope
+
+The `scope` argument controls fuzzy matching tolerance using the format
+`"s,i,d,t"` (substitutions, insertions, deletions, total) or `"s,id,t"` where
+insertions and deletions share the same limit. Use `"0,0,0,0"` for exact
+matching.
+
+```r
+# Allow up to 2 substitutions and 1 insertion/deletion, total up to 3 edits
+scope <- "2,1,2,3"
+```
+
+## Performance tips
+
+- Pre-filter the database (species/gene/score) to speed up matching.
+- Use `top_n` to cap returned hits per query.
+- For large batches, prefer `match_tcr_many_df()`.
+
+## Reproducibility
+
+Document the database version and filters used in your analysis. Store the
+VDJdb file path returned by `vdjdb_download()` in your project metadata.

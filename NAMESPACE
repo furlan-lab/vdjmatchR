@@ -1,0 +1,2 @@
+useDynLib(vdjmatchR, .registration = TRUE)
+exportPattern("^[[:alpha:]]+")

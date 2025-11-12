@@ -1,0 +1,5 @@
+PKG_CPPFLAGS = $(shell "$(R_HOME)/bin/Rscript" -e "cat(rextendr:::rustc_flags())")
+PKG_LIBS = $(shell "$(R_HOME)/bin/Rscript" -e "cat(rextendr:::rustc_link_flags())")
+
+# Build a tiny C stub so R produces the shared library and links to Rust.
+SOURCES = entrypoint.c

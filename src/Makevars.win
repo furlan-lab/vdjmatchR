@@ -1,0 +1,4 @@
+PKG_CPPFLAGS = $(shell "$(R_HOME)/bin/Rscript" -e "cat(rextendr:::rustc_flags())")
+PKG_LIBS = $(shell "$(R_HOME)/bin/Rscript" -e "cat(rextendr:::rustc_link_flags())")
+
+SOURCES = entrypoint.c
