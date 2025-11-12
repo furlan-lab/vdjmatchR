@@ -101,8 +101,8 @@ mismatch counts from the pairwise alignment of CDR3 sequences. Higher is
 better for the scores shown, and lower is better for
 <code>edit_distance</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/yourname/vdjmatchR" class="external-link">vdjmatchR</a></span><span class="op">)</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_download.html">vdjdb_download</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>

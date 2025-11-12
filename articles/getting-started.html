@@ -91,10 +91,10 @@ Authors</h4>
 <h2 id="quick-tour">Quick tour<a class="anchor" aria-label="anchor" href="#quick-tour"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/yourname/vdjmatchR" class="external-link">vdjmatchR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Ensure/download the VDJdb slim file and load it</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_download.html">vdjdb_download</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co"># Use the packaged slim VDJdb bundled with the package</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optionally filter to human TRB with min score &gt;= 2</span></span>
@@ -110,6 +110,10 @@ Authors</h4>
 <span>  top_n <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Optionally, point to your own VDJdb file for this session</span></span>
+<span><span class="co"># vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)</span></span>
+<span><span class="co"># db &lt;- RDatabase$new_from_file(new_path)</span></span>
 <span></span>
 <span><span class="co"># Batch matching of multiple clonotypes</span></span>
 <span><span class="va">cdr3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CASSLGQAYEQYF"</span>, <span class="st">"CASSIRSSYEQYF"</span><span class="op">)</span></span>
@@ -144,8 +148,8 @@ matching.</li>
 <h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
 </h2>
 <p>Document the database version and filters used in your analysis.
-Store the VDJdb file path returned by <code><a href="../reference/vdjdb_download.html">vdjdb_download()</a></code> in
-your project metadata.</p>
+Store the VDJdb file path used (<code><a href="../reference/vdjdb_path.html">vdjdb_path()</a></code>) in your
+project metadata.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

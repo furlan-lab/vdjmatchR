@@ -77,13 +77,31 @@
           <code><a href="vdjdb_download.html">vdjdb_download()</a></code>
 
         </dt>
-        <dd>Ensure VDJdb exists locally; return the file path</dd>
+        <dd>Back-compat alias for updating/downloading VDJdb (one variant)</dd>
       </dl><dl><dt>
 
           <code><a href="vdjdb_ensure.html">vdjdb_ensure()</a></code>
 
         </dt>
         <dd>Ensure VDJdb exists locally and return the path.</dd>
+      </dl><dl><dt>
+
+          <code><a href="vdjdb_packaged_path.html">vdjdb_packaged_path()</a></code>
+
+        </dt>
+        <dd>Locate packaged VDJdb file bundled with vdjmatchR</dd>
+      </dl><dl><dt>
+
+          <code><a href="vdjdb_path.html">vdjdb_path()</a></code>
+
+        </dt>
+        <dd>Preferred VDJdb path (user-specified if set, else packaged)</dd>
+      </dl><dl><dt>
+
+          <code><a href="vdjdb_set_user_db.html">vdjdb_set_user_db()</a></code>
+
+        </dt>
+        <dd>Set a user-specified VDJdb path to use by default</dd>
       </dl><dl><dt>
 
           <code><a href="vdjdb_update.html">vdjdb_update()</a></code>
@@ -95,7 +113,13 @@
           <code><a href="vdjdb_update_all.html">vdjdb_update_all()</a></code>
 
         </dt>
-        <dd>Update/download both slim and fat VDJdb files</dd>
+        <dd>Update/download both slim and fat VDJdb files (disabled)</dd>
+      </dl><dl><dt>
+
+          <code><a href="vdjdb_update_latest.html">vdjdb_update_latest()</a></code>
+
+        </dt>
+        <dd>Update (download) the VDJdb file and return its path into extdata</dd>
       </dl></div><div class="section level2">
       <h2 id="database-object">Database object<a class="anchor" aria-label="anchor" href="#database-object"></a></h2>
 
@@ -149,7 +173,7 @@
 
       <dl><dt>
 
-          <code><a href="vdjmatchR-package.html">vdjmatchR</a></code> <code><a href="vdjmatchR-package.html">vdjmatchR-package</a></code>
+          <code><a href="vdjmatchR-package.html">vdjmatchR-package</a></code>
 
         </dt>
         <dd>vdjmatchR: R Interface to VDJmatch (Rust)</dd>

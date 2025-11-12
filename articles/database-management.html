@@ -72,15 +72,22 @@ Authors</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#| echo: false</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>collapse <span class="op">=</span> <span class="cn">TRUE</span>, comment <span class="op">=</span> <span class="st">"#&gt;"</span>, eval <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>This vignette covers downloading VDJdb and filtering it for common
-use cases.</p>
+<p>This vignette covers using the packaged VDJdb, filtering it for
+common use cases, and how to point the package to your own database
+file.</p>
 <div class="section level2">
-<h2 id="download-or-ensure-database">Download or ensure database<a class="anchor" aria-label="anchor" href="#download-or-ensure-database"></a>
+<h2 id="packaged-database-and-updates">Packaged database and updates<a class="anchor" aria-label="anchor" href="#packaged-database-and-updates"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/yourname/vdjmatchR" class="external-link">vdjmatchR</a></span><span class="op">)</span></span>
-<span><span class="co"># Download if missing and return the path to the slim TSV</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_download.html">vdjdb_download</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
+<span><span class="co"># Use the slim VDJdb bundled with the package</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Optionally update to the latest slim/full VDJdb into the package's extdata</span></span>
+<span><span class="co"># path &lt;- vdjdb_update_latest(use_fat_db = FALSE)</span></span>
+<span></span>
+<span><span class="co"># Or use the full ("fat") VDJdb bundled with the package</span></span>
+<span><span class="co"># path &lt;- vdjdb_packaged_path(use_fat_db = TRUE)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-and-inspect">Load and inspect<a class="anchor" aria-label="anchor" href="#load-and-inspect"></a>
@@ -104,18 +111,19 @@ use cases.</p>
 <span><span class="va">fdb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db_by_epitope_size.html">filter_db_by_epitope_size</a></span><span class="op">(</span><span class="va">fdb</span>, min_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="update-database">Update database<a class="anchor" aria-label="anchor" href="#update-database"></a>
+<h2 id="use-your-own-database-file">Use your own database file<a class="anchor" aria-label="anchor" href="#use-your-own-database-file"></a>
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Download/refresh both slim and full versions</span></span>
-<span><span class="fu"><a href="../reference/vdjdb_update_all.html">vdjdb_update_all</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Tell vdjmatchR where your own VDJdb file is for this session</span></span>
+<span><span class="fu"><a href="../reference/vdjdb_set_user_db.html">vdjdb_set_user_db</a></span><span class="op">(</span><span class="st">"/path/to/vdjdb.txt.gz"</span>, use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_path.html">vdjdb_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reproducibility-hints">Reproducibility hints<a class="anchor" aria-label="anchor" href="#reproducibility-hints"></a>
 </h2>
 <ul>
-<li>Record the file path returned by <code><a href="../reference/vdjdb_download.html">vdjdb_download()</a></code> and
-include it in your analysis metadata.</li>
+<li>Record the file path used (<code><a href="../reference/vdjdb_path.html">vdjdb_path()</a></code>) and include it
+in your analysis metadata.</li>
 <li>Consider snapshotting the TSV file alongside your project for
 long-term reproducibility.</li>
 </ul>

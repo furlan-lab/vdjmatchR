@@ -91,14 +91,24 @@
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/yourname/vdjmatchR" class="external-link">vdjmatchR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Option A: Ensure/download VDJdb and load</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_download.html">vdjdb_download</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co"># Use the packaged slim VDJdb (bundled with the package)</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Option B: Load an existing TSV</span></span>
-<span><span class="co"># db &lt;- RDatabase$new_from_file("/path/to/vdjdb.slim.txt")</span></span>
+<span><span class="co"># Optionally update the packaged database into the package's extdata and use it</span></span>
+<span><span class="co"># updated_path &lt;- vdjdb_update_latest(use_fat_db = FALSE)</span></span>
+<span><span class="co"># db &lt;- RDatabase$new_from_file(updated_path)</span></span>
+<span></span>
+<span><span class="co"># Or point to your own database file for this session</span></span>
+<span><span class="co"># vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)</span></span>
+<span><span class="co"># path &lt;- vdjdb_path(FALSE)</span></span>
+<span><span class="co"># db &lt;- RDatabase$new_from_file(path)</span></span>
+<span></span>
+<span><span class="co"># Or use the packaged full ("fat") VDJdb</span></span>
+<span><span class="co"># path_full &lt;- vdjdb_packaged_path(use_fat_db = TRUE)</span></span>
+<span><span class="co"># db &lt;- RDatabase$new_from_file(path_full)</span></span>
 <span></span>
 <span><span class="co"># Filter for human TRB and higher-confidence entries</span></span>
 <span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -118,9 +128,7 @@
 <h2 id="r-api">R API<a class="anchor" aria-label="anchor" href="#r-api"></a>
 </h2>
 <ul>
-<li>
-<code>RDatabase$new_from_file(path)</code> / <code>RDatabase$new_from_vdjdb(use_fat_db=FALSE)</code>
-</li>
+<li><code>RDatabase$new_from_file(path)</code></li>
 <li><code>RDatabase$len()</code></li>
 <li><code>RDatabase$filter(species = NULL, gene = NULL, min_vdjdb_score = 0)</code></li>
 <li><code>RDatabase$filter_by_epitope_size(min_size = 1)</code></li>
@@ -133,8 +141,10 @@
 <li>
 <code>match_tcr_many_df(...)</code> → data.frame</li>
 <li>
-<code>vdjdb_download(use_fat_db = FALSE)</code> → file path</li>
-<li><code><a href="reference/vdjdb_update_all.html">vdjdb_update_all()</a></code></li>
+<code>vdjdb_packaged_path(use_fat_db = FALSE)</code> / <code>vdjdb_path(use_fat_db = FALSE)</code>
+</li>
+<li>
+<code>vdjdb_set_user_db(path, use_fat_db = FALSE)</code> (configure your own DB file)</li>
 </ul>
 </div>
 <div class="section level2">

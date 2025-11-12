@@ -56,11 +56,11 @@
 <ul><li>
 <code>DESCRIPTION</code> — package metadata (updated for vignettes/pkgdown).</li>
 <li>
-<code>NAMESPACE</code> — loads dynamic library; exports default patterns.</li>
+<code>NAMESPACE</code> — uses dynamic library; exports by default pattern.</li>
 <li>
-<code>R/zzz.R</code> — <code>.onLoad</code> to load shared library.</li>
+<code>R/match.R</code> — high-level R helpers (data.frame results, filters).</li>
 <li>
-<code>R/match.R</code> — high-level R helpers (data.frame results, filters, downloads).</li>
+<code>R/vdjdb.R</code> — packaged DB paths, user DB configuration.</li>
 <li>
 <code>R/RDatabase.R</code> — roxygen topic for the <code>RDatabase</code> class.</li>
 <li>
@@ -72,9 +72,7 @@
 </ul></li>
 <li>Rust crate (extendr + core)
 <ul><li>
-<code>src/rust/Cargo.toml</code> — cdylib crate with dependencies (<code>extendr-api</code>, etc.).</li>
-<li>
-<code>src/rust/build.rs</code> — enables rextendr wrapper generation.</li>
+<code>src/rust/Cargo.toml</code> — staticlib crate with dependencies (<code>extendr-api</code>, etc.).</li>
 <li>
 <code>src/rust/src/lib.rs</code> — extendr module and exports.</li>
 <li>
@@ -109,7 +107,7 @@
 <code>RDatabase</code> (wrapper holding <code>Database</code>):
 <ul><li><code>new_from_file(path: &amp;str) -&gt; RDatabase</code></li>
 <li>
-<code>new_from_vdjdb(use_fat_db: bool) -&gt; RDatabase</code> (ensures local VDJdb then loads)</li>
+<code>new_from_vdjdb(use_fat_db: bool) -&gt; RDatabase</code> (disabled; instructs to use <code>new_from_file()</code>)</li>
 <li><code>len(&amp;self) -&gt; i32</code></li>
 <li><code>filter(&amp;self, species: Option&lt;String&gt;, gene: Option&lt;String&gt;, min_vdjdb_score: i32) -&gt; RDatabase</code></li>
 <li><code>filter_by_epitope_size(&amp;self, min_size: i32) -&gt; RDatabase</code></li>
@@ -121,15 +119,15 @@
 <li>
 <code>match_tcr_many(db, cdr3[], v_segment[], j_segment[], scope, top_n) -&gt; List</code> (batch)</li>
 <li>
-<code>vdjdb_ensure(use_fat_db: bool) -&gt; String</code> (returns TSV path; downloads if missing)</li>
+<code>vdjdb_ensure(use_fat_db: bool) -&gt; String</code> (disabled; automatic download not supported)</li>
 <li>
-<code>vdjdb_update() -&gt; ()</code> (downloads/refreshes slim and full TSVs)</li>
+<code>vdjdb_update() -&gt; ()</code> (disabled; automatic update not supported)</li>
 </ul></li>
 </ul><p>Notes - Scoring currently uses the simple mismatch approach defined in the copied <code>matching/scoring</code> modules. - <code>scope</code> parsing supports <code>"s,i,d,t"</code> or <code>"s,id,t"</code> formats; <code>"0,0,0,0"</code> means exact. - Batch results include <code>query_index</code> (1-based for R) and query metadata columns.</p>
 </div>
 <div class="section level2">
 <h2 id="r-convenience-api">R Convenience API<a class="anchor" aria-label="anchor" href="#r-convenience-api"></a></h2>
-<p>File: <code>R/match.R</code></p>
+<p>Files: <code>R/match.R</code>, <code>R/vdjdb.R</code></p>
 <ul><li>
 <code>match_tcr_df(db, cdr3, v_segment = "", j_segment = "", scope = "0,0,0,0", top_n = 0)</code> → data.frame</li>
 <li>
@@ -141,9 +139,14 @@
 <code>filter_db_by_epitope_size(db, min_size = 1)</code> → <code>RDatabase</code>
 </li>
 <li>
-<code>vdjdb_download(use_fat_db = FALSE)</code> → TSV file path</li>
+<code>vdjdb_packaged_path(use_fat_db = FALSE)</code> → packaged TSV(.gz) path (slim/full)</li>
 <li>
-<code><a href="reference/vdjdb_update_all.html">vdjdb_update_all()</a></code> → downloads/refreshes VDJdb</li>
+<code>vdjdb_path(use_fat_db = FALSE)</code> → uses user-specified path if set via <code><a href="reference/vdjdb_set_user_db.html">vdjdb_set_user_db()</a></code>, else packaged</li>
+<li>
+<code>vdjdb_set_user_db(path, use_fat_db = FALSE)</code> → set a user-supplied DB file for the session</li>
+<li>
+<code><a href="reference/vdjdb_update_latest.html">vdjdb_update_latest()</a></code>/<code><a href="reference/vdjdb_download.html">vdjdb_download()</a></code>/<code><a href="reference/vdjdb_update_all.html">vdjdb_update_all()</a></code> → disabled (no network); instructs to use <code><a href="reference/vdjdb_set_user_db.html">vdjdb_set_user_db()</a></code>
+</li>
 </ul></div>
 <div class="section level2">
 <h2 id="build-and-installation">Build and Installation<a class="anchor" aria-label="anchor" href="#build-and-installation"></a></h2>
@@ -166,7 +169,8 @@
 <h2 id="notable-implementation-details">Notable Implementation Details<a class="anchor" aria-label="anchor" href="#notable-implementation-details"></a></h2>
 <ul><li>
 <code>src/entrypoint.c</code> contains only a dummy symbol to avoid conflicting with extendr’s auto-registration; the Rust side provides the <code>R_init_*</code> hook.</li>
-<li>Database download uses <code>reqwest</code> with blocking + rustls TLS; requires network when calling <code><a href="reference/vdjdb_ensure.html">vdjdb_ensure()</a></code> or <code><a href="reference/vdjdb_update.html">vdjdb_update()</a></code>.</li>
+<li>Automatic download is disabled. The package does not use <code>~/.vdjmatch</code> and does not perform network I/O.</li>
+<li>Slim and full VDJdb samples are bundled (gzipped) under <code>inst/extdata/vdjdb.slim.txt.gz</code> and <code>inst/extdata/vdjdb.txt.gz</code> for immediate use; <code><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path()</a></code> locates them (with fallback to uncompressed filenames if present).</li>
 <li>Core Rust modules are currently copied from <code>vdjmatch-rs</code> to keep this repo self-contained.</li>
 </ul></div>
 <div class="section level2">
