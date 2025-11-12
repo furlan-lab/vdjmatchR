@@ -15,9 +15,8 @@ LinkingTo: extendr
 Imports: methods
 Suggests: rextendr, knitr, rmarkdown, roxygen2, pkgdown
 Config/rextendr/version: 0.3.1
-
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/yourname/vdjmatchR
-BugReports: https://github.com/yourname/vdjmatchR/issues
+URL: https://furlan-lab.github.io/vdjmatchR, https://github.com/furlan-lab/vdjmatchR
+BugReports: https://github.com/furlan-lab/vdjmatchR/issues
 Config/Needs/website: pkgdown

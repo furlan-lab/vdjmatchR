@@ -1,4 +1,4 @@
-url: https://yourname.github.io/vdjmatchR/
+url: https://furlan-lab.github.io/vdjmatchR/
 template:
   bootstrap: 5
   bootswatch: flatly
@@ -30,3 +30,6 @@ reference:
 - title: "Helpers"
   contents:
   - matches("^filter_db")
+- title: "Package"
+  contents:
+  - vdjmatchR-package

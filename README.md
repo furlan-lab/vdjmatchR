@@ -7,6 +7,10 @@ R interface to a Rust implementation of TCR sequence matching (derived from `vdj
 - Exposes an R API using extendr.
 - Designed to work with VDJdb-formatted TSVs (slim or full).
 
+## Documentation
+- Website: https://furlan-lab.github.io/vdjmatchR/
+- Reference topics and vignettes are available on the site.
+
 ## Quickstart
 1. Ensure Rust (>= 1.70) and an R toolchain are installed.
 2. In R, install `rextendr` to aid linking (optional but recommended):
