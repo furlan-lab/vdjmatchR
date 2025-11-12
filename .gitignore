@@ -1,3 +1,5 @@
+.vscode/
+src/.gitignore
 .Rproj.user
 .Rhistory
 .RData
