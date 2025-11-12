@@ -32,8 +32,8 @@ R CMD INSTALL .
 ```r
 library(vdjmatchR)
 
-# Ensure/download the VDJdb slim file and load it
-path <- vdjdb_download(use_fat_db = FALSE)
+# Use the packaged slim VDJdb bundled with the package
+path <- vdjdb_packaged_path(use_fat_db = FALSE)
 db <- RDatabase$new_from_file(path)
 
 # Optionally filter to human TRB with min score >= 2
@@ -49,6 +49,10 @@ df <- match_tcr_df(
   top_n = 5
 )
 print(df)
+
+# Optionally, point to your own VDJdb file for this session
+# vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)
+# db <- RDatabase$new_from_file(new_path)
 
 # Batch matching of multiple clonotypes
 cdr3s <- c("CASSLGQAYEQYF", "CASSIRSSYEQYF")
@@ -79,4 +83,4 @@ scope <- "2,1,2,3"
 ## Reproducibility
 
 Document the database version and filters used in your analysis. Store the
-VDJdb file path returned by `vdjdb_download()` in your project metadata.
+VDJdb file path used (`vdjdb_path()`) in your project metadata.

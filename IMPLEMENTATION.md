@@ -16,16 +16,15 @@ via `extendr`.
 ## Repository Structure (key files)
 - R package
   - `DESCRIPTION` — package metadata (updated for vignettes/pkgdown).
-  - `NAMESPACE` — loads dynamic library; exports default patterns.
-  - `R/zzz.R` — `.onLoad` to load shared library.
-  - `R/match.R` — high-level R helpers (data.frame results, filters, downloads).
+  - `NAMESPACE` — uses dynamic library; exports by default pattern.
+  - `R/match.R` — high-level R helpers (data.frame results, filters).
+  - `R/vdjdb.R` — packaged DB paths, user DB configuration.
   - `R/RDatabase.R` — roxygen topic for the `RDatabase` class.
   - `README.md` — quickstart and examples.
   - `.Rbuildignore`, `.gitignore` — ignores incl. pkgdown artifacts.
   - `LICENSE`, `LICENSE.md` — MIT license metadata.
 - Rust crate (extendr + core)
-  - `src/rust/Cargo.toml` — cdylib crate with dependencies (`extendr-api`, etc.).
-  - `src/rust/build.rs` — enables rextendr wrapper generation.
+  - `src/rust/Cargo.toml` — staticlib crate with dependencies (`extendr-api`, etc.).
   - `src/rust/src/lib.rs` — extendr module and exports.
   - `src/rust/src/{alignment,database,error,filtering,matching,scoring,sequence,utils}.rs` — copied from `vdjmatch-rs`.
 - R build glue
@@ -45,15 +44,15 @@ File: `src/rust/src/lib.rs`
 - Type
   - `RDatabase` (wrapper holding `Database`):
     - `new_from_file(path: &str) -> RDatabase`
-    - `new_from_vdjdb(use_fat_db: bool) -> RDatabase` (ensures local VDJdb then loads)
+    - `new_from_vdjdb(use_fat_db: bool) -> RDatabase` (disabled; instructs to use `new_from_file()`)
     - `len(&self) -> i32`
     - `filter(&self, species: Option<String>, gene: Option<String>, min_vdjdb_score: i32) -> RDatabase`
     - `filter_by_epitope_size(&self, min_size: i32) -> RDatabase`
 - Functions
   - `match_tcr(db, cdr3, v_segment, j_segment, scope, top_n) -> List` (single clonotype)
   - `match_tcr_many(db, cdr3[], v_segment[], j_segment[], scope, top_n) -> List` (batch)
-  - `vdjdb_ensure(use_fat_db: bool) -> String` (returns TSV path; downloads if missing)
-  - `vdjdb_update() -> ()` (downloads/refreshes slim and full TSVs)
+  - `vdjdb_ensure(use_fat_db: bool) -> String` (disabled; automatic download not supported)
+  - `vdjdb_update() -> ()` (disabled; automatic update not supported)
 
 Notes
 - Scoring currently uses the simple mismatch approach defined in the copied `matching/scoring` modules.
@@ -61,14 +60,16 @@ Notes
 - Batch results include `query_index` (1-based for R) and query metadata columns.
 
 ## R Convenience API
-File: `R/match.R`
+Files: `R/match.R`, `R/vdjdb.R`
 
 - `match_tcr_df(db, cdr3, v_segment = "", j_segment = "", scope = "0,0,0,0", top_n = 0)` → data.frame
 - `match_tcr_many_df(db, cdr3[], v_segment[], j_segment[], scope = "0,0,0,0", top_n = 0)` → data.frame
 - `filter_db(db, species = NULL, gene = NULL, min_vdjdb_score = 0)` → `RDatabase`
 - `filter_db_by_epitope_size(db, min_size = 1)` → `RDatabase`
-- `vdjdb_download(use_fat_db = FALSE)` → TSV file path
-- `vdjdb_update_all()` → downloads/refreshes VDJdb
+- `vdjdb_packaged_path(use_fat_db = FALSE)` → packaged TSV(.gz) path (slim/full)
+- `vdjdb_path(use_fat_db = FALSE)` → uses user-specified path if set via `vdjdb_set_user_db()`, else packaged
+- `vdjdb_set_user_db(path, use_fat_db = FALSE)` → set a user-supplied DB file for the session
+- `vdjdb_update_latest()`/`vdjdb_download()`/`vdjdb_update_all()` → disabled (no network); instructs to use `vdjdb_set_user_db()`
 
 ## Build and Installation
 Requirements
@@ -92,8 +93,11 @@ Install steps
 ## Notable Implementation Details
 - `src/entrypoint.c` contains only a dummy symbol to avoid conflicting with
   extendr’s auto-registration; the Rust side provides the `R_init_*` hook.
-- Database download uses `reqwest` with blocking + rustls TLS; requires network
-  when calling `vdjdb_ensure()` or `vdjdb_update()`.
+- Automatic download is disabled. The package does not use `~/.vdjmatch` and does not perform network I/O.
+- Slim and full VDJdb samples are bundled (gzipped) under
+  `inst/extdata/vdjdb.slim.txt.gz` and `inst/extdata/vdjdb.txt.gz` for
+  immediate use; `vdjdb_packaged_path()` locates them (with fallback to
+  uncompressed filenames if present).
 - Core Rust modules are currently copied from `vdjmatch-rs` to keep this repo
   self-contained.
 
@@ -103,4 +107,3 @@ Install steps
 - Add tests (R and Rust) and CI for build checks.
 - Add more R-friendly result shaping (e.g., tibble, factor levels for segments).
 - Expose additional configuration knobs (e.g., scoring mode toggle) through the R API.
-

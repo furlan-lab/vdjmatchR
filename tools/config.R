@@ -124,3 +124,11 @@ writeLines(new_txt, con, sep = "\n")
 close(con)
 
 message("`tools/config.R` has finished.")
+
+# Try to (re)generate extendr R wrappers so exported Rust functions are available in R.
+# This mirrors the behavior of build.rs with extendr-build/rextendr, but runs from R.
+try({
+  if (requireNamespace("rextendr", quietly = TRUE)) {
+    rextendr::register()
+  }
+}, silent = TRUE)

@@ -18,7 +18,7 @@ This vignette demonstrates how to match multiple clonotypes efficiently using
 
 ```r
 library(vdjmatchR)
-path <- vdjdb_download(FALSE)
+path <- vdjdb_packaged_path(FALSE)
 db <- RDatabase$new_from_file(path)
 fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
 ```

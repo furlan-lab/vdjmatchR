@@ -10,13 +10,13 @@ Description: R bindings to query TCR sequences using a Rust implementation deriv
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-SystemRequirements: Rust (>= 1.70), cargo
-LinkingTo: extendr
+SystemRequirements: Cargo (Rust's package manager), rustc (>= 1.70)
 Imports: methods
 Suggests: rextendr, knitr, rmarkdown, roxygen2, pkgdown
-Config/rextendr/version: 0.3.1
+Config/rextendr/version: 0.4.2
 VignetteBuilder: knitr
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, load = "source")
 URL: https://furlan-lab.github.io/vdjmatchR, https://github.com/furlan-lab/vdjmatchR
 BugReports: https://github.com/furlan-lab/vdjmatchR/issues
 Config/Needs/website: pkgdown
+RoxygenNote: 7.3.3

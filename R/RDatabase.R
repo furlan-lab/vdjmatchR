@@ -11,7 +11,7 @@
 #' - `filter(species = NULL, gene = NULL, min_vdjdb_score = 0)`
 #' - `filter_by_epitope_size(min_size = 1)`
 #'
-#' See also: [match_tcr_df()], [match_tcr_many_df()], [vdjdb_download()].
+#' See also: \link[=match_tcr_df]{match_tcr_df}, \link[=match_tcr_many_df]{match_tcr_many_df}, \link[=vdjdb_download]{vdjdb_download}.
 #'
 #' @name RDatabase
 #' @docType class

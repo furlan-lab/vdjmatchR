@@ -22,12 +22,22 @@ R interface to a Rust implementation of TCR sequence matching (derived from `vdj
 ```r
 library(vdjmatchR)
 
-# Option A: Ensure/download VDJdb and load
-path <- vdjdb_download(use_fat_db = FALSE)
+# Use the packaged slim VDJdb (bundled with the package)
+path <- vdjdb_packaged_path(use_fat_db = FALSE)
 db <- RDatabase$new_from_file(path)
 
-# Option B: Load an existing TSV
-# db <- RDatabase$new_from_file("/path/to/vdjdb.slim.txt")
+# Optionally update the packaged database into the package's extdata and use it
+# updated_path <- vdjdb_update_latest(use_fat_db = FALSE)
+# db <- RDatabase$new_from_file(updated_path)
+
+# Or point to your own database file for this session
+# vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)
+# path <- vdjdb_path(FALSE)
+# db <- RDatabase$new_from_file(path)
+
+# Or use the packaged full ("fat") VDJdb
+# path_full <- vdjdb_packaged_path(use_fat_db = TRUE)
+# db <- RDatabase$new_from_file(path_full)
 
 # Filter for human TRB and higher-confidence entries
 fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
@@ -45,7 +55,7 @@ head(res_many)
 ```
 
 ## R API
-- `RDatabase$new_from_file(path)` / `RDatabase$new_from_vdjdb(use_fat_db=FALSE)`
+- `RDatabase$new_from_file(path)`
 - `RDatabase$len()`
 - `RDatabase$filter(species = NULL, gene = NULL, min_vdjdb_score = 0)`
 - `RDatabase$filter_by_epitope_size(min_size = 1)`
@@ -53,8 +63,8 @@ head(res_many)
 - `match_tcr_df(...)` → data.frame
 - `match_tcr_many(db, cdr3, v_segment, j_segment, scope, top_n)` → list
 - `match_tcr_many_df(...)` → data.frame
-- `vdjdb_download(use_fat_db = FALSE)` → file path
-- `vdjdb_update_all()`
+- `vdjdb_packaged_path(use_fat_db = FALSE)` / `vdjdb_path(use_fat_db = FALSE)`
+- `vdjdb_set_user_db(path, use_fat_db = FALSE)` (configure your own DB file)
 
 ## Notes
 - Results are returned as data.frames via R wrappers for convenience; core Rust functions return plain lists for flexibility.

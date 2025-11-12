@@ -24,15 +24,10 @@ impl RDatabase {
         }
     }
 
-    pub fn new_from_vdjdb(use_fat_db: bool) -> Result<Self> {
-        let mgr = database::DatabaseManager::new();
-        match mgr.ensure_database_exists(use_fat_db) {
-            Ok(path) => match database::Database::load_from_file(&path) {
-                Ok(db) => Ok(Self { inner: db }),
-                Err(e) => Err(extendr_api::error::Error::Other(e.to_string())),
-            },
-            Err(e) => Err(extendr_api::error::Error::Other(e.to_string())),
-        }
+    pub fn new_from_vdjdb(_use_fat_db: bool) -> Result<Self> {
+        Err(extendr_api::error::Error::Other(
+            "new_from_vdjdb is disabled. Provide an explicit file path via new_from_file().".into(),
+        ))
     }
 
     pub fn len(&self) -> i32 {
@@ -211,18 +206,34 @@ pub fn match_tcr_many(
 
 /// Ensure VDJdb exists locally and return the path.
 #[extendr]
-pub fn vdjdb_ensure(use_fat_db: bool) -> Result<String> {
-    let mgr = database::DatabaseManager::new();
+pub fn vdjdb_ensure(_use_fat_db: bool) -> Result<String> {
+    Err(extendr_api::error::Error::Other(
+        "Automatic download to home directory is disabled. Use vdjdb_ensure_into(dir, use_fat_db).".into(),
+    ))
+}
+
+/// Download/update the VDJdb files (slim and fat).
+#[extendr]
+pub fn vdjdb_update() -> Result<()> {
+    Err(extendr_api::error::Error::Other(
+        "Automatic update to home directory is disabled. Use vdjdb_update_into(dir).".into(),
+    ))
+}
+
+/// Ensure VDJdb exists in the specified directory and return the path.
+#[extendr]
+pub fn vdjdb_ensure_into(dir: &str, use_fat_db: bool) -> Result<String> {
+    let mgr = database::DatabaseManager::new_with_dir(dir);
     match mgr.ensure_database_exists(use_fat_db) {
         Ok(path) => Ok(path.to_string_lossy().to_string()),
         Err(e) => Err(extendr_api::error::Error::Other(e.to_string())),
     }
 }
 
-/// Download/update the VDJdb files (slim and fat).
+/// Download/update the VDJdb files (slim and fat) into the specified directory.
 #[extendr]
-pub fn vdjdb_update() -> Result<()> {
-    let mgr = database::DatabaseManager::new();
+pub fn vdjdb_update_into(dir: &str) -> Result<()> {
+    let mgr = database::DatabaseManager::new_with_dir(dir);
     match mgr.update_database() {
         Ok(()) => Ok(()),
         Err(e) => Err(extendr_api::error::Error::Other(e.to_string())),
@@ -237,4 +248,6 @@ extendr_module! {
     fn match_tcr_many;
     fn vdjdb_ensure;
     fn vdjdb_update;
+    fn vdjdb_ensure_into;
+    fn vdjdb_update_into;
 }

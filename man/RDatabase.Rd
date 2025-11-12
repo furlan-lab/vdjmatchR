@@ -17,6 +17,6 @@ Methods include:
 \item \code{filter_by_epitope_size(min_size = 1)}
 }
 
-See also: \code{\link[=match_tcr_df]{match_tcr_df()}}, \code{\link[=match_tcr_many_df]{match_tcr_many_df()}}, \code{\link[=vdjdb_download]{vdjdb_download()}}.
+See also: \link[=match_tcr_df]{match_tcr_df}, \link[=match_tcr_many_df]{match_tcr_many_df}, \link[=vdjdb_download]{vdjdb_download}.
 }
 \keyword{internal}

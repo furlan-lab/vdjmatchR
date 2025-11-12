@@ -2,10 +2,11 @@
 use crate::error::{Result, VdjMatchError};
 use crate::sequence::Clonotype;
 use csv::ReaderBuilder;
+use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufReader, Write};
+use std::io::{BufReader, Read, Write};
 use std::path::{Path, PathBuf};
 
 /// VDJdb database entry
@@ -57,12 +58,26 @@ pub struct DatabaseMetadata {
 impl Database {
     /// Load database from file
     pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let file = File::open(path.as_ref())
+        let p = path.as_ref();
+        let file = File::open(p)
             .map_err(|e| VdjMatchError::DatabaseNotFound(e.to_string()))?;
-        
+
+        // Support gzip-compressed TSVs by checking the file extension.
+        let is_gz = p
+            .extension()
+            .and_then(|s| s.to_str())
+            .map(|s| s.eq_ignore_ascii_case("gz"))
+            .unwrap_or(false);
+
+        let reader: Box<dyn Read> = if is_gz {
+            Box::new(GzDecoder::new(file))
+        } else {
+            Box::new(file)
+        };
+
         let mut reader = ReaderBuilder::new()
             .delimiter(b'\t')
-            .from_reader(BufReader::new(file));
+            .from_reader(BufReader::new(reader));
         
         let headers = reader.headers()?;
         let columns: Vec<String> = headers.iter().map(|s| s.to_string()).collect();
@@ -206,6 +221,11 @@ impl DatabaseManager {
         let vdjdb_home = home.join(".vdjmatch");
         
         Self { home_dir: vdjdb_home }
+    }
+    
+    /// Create a manager that stores files in the specified directory
+    pub fn new_with_dir<P: AsRef<Path>>(dir: P) -> Self {
+        Self { home_dir: dir.as_ref().to_path_buf() }
     }
     
     pub fn ensure_database_exists(&self, use_fat_db: bool) -> Result<PathBuf> {

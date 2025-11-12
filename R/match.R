@@ -49,16 +49,3 @@ filter_db <- function(db, species = NULL, gene = NULL, min_vdjdb_score = 0L) {
 filter_db_by_epitope_size <- function(db, min_size = 1L) {
   db$filter_by_epitope_size(as.integer(min_size))
 }
-
-#' Ensure VDJdb exists locally; return the file path
-#'
-#' @param use_fat_db logical; TRUE for full db, FALSE for slim (default)
-#' @return string file path
-#' @export
-vdjdb_download <- function(use_fat_db = FALSE) {
-  vdjdb_ensure(isTRUE(use_fat_db))
-}
-
-#' Update/download both slim and fat VDJdb files
-#' @export
-vdjdb_update_all <- function() { vdjdb_update(); invisible(NULL) }

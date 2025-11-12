@@ -11,14 +11,20 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
 
-This vignette covers downloading VDJdb and filtering it for common use cases.
+This vignette covers using the packaged VDJdb, filtering it for common use cases, and how to point the package to your own database file.
 
-## Download or ensure database
+## Packaged database and updates
 
 ```r
 library(vdjmatchR)
-# Download if missing and return the path to the slim TSV
-path <- vdjdb_download(use_fat_db = FALSE)
+# Use the slim VDJdb bundled with the package
+path <- vdjdb_packaged_path(use_fat_db = FALSE)
+
+# Optionally update to the latest slim/full VDJdb into the package's extdata
+# path <- vdjdb_update_latest(use_fat_db = FALSE)
+
+# Or use the full ("fat") VDJdb bundled with the package
+# path <- vdjdb_packaged_path(use_fat_db = TRUE)
 ```
 
 ## Load and inspect
@@ -42,16 +48,16 @@ fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
 fdb2 <- filter_db_by_epitope_size(fdb, min_size = 5)
 ```
 
-## Update database
+## Use your own database file
 
 ```r
-# Download/refresh both slim and full versions
-vdjdb_update_all()
+# Tell vdjmatchR where your own VDJdb file is for this session
+vdjdb_set_user_db("/path/to/vdjdb.txt.gz", use_fat_db = TRUE)
+path <- vdjdb_path(use_fat_db = TRUE)
 ```
 
 ## Reproducibility hints
 
-- Record the file path returned by `vdjdb_download()` and include it in your
-  analysis metadata.
+- Record the file path used (`vdjdb_path()`) and include it in your analysis metadata.
 - Consider snapshotting the TSV file alongside your project for long-term
   reproducibility.
