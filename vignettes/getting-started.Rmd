@@ -34,7 +34,7 @@ library(vdjmatchR)
 
 # Use the packaged slim VDJdb bundled with the package
 path <- vdjdb_packaged_path(use_fat_db = FALSE)
-db <- RDatabase$new_from_file(path)
+db <- vdjdb_open_file(path)
 
 # Optionally filter to human TRB with min score >= 2
 fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
@@ -52,7 +52,7 @@ print(df)
 
 # Optionally, point to your own VDJdb file for this session
 # vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)
-# db <- RDatabase$new_from_file(new_path)
+# db <- vdjdb_open(use_fat_db = FALSE)
 
 # Batch matching of multiple clonotypes
 cdr3s <- c("CASSLGQAYEQYF", "CASSIRSSYEQYF")

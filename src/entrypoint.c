@@ -1,5 +1,6 @@
-#include <R.h>
-#include <Rinternals.h>
+// Forward routine registration from C to the extendr-generated function.
+void R_init_vdjmatchR_extendr(void *dll);
 
-// Dummy symbol to force compilation & linking. Registration comes from Rust via extendr.
-void vdjmatchR_dummy(void) {}
+void R_init_vdjmatchR(void *dll) {
+    R_init_vdjmatchR_extendr(dll);
+}

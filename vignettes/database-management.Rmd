@@ -30,8 +30,8 @@ path <- vdjdb_packaged_path(use_fat_db = FALSE)
 ## Load and inspect
 
 ```r
-db <- RDatabase$new_from_file(path)
-db$len()
+db <- vdjdb_open_file(path)
+vdjdb_len(db)
 ```
 
 ## Filter by species, gene, and VDJdb score

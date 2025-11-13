@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 // Reuse core modules ported from vdjmatch-rs
 pub mod alignment;
 pub mod database;
@@ -9,6 +11,7 @@ pub mod sequence;
 pub mod utils;
 
 use extendr_api::prelude::*;
+use std::path::Path;
 
 #[extendr]
 pub struct RDatabase {
@@ -49,6 +52,47 @@ impl RDatabase {
         let filtered = self.inner.filter_by_epitope_size(min_size as usize);
         Self { inner: filtered }
     }
+}
+
+/// Open a VDJdb TSV/TSV.GZ via the Rust backend.
+/// @export
+#[extendr]
+pub fn vdjdb_open_file(path: &str) -> Result<RDatabase> {
+    if path.trim().is_empty() {
+        return Err(extendr_api::error::Error::Other("path must be a non-empty string".into()));
+    }
+    if !Path::new(path).exists() {
+        return Err(extendr_api::error::Error::Other(format!("VDJdb file not found: {path}")));
+    }
+    RDatabase::new_from_file(path)
+}
+
+/// Number of rows stored in the in-memory VDJdb handle.
+/// @export
+#[extendr]
+pub fn vdjdb_len(db: &RDatabase) -> i32 {
+    db.len()
+}
+
+/// Filter database entries by species, gene, and minimum VDJdb score.
+/// @export
+#[extendr]
+pub fn filter_db(
+    db: &RDatabase,
+    species: Nullable<String>,
+    gene: Nullable<String>,
+    min_vdjdb_score: i32,
+) -> RDatabase {
+    let species_string = species.into_option().filter(|s| !s.trim().is_empty());
+    let gene_string = gene.into_option().filter(|s| !s.trim().is_empty());
+    db.filter(species_string, gene_string, min_vdjdb_score)
+}
+
+/// Filter by minimum epitope size (unique CDR3 per epitope).
+/// @export
+#[extendr]
+pub fn filter_db_by_epitope_size(db: &RDatabase, min_size: i32) -> RDatabase {
+    db.filter_by_epitope_size(min_size)
 }
 
 /// Match a single clonotype against the database.
@@ -246,6 +290,10 @@ extendr_module! {
     impl RDatabase;
     fn match_tcr;
     fn match_tcr_many;
+    fn vdjdb_open_file;
+    fn vdjdb_len;
+    fn filter_db;
+    fn filter_db_by_epitope_size;
     fn vdjdb_ensure;
     fn vdjdb_update;
     fn vdjdb_ensure_into;

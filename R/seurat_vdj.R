@@ -86,6 +86,13 @@ vdj_attach_10x_vdj_v2 <- function(
   all_cells <- colnames(seurat)
   if (is.null(all_cells) || length(all_cells) == 0) all_cells <- rownames(seurat@meta.data)
   candidate_cells <- all_cells
+  # If a barcode_prefix is provided (common in multi-sample objects), restrict
+  # candidate cells to those belonging to this prefix. This prevents suffix
+  # matching from mapping barcodes to cells in other samples that share the
+  # same 10x barcode string.
+  if (!is.null(barcode_prefix) && nzchar(barcode_prefix)) {
+    candidate_cells <- candidate_cells[startsWith(candidate_cells, barcode_prefix)]
+  }
 
   # Build mapping from 10x barcode -> Seurat cell name
   barcodes <- unique(contigs$barcode)
@@ -382,6 +389,223 @@ vdj_attach_10x_vdj_v2 <- function(
   return(seurat)
 }
 
+
+#' Collapse per-cell TRA/TRB into 1 TRB + up to 2 TRA pairs
+#'
+#' Selects one TRB per cell and up to two TRA chains ordered by support, then
+#' emits a `pairs` table in `obj@tools[[tool_key]]$pairs` with one or two rows
+#' per cell: the dominant pair (TRA1+TRB) and, if present and requested, the
+#' secondary pair (TRA2+TRB).
+#'
+#' Selection heuristic:
+#' - Filter contigs by QC: `productive`, `full_length`, `high_confidence` (configurable).
+#' - TRB: select exactly one best contig by UMIs, then reads, then high_confidence.
+#'   If more than one TRB exists and `drop_multi_trb = TRUE`, the cell is dropped.
+#' - TRA: order candidate alphas by UMIs (or reads) descending, then reads, then
+#'   high_confidence; keep the top one (dominant) and optionally the second.
+#'
+#' Metadata:
+#' - Writes `vdj.tra1.*`, `vdj.tra2.*` (if present), and `vdj.trb.*` fields per cell when
+#'   `write_meta = TRUE`. Also writes flags `vdj.has_tra2`, `vdj.multi_trb`, and `vdj.pair_qc`.
+#' - Optionally updates the primary `vdj.tra.*` and `vdj.trb.*` fields to TRA1/TRB.
+#'
+#' @param seurat Seurat v5 object previously processed by `vdj_attach_10x_vdj_v2[_batch]`.
+#' @param tool_key Character; tools slot name (default "vdj").
+#' @param drop_multi_trb Logical; drop cells with >1 TRB after QC (default TRUE). If FALSE, picks the best TRB.
+#' @param keep_two_alpha Logical; if TRUE, produce a secondary pair using TRA2+TRB when available (default TRUE).
+#' @param alpha_support Character; support metric for ranking alphas: "umis" (default) or "reads".
+#' @param min_umis Integer; discard contigs below this UMI count (default 0).
+#' @param min_reads Integer; discard contigs below this read count (default 0).
+#' @param require_productive Logical; require productive contigs (default TRUE).
+#' @param require_full_length Logical; require full_length when column exists (default FALSE).
+#' @param require_high_confidence Logical; require high_confidence when column exists (default FALSE).
+#' @param write_meta Logical; write metadata columns described above (default TRUE).
+#' @param update_primary_meta Logical; if TRUE, also set `vdj.tra.*` and `vdj.trb.*` to the primary pair (default TRUE).
+#' @return Updated Seurat object (invisible).
+#' @export
+vdj_collapse_pairs_seurat <- function(
+  seurat,
+  tool_key = "vdj",
+  drop_multi_trb = TRUE,
+  keep_two_alpha = TRUE,
+  alpha_support = c("umis", "reads"),
+  min_umis = 0L,
+  min_reads = 0L,
+  require_productive = TRUE,
+  require_full_length = FALSE,
+  require_high_confidence = FALSE,
+  write_meta = TRUE,
+  update_primary_meta = TRUE
+) {
+  stopifnot(!is.null(seurat))
+  if (!isS4(seurat) || !all(c("meta.data", "tools") %in% slotNames(seurat))) {
+    stop("Expected a Seurat v5 object with slots 'meta.data' and 'tools'.")
+  }
+  alpha_support <- match.arg(alpha_support)
+
+  tools_list <- seurat@tools
+  if (is.null(tools_list) || is.null(tools_list[[tool_key]]) || is.null(tools_list[[tool_key]]$contigs)) {
+    stop(sprintf("No contigs table found at tools$%s$contigs. Run vdj_attach_10x_vdj_v2 first.", tool_key))
+  }
+  contigs <- tools_list[[tool_key]]$contigs
+  if (!all(c("cell", "chain", "v_gene", "j_gene", "cdr3") %in% names(contigs))) {
+    stop("contigs table missing required columns: cell, chain, v_gene, j_gene, cdr3")
+  }
+
+  # Normalize QC booleans
+  norm_bool <- function(x) {
+    if (is.null(x) || !length(x)) return(rep(NA, nrow(contigs)))
+    if (is.logical(x)) return(x)
+    if (is.numeric(x)) return(x != 0)
+    if (is.character(x)) return(toupper(x) %in% c("TRUE", "T", "YES", "Y"))
+    as.logical(x)
+  }
+  contigs$productive <- if ("productive" %in% names(contigs)) norm_bool(contigs$productive) else NA
+  contigs$full_length <- if ("full_length" %in% names(contigs)) norm_bool(contigs$full_length) else NA
+  contigs$high_confidence <- if ("high_confidence" %in% names(contigs)) norm_bool(contigs$high_confidence) else NA
+  contigs$umis <- if ("umis" %in% names(contigs)) suppressWarnings(as.numeric(contigs$umis)) else NA_real_
+  contigs$reads <- if ("read_count" %in% names(contigs)) suppressWarnings(as.numeric(contigs$read_count)) else if ("reads" %in% names(contigs)) suppressWarnings(as.numeric(contigs$reads)) else NA_real_
+
+  # Apply QC filters
+  keep <- rep(TRUE, nrow(contigs))
+  if (isTRUE(require_productive) && "productive" %in% names(contigs)) keep <- keep & (contigs$productive %in% c(TRUE))
+  if (isTRUE(require_full_length) && "full_length" %in% names(contigs)) keep <- keep & (contigs$full_length %in% c(TRUE))
+  if (isTRUE(require_high_confidence) && "high_confidence" %in% names(contigs)) keep <- keep & (contigs$high_confidence %in% c(TRUE))
+  if (!is.null(min_umis) && min_umis > 0) keep <- keep & (!is.na(contigs$umis) & contigs$umis >= min_umis)
+  if (!is.null(min_reads) && min_reads > 0) keep <- keep & (!is.na(contigs$reads) & contigs$reads >= min_reads)
+  contigs_qc <- contigs[keep & !is.na(contigs$cell) & contigs$chain %in% c("TRA", "TRB"), , drop = FALSE]
+
+  # Ranking helper
+  rank_ord <- function(df) {
+    # Prefer productive/full_length/high_confidence implicitly by filtering; in ranking use:
+    umis <- if ("umis" %in% names(df)) suppressWarnings(as.numeric(df$umis)) else rep(NA_real_, nrow(df))
+    reads <- if ("read_count" %in% names(df)) suppressWarnings(as.numeric(df$read_count)) else if ("reads" %in% names(df)) suppressWarnings(as.numeric(df$reads)) else rep(NA_real_, nrow(df))
+    hi <- if ("high_confidence" %in% names(df)) as.integer(df$high_confidence %in% c(TRUE)) else rep(0L, nrow(df))
+    if (identical(alpha_support, "umis")) {
+      order(-ifelse(is.na(umis), -Inf, umis), -ifelse(is.na(reads), -Inf, reads), -hi)
+    } else {
+      order(-ifelse(is.na(reads), -Inf, reads), -ifelse(is.na(umis), -Inf, umis), -hi)
+    }
+  }
+
+  split_by_cell <- split(contigs_qc, contigs_qc$cell)
+
+  # Iterate cells to build pairs
+  pair_rows <- list()
+  md <- seurat@meta.data
+  # Ensure metadata flags exist if writing
+  if (isTRUE(write_meta)) {
+    if (!"vdj.has_tra2" %in% colnames(md)) md$vdj.has_tra2 <- FALSE
+    if (!"vdj.multi_trb" %in% colnames(md)) md$vdj.multi_trb <- FALSE
+    if (!"vdj.pair_qc" %in% colnames(md)) md$vdj.pair_qc <- NA_character_
+  }
+
+  for (cell in names(split_by_cell)) {
+    df <- split_by_cell[[cell]]
+    tra <- df[df$chain == "TRA", , drop = FALSE]
+    trb <- df[df$chain == "TRB", , drop = FALSE]
+
+    if (nrow(trb) == 0 || nrow(tra) == 0) {
+      if (isTRUE(write_meta) && cell %in% rownames(md)) md[cell, "vdj.pair_qc"] <- if (nrow(trb) == 0) "no_trb" else "no_tra"
+      next
+    }
+
+    # Handle multiple TRB
+    multi_trb <- nrow(trb) > 1
+    if (isTRUE(write_meta) && cell %in% rownames(md)) md[cell, "vdj.multi_trb"] <- multi_trb
+    if (multi_trb && isTRUE(drop_multi_trb)) {
+      if (isTRUE(write_meta) && cell %in% rownames(md)) md[cell, "vdj.pair_qc"] <- "multi_trb_dropped"
+      next
+    }
+
+    # Pick best TRB (even if multiple and not dropped)
+    trb <- trb[rank_ord(trb), , drop = FALSE]
+    trb_best <- trb[1, , drop = FALSE]
+
+    # Order TRA by support and pick 1 or 2
+    tra <- tra[rank_ord(tra), , drop = FALSE]
+    tra_best <- tra[1, , drop = FALSE]
+    tra_second <- if (isTRUE(keep_two_alpha) && nrow(tra) >= 2) tra[2, , drop = FALSE] else NULL
+
+    # Build primary pair row
+    mk_row <- function(rank, tra_row, trb_row) {
+      tra_reads_val <- NA
+      trb_reads_val <- NA
+      if ("read_count" %in% names(tra_row)) tra_reads_val <- suppressWarnings(as.numeric(tra_row$read_count))
+      else if ("reads" %in% names(tra_row)) tra_reads_val <- suppressWarnings(as.numeric(tra_row$reads))
+      if ("read_count" %in% names(trb_row)) trb_reads_val <- suppressWarnings(as.numeric(trb_row$read_count))
+      else if ("reads" %in% names(trb_row)) trb_reads_val <- suppressWarnings(as.numeric(trb_row$reads))
+      data.frame(
+        cell = cell,
+        pair_rank = as.integer(rank),
+        tra_cdr3 = as.character(tra_row$cdr3),
+        tra_v = as.character(tra_row$v_gene),
+        tra_j = as.character(tra_row$j_gene),
+        tra_umis = suppressWarnings(as.numeric(tra_row$umis)),
+        tra_reads = tra_reads_val,
+        trb_cdr3 = as.character(trb_row$cdr3),
+        trb_v = as.character(trb_row$v_gene),
+        trb_j = as.character(trb_row$j_gene),
+        trb_umis = suppressWarnings(as.numeric(trb_row$umis)),
+        trb_reads = trb_reads_val,
+        stringsAsFactors = FALSE
+      )
+    }
+    pair_rows[[length(pair_rows) + 1L]] <- mk_row(1L, tra_best, trb_best)
+    if (!is.null(tra_second)) pair_rows[[length(pair_rows) + 1L]] <- mk_row(2L, tra_second, trb_best)
+
+    if (isTRUE(write_meta) && cell %in% rownames(md)) {
+      # Ensure metadata columns
+      ensure_md <- function(nm, default) { if (!nm %in% colnames(md)) md[[nm]] <<- default }
+      # Primary
+      ensure_md("vdj.tra1.cdr3_aa", NA_character_)
+      ensure_md("vdj.tra1.v_gene", NA_character_)
+      ensure_md("vdj.tra1.j_gene", NA_character_)
+      ensure_md("vdj.trb.cdr3_aa", NA_character_)
+      ensure_md("vdj.trb.v_gene", NA_character_)
+      ensure_md("vdj.trb.j_gene", NA_character_)
+      md[cell, "vdj.tra1.cdr3_aa"] <- as.character(tra_best$cdr3)
+      md[cell, "vdj.tra1.v_gene"] <- as.character(tra_best$v_gene)
+      md[cell, "vdj.tra1.j_gene"] <- as.character(tra_best$j_gene)
+      md[cell, "vdj.trb.cdr3_aa"] <- as.character(trb_best$cdr3)
+      md[cell, "vdj.trb.v_gene"] <- as.character(trb_best$v_gene)
+      md[cell, "vdj.trb.j_gene"] <- as.character(trb_best$j_gene)
+      # Secondary
+      ensure_md("vdj.tra2.cdr3_aa", NA_character_)
+      ensure_md("vdj.tra2.v_gene", NA_character_)
+      ensure_md("vdj.tra2.j_gene", NA_character_)
+      md[cell, "vdj.has_tra2"] <- !is.null(tra_second)
+      if (!is.null(tra_second)) {
+        md[cell, "vdj.tra2.cdr3_aa"] <- as.character(tra_second$cdr3)
+        md[cell, "vdj.tra2.v_gene"] <- as.character(tra_second$v_gene)
+        md[cell, "vdj.tra2.j_gene"] <- as.character(tra_second$j_gene)
+      } else {
+        md[cell, c("vdj.tra2.cdr3_aa", "vdj.tra2.v_gene", "vdj.tra2.j_gene")] <- NA_character_
+      }
+      md[cell, "vdj.pair_qc"] <- "pass"
+
+      if (isTRUE(update_primary_meta)) {
+        # Also maintain legacy fields to primary pair
+        ensure_md("vdj.tra.cdr3_aa", NA_character_)
+        ensure_md("vdj.tra.v_gene", NA_character_)
+        ensure_md("vdj.tra.j_gene", NA_character_)
+        md[cell, "vdj.tra.cdr3_aa"] <- md[cell, "vdj.tra1.cdr3_aa"]
+        md[cell, "vdj.tra.v_gene"] <- md[cell, "vdj.tra1.v_gene"]
+        md[cell, "vdj.tra.j_gene"] <- md[cell, "vdj.tra1.j_gene"]
+      }
+    }
+  }
+
+  pairs <- if (length(pair_rows)) do.call(rbind, pair_rows) else data.frame()
+
+  # Store pairs table
+  tools_list[[tool_key]]$pairs <- pairs
+  seurat@tools <- tools_list
+
+  # Write metadata if changed
+  if (isTRUE(write_meta)) seurat@meta.data <- md
+  invisible(seurat)
+}
 
 # Internal: rbind with column union using base R
 rbind_fill <- function(x, y) {

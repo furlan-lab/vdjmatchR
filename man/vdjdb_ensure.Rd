@@ -4,7 +4,7 @@
 \alias{vdjdb_ensure}
 \title{Ensure VDJdb exists locally and return the path.}
 \usage{
-vdjdb_ensure(use_fat_db)
+vdjdb_ensure(`_use_fat_db`)
 }
 \description{
 Ensure VDJdb exists locally and return the path.

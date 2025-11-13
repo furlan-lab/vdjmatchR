@@ -80,14 +80,49 @@ obj <- vdj_attach_10x_vdj_v2_batch(
   vdj_dir_template = vdj_dir)
 
 obj$vdj.cdr3_aa_both <- paste0(obj$vdj.tra.cdr3_aa, "_", obj$vdj.trb.cdr3_aa)
-
-data.frame(old=obj@meta.data[obj$vdj.cdr3_aa_both != obj$cdr3,]$cdr3, new=obj@meta.data[obj$vdj.cdr3_aa_both != obj$cdr3,]$vdj.cdr3_aa_both)
-
-
-table(obj$vdj.cdr3_aa_both != obj$cdr3)
-
 obj$nomatch <- obj$vdj.cdr3_aa_both != obj$cdr3
+
+
+table(obj$nomatch)[2]/(table(obj$nomatch)[1]+table(obj$nomatch)[2])
 DimPlot(obj, group.by = "nomatch")
+```
+
+
+### Collapse to TRA1/TRB (dominant) and optional TRA2/TRB (secondary)
+
+```{r collapse-pairs, eval=TRUE}
+if (exists("obj") && !is.null(obj@tools$vdj$contigs)) {
+  # Select 1 TRB and up to 2 TRA per cell; write metadata and a pairs table
+  obj <- vdj_collapse_pairs_seurat(
+    obj,
+    drop_multi_trb = TRUE,
+    keep_two_alpha = TRUE,
+    alpha_support = "umis",
+    require_productive = TRUE,
+    write_meta = TRUE,
+    update_primary_meta = TRUE
+  )
+
+  # Overall dual-TRA fraction
+  if ("vdj.has_tra2" %in% colnames(obj@meta.data)) {
+    frac_dual <- mean(obj$vdj.has_tra2 %in% TRUE, na.rm = TRUE)
+    cat(sprintf("Dual-TRA fraction: %.1f%%\n", 100 * frac_dual))
+  }
+
+  # Per-cluster dual-TRA rates when cluster labels exist
+  group_col <- NULL
+  if ("seurat_clusters" %in% colnames(obj@meta.data)) group_col <- "seurat_clusters"
+  if (!is.null(group_col)) {
+    g <- obj@meta.data[[group_col]]
+    p <- tapply(obj$vdj.has_tra2 %in% TRUE, g, function(x) mean(x, na.rm = TRUE))
+    print(round(100 * p, 1))
+  }
+
+  # Preview pairs table (first 6 rows)
+  if (!is.null(obj@tools$vdj$pairs)) {
+    print(utils::head(obj@tools$vdj$pairs, 6))
+  }
+}
 ```
 
 
@@ -105,65 +140,87 @@ if (exists("obj")) {
 }
 ```
 
-## Next steps (placeholders)
-
-The following functions will be added in subsequent phases of development:
-
-- `vdj_collapse_pairs_seurat(obj, keep_two_alpha = TRUE, drop_multi_trb = TRUE, ...)`:
-  - Applies QC (productive, high_confidence, full_length; min UMIs/reads).
-  - Selects one TRB (drop cells with >1 TRB) and up to two TRA.
-  - Writes per-cell pairing metadata (`vdj.*`) and stores a `pairs` table in `tools$vdj`.
-
-- `vdj_define_clonotypes_seurat(obj, mode = c("tenx","cdr3_aa","cdr3aa_vj"))`:
-  - Default: use 10x clonotype IDs.
-  - Optionally recompute clones by exact AA sequences (± V/J).
-
-- `vdj_match_seurat(db, obj, chain = "TRB", scope = "0,0,0,0", top_n = 1L, ...)`:
-  - Builds TRB queries from Seurat metadata/pairs and calls `match_tcr_many_df`.
-  - Stores full results in `tools$vdj$hits_trb` and per-cell summaries in metadata (`vdjdb.*`).
-
 ## Match Seurat TCRs to VDJdb
 
 This section shows how to take the TRA/TRB sequences written into Seurat metadata
 and match them against VDJdb, producing a compact table of each cell's top hit per chain.
 
 ```{r vdjdb-match, eval=TRUE}
+
+
 if (exists("obj")) {
   # 1) Load a VDJdb and filter to human and each chain of interest
-  db_path <- vdjdb_packaged_path(use_fat_db = FALSE)
+  db_path <- vdjdb_packaged_path(use_fat_db = TRUE)
   if (nzchar(db_path) && file.exists(db_path)) {
-    db <- RDatabase$new_from_file(db_path)
+    db <- vdjdb_open_file(db_path)
 
-    # Helper to build queries from metadata and get top-1 hit per cell
+    # Helper to build queries from metadata and get top-1 hit per query
+    # For TRA: emits one query per alpha (TRA1 and TRA2 when present)
     get_top_hits <- function(obj, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
       chain <- match.arg(chain)
       ch <- tolower(chain)
       md <- obj@meta.data
-      cdr3_col <- paste0("vdj.", ch, ".cdr3_aa")
-      v_col    <- paste0("vdj.", ch, ".v_gene")
-      j_col    <- paste0("vdj.", ch, ".j_gene")
-      if (!all(c(cdr3_col, v_col, j_col) %in% colnames(md))) return(NULL)
-      keep <- which(!is.na(md[[cdr3_col]]) & nzchar(md[[cdr3_col]]))
-      if (!length(keep)) return(NULL)
-      queries <- data.frame(
-        cell = rownames(md)[keep],
-        cdr3 = as.character(md[[cdr3_col]][keep]),
-        v    = as.character(md[[v_col]][keep]),
-        j    = as.character(md[[j_col]][keep]),
-        stringsAsFactors = FALSE
-      )
+      queries <- NULL
+      if (chain == "TRB") {
+        cols <- c(paste0("vdj.", ch, ".cdr3_aa"), paste0("vdj.", ch, ".v_gene"), paste0("vdj.", ch, ".j_gene"))
+        if (!all(cols %in% colnames(md))) return(NULL)
+        cdr3_col <- cols[1]; v_col <- cols[2]; j_col <- cols[3]
+        keep <- which(!is.na(md[[cdr3_col]]) & nzchar(md[[cdr3_col]]))
+        if (!length(keep)) return(NULL)
+        queries <- data.frame(
+          cell = rownames(md)[keep],
+          cdr3 = as.character(md[[cdr3_col]][keep]),
+          v    = as.character(md[[v_col]][keep]),
+          j    = as.character(md[[j_col]][keep]),
+          alpha_rank = NA_integer_,
+          stringsAsFactors = FALSE
+        )
+      } else {
+        # TRA: build from tra1 and tra2 if present
+        cols1 <- c("vdj.tra1.cdr3_aa", "vdj.tra1.v_gene", "vdj.tra1.j_gene")
+        cols2 <- c("vdj.tra2.cdr3_aa", "vdj.tra2.v_gene", "vdj.tra2.j_gene")
+        have1 <- all(cols1 %in% colnames(md))
+        have2 <- all(cols2 %in% colnames(md))
+        qlist <- list()
+        if (have1) {
+          keep1 <- which(!is.na(md[[cols1[1]]]) & nzchar(md[[cols1[1]]]))
+          if (length(keep1)) qlist[[length(qlist)+1L]] <- data.frame(
+            cell = rownames(md)[keep1],
+            cdr3 = as.character(md[[cols1[1]]][keep1]),
+            v    = as.character(md[[cols1[2]]][keep1]),
+            j    = as.character(md[[cols1[3]]][keep1]),
+            alpha_rank = 1L,
+            stringsAsFactors = FALSE
+          )
+        }
+        if (have2) {
+          keep2 <- which(!is.na(md[[cols2[1]]]) & nzchar(md[[cols2[1]]]))
+          if (length(keep2)) qlist[[length(qlist)+1L]] <- data.frame(
+            cell = rownames(md)[keep2],
+            cdr3 = as.character(md[[cols2[1]]][keep2]),
+            v    = as.character(md[[cols2[2]]][keep2]),
+            j    = as.character(md[[cols2[3]]][keep2]),
+            alpha_rank = 2L,
+            stringsAsFactors = FALSE
+          )
+        }
+        if (!length(qlist)) return(NULL)
+        queries <- do.call(rbind, qlist)
+      }
       # Filter DB to species/gene
       db_chain <- filter_db(db, species = "HomoSapiens", gene = chain, min_vdjdb_score = 0)
       hits <- match_tcr_many_df(db_chain, queries$cdr3, queries$v, queries$j, scope = scope, top_n = 1L)
       if (!nrow(hits)) return(NULL)
       # Attach cell back by query_index and return a compact table
-      hits$cell <- queries$cell[as.integer(hits$query_index)]
+      qi <- as.integer(hits$query_index)
+      hits$cell <- queries$cell[qi]
+      if ("alpha_rank" %in% colnames(queries)) hits$alpha_rank <- queries$alpha_rank[qi]
       # Keep key columns commonly used from VDJdb; adjust as needed
-      keep_cols <- intersect(c("cell","query_index","cdr3","v_segment","j_segment","gene","epitope","antigen.species","vdjdb_score","source"), colnames(hits))
+      keep_cols <- intersect(c("cell","alpha_rank","query_index","cdr3","v_segment","j_segment","gene","epitope","antigen.species","vdjdb_score","source"), colnames(hits))
       hits[, keep_cols, drop = FALSE]
     }
 
-    top_trb <- get_top_hits(obj, chain = "TRB", scope = "0,0,0,0")
+    top_trb <- get_top_hits(obj, chain = "TRB", scope = "2,1,2,3")
     top_tra <- get_top_hits(obj, chain = "TRA", scope = "0,0,0,0")
 
     if (!is.null(top_trb)) {
@@ -171,8 +228,12 @@ if (exists("obj")) {
       print(utils::head(top_trb, 10))
     }
     if (!is.null(top_tra)) {
-      cat("\nTop TRA hits (first 10):\n")
+      cat("\nTop TRA hits (first 10, includes alpha_rank 1/2):\n")
       print(utils::head(top_tra, 10))
+      if ("alpha_rank" %in% colnames(top_tra)) {
+        cat("\nTRA hits count by alpha_rank:\n")
+        print(table(top_tra$alpha_rank))
+      }
     }
   } else {
     message("VDJdb packaged path not found; set a user DB via vdjdb_set_user_db().")

@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use crate::error::{Result, VdjMatchError};
-use crate::sequence::Clonotype;
+// use crate::sequence::Clonotype;
 use csv::ReaderBuilder;
 use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};

@@ -18,17 +18,39 @@ match_tcr <- function(db, cdr3, v_segment, j_segment, scope, top_n) .Call(wrap__
 #' Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.
 match_tcr_many <- function(db, cdr3, v_segment, j_segment, scope, top_n) .Call(wrap__match_tcr_many, db, cdr3, v_segment, j_segment, scope, top_n)
 
+#' Open a VDJdb TSV/TSV.GZ via the Rust backend.
+#' @export
+vdjdb_open_file <- function(path) .Call(wrap__vdjdb_open_file, path)
+
+#' Number of rows stored in the in-memory VDJdb handle.
+#' @export
+vdjdb_len <- function(db) .Call(wrap__vdjdb_len, db)
+
+#' Filter database entries by species, gene, and minimum VDJdb score.
+#' @export
+filter_db <- function(db, species, gene, min_vdjdb_score) .Call(wrap__filter_db, db, species, gene, min_vdjdb_score)
+
+#' Filter by minimum epitope size (unique CDR3 per epitope).
+#' @export
+filter_db_by_epitope_size <- function(db, min_size) .Call(wrap__filter_db_by_epitope_size, db, min_size)
+
 #' Ensure VDJdb exists locally and return the path.
-vdjdb_ensure <- function(use_fat_db) .Call(wrap__vdjdb_ensure, use_fat_db)
+vdjdb_ensure <- function(`_use_fat_db`) .Call(wrap__vdjdb_ensure, `_use_fat_db`)
 
 #' Download/update the VDJdb files (slim and fat).
 vdjdb_update <- function() .Call(wrap__vdjdb_update)
+
+#' Ensure VDJdb exists in the specified directory and return the path.
+vdjdb_ensure_into <- function(dir, use_fat_db) .Call(wrap__vdjdb_ensure_into, dir, use_fat_db)
+
+#' Download/update the VDJdb files (slim and fat) into the specified directory.
+vdjdb_update_into <- function(dir) .Call(wrap__vdjdb_update_into, dir)
 
 RDatabase <- new.env(parent = emptyenv())
 
 RDatabase$new_from_file <- function(path) .Call(wrap__RDatabase__new_from_file, path)
 
-RDatabase$new_from_vdjdb <- function(use_fat_db) .Call(wrap__RDatabase__new_from_vdjdb, use_fat_db)
+RDatabase$new_from_vdjdb <- function(`_use_fat_db`) .Call(wrap__RDatabase__new_from_vdjdb, `_use_fat_db`)
 
 RDatabase$len <- function() .Call(wrap__RDatabase__len, self)
 

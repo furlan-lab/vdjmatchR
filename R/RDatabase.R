@@ -1,19 +1,17 @@
-#' RDatabase: Handle to a loaded VDJdb
-#'
-#' @description
-#' `RDatabase` is an object provided by the Rust backend (via extendr) that
-#' holds an in-memory VDJdb table and exposes methods for filtering.
-#'
-#' Methods include:
-#' - `new_from_file(path)`
-#' - `new_from_vdjdb(use_fat_db = FALSE)`
-#' - `len()`
-#' - `filter(species = NULL, gene = NULL, min_vdjdb_score = 0)`
-#' - `filter_by_epitope_size(min_size = 1)`
-#'
-#' See also: \link[=match_tcr_df]{match_tcr_df}, \link[=match_tcr_many_df]{match_tcr_many_df}, \link[=vdjdb_download]{vdjdb_download}.
-#'
-#' @name RDatabase
-#' @docType class
-#' @keywords internal
-NULL
+# #' RDatabase: Handle to a loaded VDJdb
+# #'
+# #' @description
+# #' `RDatabase` is an object provided by the Rust backend (via extendr) that
+# #' holds an in-memory VDJdb table. Use `vdjdb_open_file()` (or helpers like
+# #' `vdjdb_open()`) to construct a handle, `vdjdb_len()` to inspect how many
+# #' rows were loaded, and `filter_db()` / `filter_db_by_epitope_size()` to derive
+# #' filtered handles for downstream calls to \link[=match_tcr_df]{match_tcr_df}
+# #' or \link[=match_tcr_many_df]{match_tcr_many_df}.
+# #'
+# #' See also: \link[=vdjdb_download]{vdjdb_download} for updating packaged
+# #' databases.
+# #'
+# #' @name RDatabase
+# #' @docType class
+# #' @keywords internal
+# NULL
