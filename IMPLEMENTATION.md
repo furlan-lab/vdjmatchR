@@ -1,109 +1,115 @@
-# vdjmatchR Implementation Summary
+# vdjmatchR — Implementation Notes (Current State)
 
-Date: 2025-11-11
-
-This document summarizes the work done to create the `vdjmatchR` repository, an R
-package exposing the Rust TCR matching functionality (derived from `vdjmatch-rs`)
-via `extendr`.
+This document describes the current implementation and public surface of the
+`vdjmatchR` R package, including TCR matching against VDJdb and Seurat + 10x 5' VDJ v2 integration.
 
 ## Overview
-- Scaffolded a new R package in `~/develop/vdjmatchR`.
-- Embedded a Rust crate (`src/rust`) with core matching logic and `extendr` wrappers.
-- Added R convenience functions returning data.frames for ergonomic usage.
-- Implemented pkgdown documentation site configuration and multiple vignettes.
-- Included a GitHub Actions workflow to build and deploy the pkgdown site.
+- Exposes TCR matching via Rust/extendr bindings (no network I/O).
+- Provides Seurat utilities to ingest Cell Ranger 10x 5' VDJ v2 outputs into a Seurat v5 object.
+- Stores heavy VDJ tables under `obj@tools$vdj` and writes concise, per-cell VDJ metadata.
 
 ## Repository Structure (key files)
-- R package
-  - `DESCRIPTION` — package metadata (updated for vignettes/pkgdown).
-  - `NAMESPACE` — uses dynamic library; exports by default pattern.
-  - `R/match.R` — high-level R helpers (data.frame results, filters).
-  - `R/vdjdb.R` — packaged DB paths, user DB configuration.
-  - `R/RDatabase.R` — roxygen topic for the `RDatabase` class.
-  - `README.md` — quickstart and examples.
-  - `.Rbuildignore`, `.gitignore` — ignores incl. pkgdown artifacts.
-  - `LICENSE`, `LICENSE.md` — MIT license metadata.
-- Rust crate (extendr + core)
-  - `src/rust/Cargo.toml` — staticlib crate with dependencies (`extendr-api`, etc.).
-  - `src/rust/src/lib.rs` — extendr module and exports.
-  - `src/rust/src/{alignment,database,error,filtering,matching,scoring,sequence,utils}.rs` — copied from `vdjmatch-rs`.
-- R build glue
-  - `src/Makevars`, `src/Makevars.win` — link flags via `rextendr`.
-  - `src/entrypoint.c` — minimal C stub (no registration; extendr handles it).
-- Pkgdown and docs
-  - `_pkgdown.yml` — site configuration, navbar, and reference groups.
-  - `.github/workflows/pkgdown.yaml` — CI to build and deploy site.
-  - `vignettes/getting-started.Rmd` — intro vignette.
-  - `vignettes/scoring-and-scope.Rmd` — scoring and tolerance.
-  - `vignettes/batch-matching.Rmd` — batch matching workflows.
-  - `vignettes/database-management.Rmd` — downloading and filtering DB.
+- R API
+  - `R/match.R` — high-level matching helpers (data.frame results, filters).
+  - `R/vdjdb.R` — packaged DB paths and user DB configuration.
+  - `R/seurat_vdj.R` — Seurat + 10x VDJ integration functions and diagnostics.
+- Rust + build glue
+  - `src/` — extendr integration and static library glue (platform-specific Makevars).
+- Docs
+  - `vignettes/` — demonstration and integration workflows.
+  - `_pkgdown.yml` — site configuration.
 
-## Rust API exposed to R (extendr)
-File: `src/rust/src/lib.rs`
-
-- Type
-  - `RDatabase` (wrapper holding `Database`):
-    - `new_from_file(path: &str) -> RDatabase`
-    - `new_from_vdjdb(use_fat_db: bool) -> RDatabase` (disabled; instructs to use `new_from_file()`)
-    - `len(&self) -> i32`
-    - `filter(&self, species: Option<String>, gene: Option<String>, min_vdjdb_score: i32) -> RDatabase`
-    - `filter_by_epitope_size(&self, min_size: i32) -> RDatabase`
-- Functions
-  - `match_tcr(db, cdr3, v_segment, j_segment, scope, top_n) -> List` (single clonotype)
-  - `match_tcr_many(db, cdr3[], v_segment[], j_segment[], scope, top_n) -> List` (batch)
-  - `vdjdb_ensure(use_fat_db: bool) -> String` (disabled; automatic download not supported)
-  - `vdjdb_update() -> ()` (disabled; automatic update not supported)
-
-Notes
-- Scoring currently uses the simple mismatch approach defined in the copied `matching/scoring` modules.
-- `scope` parsing supports `"s,i,d,t"` or `"s,id,t"` formats; `"0,0,0,0"` means exact.
-- Batch results include `query_index` (1-based for R) and query metadata columns.
-
-## R Convenience API
-Files: `R/match.R`, `R/vdjdb.R`
-
+## Matching API (R)
 - `match_tcr_df(db, cdr3, v_segment = "", j_segment = "", scope = "0,0,0,0", top_n = 0)` → data.frame
 - `match_tcr_many_df(db, cdr3[], v_segment[], j_segment[], scope = "0,0,0,0", top_n = 0)` → data.frame
-- `filter_db(db, species = NULL, gene = NULL, min_vdjdb_score = 0)` → `RDatabase`
-- `filter_db_by_epitope_size(db, min_size = 1)` → `RDatabase`
-- `vdjdb_packaged_path(use_fat_db = FALSE)` → packaged TSV(.gz) path (slim/full)
-- `vdjdb_path(use_fat_db = FALSE)` → uses user-specified path if set via `vdjdb_set_user_db()`, else packaged
-- `vdjdb_set_user_db(path, use_fat_db = FALSE)` → set a user-supplied DB file for the session
-- `vdjdb_update_latest()`/`vdjdb_download()`/`vdjdb_update_all()` → disabled (no network); instructs to use `vdjdb_set_user_db()`
+- Database helpers: `filter_db`, `filter_db_by_epitope_size`, `vdjdb_packaged_path`,
+  `vdjdb_path`, `vdjdb_set_user_db`, `vdjdb_update_latest` (no network), `vdjdb_download` (no network).
 
-## Build and Installation
-Requirements
-- Rust ≥ 1.70 and cargo
-- R toolchain with `rextendr` (for compile/link flags)
+## Seurat + 10x VDJ Integration (R/seurat_vdj.R)
 
-Install steps
-- In R: `install.packages("rextendr")`
-- In shell from package root: `R CMD INSTALL .`
+### Single-run attach
+`vdj_attach_10x_vdj_v2(
+  seurat,
+  vdj_dir,
+  sample_id = NULL,
+  barcode_prefix = NULL,
+  cell_regex = NULL,
+  cell_map = NULL,
+  tool_key = "vdj",
+  add_meta = TRUE,
+  include_cdr12 = FALSE,
+  include_nt_subseq = FALSE,
+  expected_t_fraction = 0.5
+)`
 
-## Pkgdown Site
-- Local build: in R, run `roxygen2::roxygenise(); pkgdown::build_site()`.
-- CI deploy: GitHub Actions builds `docs/` and publishes to Pages (enable Pages for the repo).
+- Input: Cell Ranger VDJ v2 outputs in `vdj_dir` (`filtered_contig_annotations.csv`, `clonotypes.csv`).
+- Sample: `sample_id` inferred from the path if missing.
+- Mapping (barcode-based; no metadata gating):
+  - Priority: explicit `cell_map` → `cell_regex` capture → exact equality → prefix-assisted equality (`prefix + barcode`, `prefix + "_" + barcode`) → suffix fallback.
+  - Per-run mapping table: 10x `barcode` → Seurat `cell` with `strategy` (unique matches only).
+- Heavy tables: append to `obj@tools[[tool_key]]$contigs` and `$clonotypes_raw` (adds `sample_id`).
+- Per-cell minimal metadata:
+  - `vdj.clone_id_10x`: majority of `raw_clonotype_id` across a cell’s contigs; tie-break by summed UMIs.
+  - `vdj.clone_size_10x`: frequency from `clonotypes.csv` for the chosen clonotype (scoped by sample).
+- Per-cell, per-chain metadata (best contig per (cell, TRA/TRB)):
+  - Selection priority: productive==TRUE (if present) → highest UMIs → highest reads (`read_count` or `reads`) → high_confidence (if present).
+  - Genes: `vdj.<tra|trb>.v_gene`, `vdj.<tra|trb>.j_gene`, `vdj.<tra|trb>.c_gene`.
+  - Sequences: `vdj.<tra|trb>.cdr3_aa`; if `include_nt_subseq=TRUE` and present, `vdj.<tra|trb>.cdr3_nt`.
+  - Counts: `vdj.<tra|trb>.umis`, `vdj.<tra|trb>.reads`.
+  - Optional CDR1/2 AA: `vdj.<tra|trb>.cdr1_aa`, `vdj.<tra|trb>.cdr2_aa` when `include_cdr12=TRUE` and columns exist; `*_nt` when `include_nt_subseq=TRUE` and present.
+- Diagnostics:
+  - Queried cells: all cells if no prefix; else cells whose names start with `barcode_prefix`.
+  - Unmatched fraction: (queried − matched) / queried.
+  - Warning only if `unmatched_fraction > (1 - expected_t_fraction)`; default `expected_t_fraction=0.5`.
+  - Summary row stored under `obj@tools[[tool_key]]$mapping_summary[[sample_id]]` with `queried`, `matched`, `unmatched`, `unmatched_fraction`.
+- Tools structure also records `config$last_attach` (inputs and options).
+
+### Batch attach with caps-token templates
+`vdj_attach_10x_vdj_v2_batch(
+  seurat,
+  prefix_folders,
+  vdj_dir_template,
+  tool_key = "vdj",
+  add_meta = TRUE,
+  include_cdr12 = FALSE,
+  include_nt_subseq = FALSE,
+  expected_t_fraction = 0.5,
+  placeholder = "FOLDERNAME",
+  prefixes_col = c("prefixes","PREFIXES"),
+  folders_col = "folders",
+  cell_regex = NULL,
+  cell_map = NULL
+)`
+
+- `prefix_folders`: data.frame with a prefix column (`PREFIXES` or `prefixes`) and any number of UPPERCASE columns referenced by the template (e.g., `FOLDERNAME1`, `FOLDERNAME2`).
+- `vdj_dir_template`: path containing UPPERCASE tokens; replaced per-row with same-named columns. If no tokens are found, falls back to single `placeholder` substitution using `folders_col`.
+- For each row: resolves `vdj_dir`, uses row’s prefix as `barcode_prefix`, and calls the single-run attach; results are appended.
+- Missing directories are warned and skipped.
+
+## Data written to Seurat
+- `obj@tools[[tool_key]]`:
+  - `$contigs`: rbind of per-run contigs with `sample_id`.
+  - `$clonotypes_raw`: rbind of per-run clonotypes with `sample_id` and `clonotype_uid` (`sample:clonotype_id`).
+  - `$mapping`: list of data.frames keyed by `sample_id` (10x `barcode`, mapped `cell`, `strategy`).
+  - `$mapping_summary`: list of per-run data.frames with `queried`, `matched`, `unmatched`, `unmatched_fraction`.
+  - `$config$last_attach`: inputs and options of the latest attach.
+- `obj@meta.data`:
+  - `vdj.clone_id_10x`, `vdj.clone_size_10x`.
+  - `vdj.tra.*`, `vdj.trb.*` as described above.
 
 ## Vignettes
-- Getting started: walkthrough of install, download, filtering, and matching.
-- Scoring and scope: guidance on `scope` and interpreting scores.
-- Batch matching: efficient multi-query usage.
-- Database management: ensuring/updating VDJdb and filtering strategies.
+- `vignettes/seurat-vdj-integration.Rmd` demonstrates batch attach with caps-token templates, diagnostics via `mapping_summary`, and the per-chain metadata fields.
+- Other vignettes: getting started, scoring/scope, batch matching, database management.
 
-## Notable Implementation Details
-- `src/entrypoint.c` contains only a dummy symbol to avoid conflicting with
-  extendr’s auto-registration; the Rust side provides the `R_init_*` hook.
-- Automatic download is disabled. The package does not use `~/.vdjmatch` and does not perform network I/O.
-- Slim and full VDJdb samples are bundled (gzipped) under
-  `inst/extdata/vdjdb.slim.txt.gz` and `inst/extdata/vdjdb.txt.gz` for
-  immediate use; `vdjdb_packaged_path()` locates them (with fallback to
-  uncompressed filenames if present).
-- Core Rust modules are currently copied from `vdjmatch-rs` to keep this repo
-  self-contained.
+## Build and Installation
+- Requires Rust toolchain and `rextendr` for linking; install via `R CMD INSTALL .` from the package root.
 
-## Next Steps (optional)
-- Replace placeholder URLs in `DESCRIPTION` and `_pkgdown.yml` with the real GitHub org/repo.
-- Refactor to depend on a library crate version of `vdjmatch-rs` to avoid code duplication (workspace or git dependency).
-- Add tests (R and Rust) and CI for build checks.
-- Add more R-friendly result shaping (e.g., tibble, factor levels for segments).
-- Expose additional configuration knobs (e.g., scoring mode toggle) through the R API.
+## Notes / Assumptions
+- Assumes human TCR (TRA/TRB) in the Seurat helpers.
+- Mapping is purely based on cell-barcode string operations and optional explicit/regex maps.
+- No dependency on Seurat’s functions; uses base slots (`meta.data`, `tools`).
+
+## Future Options
+- Expose contig selection knobs (e.g., prioritize reads over UMIs, require `full_length`/`high_confidence`).
+- Optional stricter mapping modes (e.g., disable suffix fallback).
+
