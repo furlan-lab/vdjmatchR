@@ -43,10 +43,10 @@ Set the path to a Seurat v5 object (RDS) and to the 10x VDJ directory (`vdj_t`).
 
 ```{r params, eval=TRUE}
 # Edit these to your environment
-seurat_rds <- "/Volumes/fh/fast/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
-
+seurat_rds <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
+#/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS
 # Example 10x VDJ v2 directory (replace as needed)
-vdj_dir <- "/Volumes/fh/fast/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
+vdj_dir <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
 
 ```
 
@@ -62,7 +62,7 @@ if (nzchar(seurat_rds) && file.exists(seurat_rds)) {
 prefixes <- sub("[ACGT]{16}-\\d+$", "", Cells(orig)) %>% unique()
 folders2 <- sub("^[^_]+_(.+)_$", "\\1", prefixes)
 folders1 <- sub("_[^_]+$", "", folders2)
-matchdf <- data.frame(PREFIXES=prefixes, FOLDERNAME1=folders1, FOLDERNAME2=folders)
+matchdf <- data.frame(PREFIXES=prefixes, FOLDERNAME1=folders1, FOLDERNAME2=folders2)
 
 ```
 

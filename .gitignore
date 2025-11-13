@@ -5,7 +5,6 @@ src/.gitignore
 .RData
 .Ruserdata
 .DS_Store
-/inst/
 /target/
 src/rust/target/
 **/*.o
