@@ -1,0 +1,187 @@
+---
+title: "Seurat v5 + 10x VDJ v2 Integration"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{Seurat v5 + 10x VDJ v2 Integration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = TRUE,
+  warning = TRUE
+)
+```
+
+This vignette shows how to:
+- Start from a Seurat v5 object.
+- Attach 10x 5' VDJ v2 outputs to the object with flexible cell-name mapping.
+- Inspect mapping diagnostics and basic metadata written by vdjmatchR.
+
+Later sections (placeholders) will add pairing/QC, clonotype definitions, and vdjmatchR matching.
+
+Note: paths below reference user-specific data; code chunks are guarded to run only if files exist.
+
+## Prerequisites
+
+```{r packages}
+library(Seurat)       # v5
+library(vdjmatchR)
+library(magrittr)
+```
+
+## Provide your inputs
+
+Set the path to a Seurat v5 object (RDS) and to the 10x VDJ directory (`vdj_t`).
+
+```{r params, eval=TRUE}
+# Edit these to your environment
+seurat_rds <- "/Volumes/fh/fast/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
+
+# Example 10x VDJ v2 directory (replace as needed)
+vdj_dir <- "/Volumes/fh/fast/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
+
+```
+
+## Load Seurat object
+
+```{r load-seurat, eval=TRUE}
+if (nzchar(seurat_rds) && file.exists(seurat_rds)) {
+  orig <- readRDS(seurat_rds)
+} else {
+  message("Set SEURAT_RDS_PATH to a Seurat v5 RDS file to run this vignette end-to-end.")
+}
+
+prefixes <- sub("[ACGT]{16}-\\d+$", "", Cells(orig)) %>% unique()
+folders2 <- sub("^[^_]+_(.+)_$", "\\1", prefixes)
+folders1 <- sub("_[^_]+$", "", folders2)
+matchdf <- data.frame(PREFIXES=prefixes, FOLDERNAME1=folders1, FOLDERNAME2=folders)
+
+```
+
+## Attach 10x VDJ v2 to Seurat
+
+The function `vdj_attach_10x_vdj_v2()` reads `filtered_contig_annotations.csv` and `clonotypes.csv`,
+maps 10x barcodes to Seurat cell names (with flexible strategies), and stores heavy tables in
+`obj@tools$vdj`. Minimal metadata (10x clonotype id/size) can be written per cell.
+
+```{r attach, eval=TRUE}
+
+obj <- vdj_attach_10x_vdj_v2_batch(
+  orig,
+  matchdf,
+  vdj_dir_template = vdj_dir)
+
+obj$vdj.cdr3_aa_both <- paste0(obj$vdj.tra.cdr3_aa, "_", obj$vdj.trb.cdr3_aa)
+
+data.frame(old=obj@meta.data[obj$vdj.cdr3_aa_both != obj$cdr3,]$cdr3, new=obj@meta.data[obj$vdj.cdr3_aa_both != obj$cdr3,]$vdj.cdr3_aa_both)
+
+
+table(obj$vdj.cdr3_aa_both != obj$cdr3)
+
+obj$nomatch <- obj$vdj.cdr3_aa_both != obj$cdr3
+DimPlot(obj, group.by = "nomatch")
+```
+
+
+### Inspect attached tables and metadata
+
+```{r inspect, eval=TRUE}
+if (exists("obj") && !is.null(obj@tools$vdj$contigs)) {
+  cat("Contigs rows:", nrow(obj@tools$vdj$contigs), "\n")
+  print(utils::head(obj@tools$vdj$contigs[ , c("barcode","chain","v_gene","j_gene","cdr3","umis","cell","sample_id")], 5))
+}
+
+if (exists("obj")) {
+  cols <- intersect(c("vdj.clone_id_10x","vdj.clone_size_10x"), colnames(obj@meta.data))
+  if (length(cols)) print(utils::head(obj@meta.data[, cols, drop = FALSE]))
+}
+```
+
+## Next steps (placeholders)
+
+The following functions will be added in subsequent phases of development:
+
+- `vdj_collapse_pairs_seurat(obj, keep_two_alpha = TRUE, drop_multi_trb = TRUE, ...)`:
+  - Applies QC (productive, high_confidence, full_length; min UMIs/reads).
+  - Selects one TRB (drop cells with >1 TRB) and up to two TRA.
+  - Writes per-cell pairing metadata (`vdj.*`) and stores a `pairs` table in `tools$vdj`.
+
+- `vdj_define_clonotypes_seurat(obj, mode = c("tenx","cdr3_aa","cdr3aa_vj"))`:
+  - Default: use 10x clonotype IDs.
+  - Optionally recompute clones by exact AA sequences (± V/J).
+
+- `vdj_match_seurat(db, obj, chain = "TRB", scope = "0,0,0,0", top_n = 1L, ...)`:
+  - Builds TRB queries from Seurat metadata/pairs and calls `match_tcr_many_df`.
+  - Stores full results in `tools$vdj$hits_trb` and per-cell summaries in metadata (`vdjdb.*`).
+
+## Match Seurat TCRs to VDJdb
+
+This section shows how to take the TRA/TRB sequences written into Seurat metadata
+and match them against VDJdb, producing a compact table of each cell's top hit per chain.
+
+```{r vdjdb-match, eval=TRUE}
+if (exists("obj")) {
+  # 1) Load a VDJdb and filter to human and each chain of interest
+  db_path <- vdjdb_packaged_path(use_fat_db = FALSE)
+  if (nzchar(db_path) && file.exists(db_path)) {
+    db <- RDatabase$new_from_file(db_path)
+
+    # Helper to build queries from metadata and get top-1 hit per cell
+    get_top_hits <- function(obj, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
+      chain <- match.arg(chain)
+      ch <- tolower(chain)
+      md <- obj@meta.data
+      cdr3_col <- paste0("vdj.", ch, ".cdr3_aa")
+      v_col    <- paste0("vdj.", ch, ".v_gene")
+      j_col    <- paste0("vdj.", ch, ".j_gene")
+      if (!all(c(cdr3_col, v_col, j_col) %in% colnames(md))) return(NULL)
+      keep <- which(!is.na(md[[cdr3_col]]) & nzchar(md[[cdr3_col]]))
+      if (!length(keep)) return(NULL)
+      queries <- data.frame(
+        cell = rownames(md)[keep],
+        cdr3 = as.character(md[[cdr3_col]][keep]),
+        v    = as.character(md[[v_col]][keep]),
+        j    = as.character(md[[j_col]][keep]),
+        stringsAsFactors = FALSE
+      )
+      # Filter DB to species/gene
+      db_chain <- filter_db(db, species = "HomoSapiens", gene = chain, min_vdjdb_score = 0)
+      hits <- match_tcr_many_df(db_chain, queries$cdr3, queries$v, queries$j, scope = scope, top_n = 1L)
+      if (!nrow(hits)) return(NULL)
+      # Attach cell back by query_index and return a compact table
+      hits$cell <- queries$cell[as.integer(hits$query_index)]
+      # Keep key columns commonly used from VDJdb; adjust as needed
+      keep_cols <- intersect(c("cell","query_index","cdr3","v_segment","j_segment","gene","epitope","antigen.species","vdjdb_score","source"), colnames(hits))
+      hits[, keep_cols, drop = FALSE]
+    }
+
+    top_trb <- get_top_hits(obj, chain = "TRB", scope = "0,0,0,0")
+    top_tra <- get_top_hits(obj, chain = "TRA", scope = "0,0,0,0")
+
+    if (!is.null(top_trb)) {
+      cat("Top TRB hits (first 10):\n")
+      print(utils::head(top_trb, 10))
+    }
+    if (!is.null(top_tra)) {
+      cat("\nTop TRA hits (first 10):\n")
+      print(utils::head(top_tra, 10))
+    }
+  } else {
+    message("VDJdb packaged path not found; set a user DB via vdjdb_set_user_db().")
+  }
+}
+```
+
+## Session info
+
+```{r session}
+sessionInfo()
+```
