@@ -12,7 +12,7 @@ articles:
   vdjmatchR/vignettes/scoring-and-scope: vdjmatchR/vignettes/scoring-and-scope.html
   seurat-vdj-integration: seurat-vdj-integration.html
   vdjmatchR/vignettes/seurat-vdj-integration: vdjmatchR/vignettes/seurat-vdj-integration.html
-last_built: 2025-11-14T18:57Z
+last_built: 2025-11-14T19:00Z
 urls:
   reference: https://furlan-lab.github.io/vdjmatchR/reference
   article: https://furlan-lab.github.io/vdjmatchR/articles
