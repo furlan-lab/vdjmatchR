@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting started with vdjmatchR • vdjmatchR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -16,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">vdjmatchR</a>
 
@@ -30,13 +36,20 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/scoring-and-scope.html">Scoring and scope</a></li>
-    <li><a class="dropdown-item" href="../articles/batch-matching.html">Batch matching</a></li>
-    <li><a class="dropdown-item" href="../articles/database-management.html">Database management</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>TCR Matching</h6></li>
+    <li><a class="dropdown-item" href="../articles/batch-matching.html">Batch Matching</a></li>
+    <li><a class="dropdown-item" href="../articles/scoring-and-scope.html">Scoring and Search Scope</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Database Tools</h6></li>
+    <li><a class="dropdown-item" href="../articles/database-management.html">Database Management</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Integration</h6></li>
+    <li><a class="dropdown-item" href="../articles/seurat-vdj-integration.html">Seurat + 10x VDJ Integration</a></li>
   </ul>
 </li>
       </ul>
@@ -44,7 +57,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,21 +70,17 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Getting started with vdjmatchR</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Getting started with vdjmatchR</h1>
                         <h4 data-toc-skip class="author">vdjmatchR
 Authors</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/HEAD/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#| echo: false</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>collapse <span class="op">=</span> <span class="cn">TRUE</span>, comment <span class="op">=</span> <span class="st">"#&gt;"</span>, eval <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -79,23 +88,23 @@ Authors</h4>
 <li>Install Rust (&gt;= 1.70) from <a href="https://rustup.rs" class="external-link uri">https://rustup.rs</a>.</li>
 <li>In R, install the helper package:</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rextendr"</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>Build and install this package (from the repo root):</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># in a shell</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>R CMD INSTALL .</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># in a shell</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>R CMD INSTALL .</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-tour">Quick tour<a class="anchor" aria-label="anchor" href="#quick-tour"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use the packaged slim VDJdb bundled with the package</span></span>
 <span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optionally filter to human TRB with min score &gt;= 2</span></span>
 <span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -113,7 +122,7 @@ Authors</h4>
 <span></span>
 <span><span class="co"># Optionally, point to your own VDJdb file for this session</span></span>
 <span><span class="co"># vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)</span></span>
-<span><span class="co"># db &lt;- RDatabase$new_from_file(new_path)</span></span>
+<span><span class="co"># db &lt;- vdjdb_open(use_fat_db = FALSE)</span></span>
 <span></span>
 <span><span class="co"># Batch matching of multiple clonotypes</span></span>
 <span><span class="va">cdr3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CASSLGQAYEQYF"</span>, <span class="st">"CASSIRSSYEQYF"</span><span class="op">)</span></span>
@@ -130,7 +139,7 @@ using the format <code>"s,i,d,t"</code> (substitutions, insertions,
 deletions, total) or <code>"s,id,t"</code> where insertions and
 deletions share the same limit. Use <code>"0,0,0,0"</code> for exact
 matching.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Allow up to 2 substitutions and 1 insertion/deletion, total up to 3 edits</span></span>
 <span><span class="va">scope</span> <span class="op">&lt;-</span> <span class="st">"2,1,2,3"</span></span></code></pre></div>
 </div>
@@ -162,7 +171,7 @@ project metadata.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

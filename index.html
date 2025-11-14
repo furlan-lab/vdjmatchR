@@ -5,20 +5,27 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>R Interface to VDJmatch (Rust) • vdjmatchR</title>
+<title>vdjmatchR - Fast TCR sequence matching in R • vdjmatchR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R Interface to VDJmatch (Rust)">
-<meta name="description" content="R bindings to query TCR sequences using a Rust implementation derived from vdjmatch-rs, via extendr.">
-<meta property="og:description" content="R bindings to query TCR sequences using a Rust implementation derived from vdjmatch-rs, via extendr.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="vdjmatchR - Fast TCR sequence matching in R">
+<meta name="description" content="High-performance TCR sequence matching against VDJdb with Rust-powered parallel processing">
+<meta property="og:description" content="High-performance TCR sequence matching against VDJdb with Rust-powered parallel processing">
+<meta property="og:image" content="https://furlan-lab.github.io/vdjmatchR/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">vdjmatchR</a>
 
@@ -33,12 +40,19 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/getting-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="articles/scoring-and-scope.html">Scoring and scope</a></li>
-    <li><a class="dropdown-item" href="articles/batch-matching.html">Batch matching</a></li>
-    <li><a class="dropdown-item" href="articles/database-management.html">Database management</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="articles/getting-started.html">Getting Started</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>TCR Matching</h6></li>
+    <li><a class="dropdown-item" href="articles/batch-matching.html">Batch Matching</a></li>
+    <li><a class="dropdown-item" href="articles/scoring-and-scope.html">Scoring and Search Scope</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Database Tools</h6></li>
+    <li><a class="dropdown-item" href="articles/database-management.html">Database Management</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Integration</h6></li>
+    <li><a class="dropdown-item" href="articles/seurat-vdj-integration.html">Seurat + 10x VDJ Integration</a></li>
   </ul>
 </li>
       </ul>
@@ -46,7 +60,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -55,106 +69,330 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="vdjmatchr">vdjmatchR<a class="anchor" aria-label="anchor" href="#vdjmatchr"></a>
-</h1></div>
-<p>R interface to a Rust implementation of TCR sequence matching (derived from <code>vdjmatch-rs</code>), built via <a href="https://extendr.github.io/" class="external-link"><code>extendr</code></a>.</p>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="vdjmatchr">vdjmatchR<a class="anchor" aria-label="anchor" href="#vdjmatchr"></a>
+</h1>
+</div>
+<p align="center">
+<img src="reference/figures/logo2.png" alt="vdjmatchR logo" width="300"></p>
+<p align="center">
+<strong>Fast TCR sequence matching with VDJdb in R</strong>
+</p>
+<p align="center">
+<a href="https://furlan-lab.github.io/vdjmatchR/">Documentation</a> • <a href="#installation">Installation</a> • <a href="#quickstart">Quickstart</a> • <a href="#vignettes">Vignettes</a>
+</p>
+<hr>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<p>vdjmatchR provides a high-performance R interface to TCR sequence matching against the VDJdb database. Built with a Rust core via <a href="https://extendr.github.io/" class="external-link"><code>extendr</code></a>, it combines the speed of Rust with the convenience of R.</p>
+<div class="section level3">
+<h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+</h3>
+<p>✨ <strong>Fast Matching</strong> - Rust-powered parallel processing for high throughput 🔍 <strong>Fuzzy Matching</strong> - Configurable edit distance tolerance 📊 <strong>Database Tools</strong> - Easy filtering, exploration, and conversion to data.table 🧬 <strong>Seurat Integration</strong> - Seamless integration with 10x Genomics VDJ data 📈 <strong>Progress Tracking</strong> - Real-time progress bars for large datasets 🎯 <strong>VDJdb Compatible</strong> - Works with both slim and full VDJdb formats</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h3>
 <ul>
-<li>Ships core matching logic in Rust for performance.</li>
-<li>Exposes an R API using extendr.</li>
-<li>Designed to work with VDJdb-formatted TSVs (slim or full).</li>
+<li>R (&gt;= 4.0)</li>
+<li>Rust (&gt;= 1.70) - <a href="https://www.rust-lang.org/tools/install" class="external-link">Install Rust</a>
+</li>
+<li>R development tools (Rtools on Windows, Xcode Command Line Tools on macOS)</li>
 </ul>
+</div>
+<div class="section level3">
+<h3 id="from-source">From Source<a class="anchor" aria-label="anchor" href="#from-source"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install rextendr for easier building (recommended)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"rextendr"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># Clone and install</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>git clone https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>furlan<span class="sc">-</span>lab<span class="sc">/</span>vdjmatchR.git</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>cd vdjmatchR</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>R CMD INSTALL .</span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="quickstart">Quickstart<a class="anchor" aria-label="anchor" href="#quickstart"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the packaged VDJdb database</span></span>
+<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="va">db_path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Filter for human TRB entries with high confidence</span></span>
+<span><span class="va">db_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>,</span>
+<span>                         species <span class="op">=</span> <span class="st">"HomoSapiens"</span>,</span>
+<span>                         gene <span class="op">=</span> <span class="st">"TRB"</span>,</span>
+<span>                         min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Match a single TCR (exact match)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_tcr_df.html">match_tcr_df</a></span><span class="op">(</span></span>
+<span>  <span class="va">db_filtered</span>,</span>
+<span>  cdr3 <span class="op">=</span> <span class="st">"CASSLGQAYEQYF"</span>,</span>
+<span>  v_segment <span class="op">=</span> <span class="st">"TRBV12-3"</span>,</span>
+<span>  j_segment <span class="op">=</span> <span class="st">"TRBJ2-7"</span>,</span>
+<span>  scope <span class="op">=</span> <span class="st">"0,0,0,0"</span>,  <span class="co"># exact match</span></span>
+<span>  top_n <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Batch matching with fuzzy tolerance (parallel processing enabled)</span></span>
+<span><span class="va">cdr3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CASSLGQAYEQYF"</span>, <span class="st">"CASSIRSSYEQYF"</span>, <span class="st">"CASSPGQGTTDTQYF"</span><span class="op">)</span></span>
+<span><span class="va">vs</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBV12-3"</span>, <span class="st">"TRBV7-9"</span>, <span class="st">"TRBV5-4"</span><span class="op">)</span></span>
+<span><span class="va">js</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBJ2-7"</span>, <span class="st">"TRBJ2-7"</span>, <span class="st">"TRBJ2-3"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_tcr_many_df.html">match_tcr_many_df</a></span><span class="op">(</span></span>
+<span>  <span class="va">db_filtered</span>,</span>
+<span>  <span class="va">cdr3s</span>, <span class="va">vs</span>, <span class="va">js</span>,</span>
+<span>  scope <span class="op">=</span> <span class="st">"3,1,2,3"</span>,  <span class="co"># fuzzy: max 3 substitutions, 1 insertion, 2 deletions</span></span>
+<span>  top_n <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># shows progress bar</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
+</h2>
+<div class="section level3">
+<h3 id="database-operations">Database Operations<a class="anchor" aria-label="anchor" href="#database-operations"></a>
+</h3>
+<ul>
+<li>
+<strong><code>vdjdb_open_file(path)</code></strong> - Load VDJdb database from file</li>
+<li>
+<strong><code>vdjdb_packaged_path(use_fat_db)</code></strong> - Get path to bundled database</li>
+<li>
+<strong><code>filter_db(db, species, gene, min_vdjdb_score)</code></strong> - Filter database entries</li>
+<li>
+<strong><code>filter_db_by_epitope_size(db, min_size)</code></strong> - Filter by epitope representation</li>
+<li>
+<strong><code>db_to_table(db)</code></strong> - Convert database to data.table for exploration</li>
+<li>
+<strong><code>db_summary(db)</code></strong> - Print database summary statistics</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="tcr-matching">TCR Matching<a class="anchor" aria-label="anchor" href="#tcr-matching"></a>
+</h3>
+<ul>
+<li>
+<strong><code>match_tcr_df(db, cdr3, v_segment, j_segment, scope, top_n)</code></strong> - Match single TCR</li>
+<li>
+<strong><code>match_tcr_many_df(db, cdr3, v, j, scope, top_n, progress)</code></strong> - Batch match with progress bar</li>
+</ul>
+<p><strong>Search Scope Format:</strong> <code>"s,i,d,t"</code> where: - <code>s</code> = max substitutions - <code>i</code> = max insertions - <code>d</code> = max deletions - <code>t</code> = max total edit distance</p>
+<p>Examples: - <code>"0,0,0,0"</code> - Exact match only - <code>"2,1,2,3"</code> - Max 2 substitutions, 1 insertion, 2 deletions, 3 total edits - <code>"3,1,2,3"</code> - More permissive fuzzy matching</p>
+</div>
+<div class="section level3">
+<h3 id="seurat-integration">Seurat Integration<a class="anchor" aria-label="anchor" href="#seurat-integration"></a>
+</h3>
+<ul>
+<li>
+<strong><code>vdj_attach_10x_vdj_v2(obj, vdj_dir, ...)</code></strong> - Attach 10x VDJ data to Seurat object</li>
+<li>
+<strong><code>vdj_attach_10x_vdj_v2_batch(obj, matchdf, vdj_dir_template)</code></strong> - Batch attach multiple samples</li>
+<li>
+<strong><code>vdj_collapse_pairs_seurat(obj, ...)</code></strong> - Collapse TRA/TRB chains into pairs</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<p>Comprehensive guides covering all aspects of vdjmatchR:</p>
+<div class="section level3">
+<h3 id="books-getting-started">📚 Getting Started<a class="anchor" aria-label="anchor" href="#books-getting-started"></a>
+</h3>
+<p><a href="articles/getting-started.html"><strong>Getting started with vdjmatchR</strong></a> Installation, basic usage, and your first TCR match</p>
+</div>
+<div class="section level3">
+<h3 id="rocket-batch-matching">🚀 Batch Matching<a class="anchor" aria-label="anchor" href="#rocket-batch-matching"></a>
+</h3>
+<p><a href="articles/batch-matching.html"><strong>Batch matching clonotypes</strong></a> High-throughput matching with parallel processing and progress bars</p>
+</div>
+<div class="section level3">
+<h3 id="dart-scoring-and-search">🎯 Scoring and Search<a class="anchor" aria-label="anchor" href="#dart-scoring-and-search"></a>
+</h3>
+<p><a href="articles/scoring-and-scope.html"><strong>Scoring and search scope</strong></a> Understanding fuzzy matching, edit distances, and scoring methods</p>
+</div>
+<div class="section level3">
+<h3 id="floppy_disk-database-management">💾 Database Management<a class="anchor" aria-label="anchor" href="#floppy_disk-database-management"></a>
+</h3>
+<p><a href="articles/database-management.html"><strong>Database management and filtering</strong></a> Loading, filtering, updating databases, and converting to data.table</p>
+</div>
+<div class="section level3">
+<h3 id="dna-seurat-integration">🧬 Seurat Integration<a class="anchor" aria-label="anchor" href="#dna-seurat-integration"></a>
+</h3>
+<p><a href="articles/seurat-vdj-integration.html"><strong>Seurat v5 + 10x VDJ v2 Integration</strong></a> Complete workflow for integrating 10x VDJ data with Seurat single-cell analysis</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="performance-features">Performance Features<a class="anchor" aria-label="anchor" href="#performance-features"></a>
+</h2>
+<div class="section level3">
+<h3 id="parallel-processing">Parallel Processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h3>
+<ul>
+<li>Automatic multi-core processing via Rayon (Rust)</li>
+<li>Linear speedup with CPU cores (e.g., 8x faster on 8-core machines)</li>
+<li>No configuration required</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="progress-bars">Progress Bars<a class="anchor" aria-label="anchor" href="#progress-bars"></a>
+</h3>
+<ul>
+<li>Real-time progress tracking for large datasets</li>
+<li>Automatic chunking for memory efficiency</li>
+<li>Summary statistics on completion</li>
+</ul>
+<p>Example with 10,000 TCRs:</p>
+<pre><code>Matching 10000 TCRs against database (parallel processing enabled)
+|=============================================| 100%
+Matched 10000 queries, found 3842 hits</code></pre>
+</div>
+<div class="section level3">
+<h3 id="memory-efficient">Memory Efficient<a class="anchor" aria-label="anchor" href="#memory-efficient"></a>
+</h3>
+<ul>
+<li>Streaming database access</li>
+<li>Minimal memory overhead</li>
+<li>Scales to millions of queries</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="example-workflows">Example Workflows<a class="anchor" aria-label="anchor" href="#example-workflows"></a>
+</h2>
+<div class="section level3">
+<h3 id="explore-database">Explore Database<a class="anchor" aria-label="anchor" href="#explore-database"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load and convert database</span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="fu"><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/db_to_table.html">db_to_table</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Summary</span></span>
+<span><span class="fu"><a href="reference/db_summary.html">db_summary</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Find most common epitopes</span></span>
+<span><span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Viral epitopes</span></span>
+<span><span class="va">dt</span><span class="op">[</span><span class="va">antigen_species</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CMV"</span>, <span class="st">"EBV"</span>, <span class="st">"InfluenzaA"</span><span class="op">)</span>,</span>
+<span>   <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">antigen_species</span>, <span class="va">antigen_epitope</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="match-seurat-tcrs">Match Seurat TCRs<a class="anchor" aria-label="anchor" href="#match-seurat-tcrs"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load Seurat object and attach VDJ data</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"seurat_object.rds"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdj_attach_10x_vdj_v2.html">vdj_attach_10x_vdj_v2</a></span><span class="op">(</span><span class="va">obj</span>, vdj_dir <span class="op">=</span> <span class="st">"path/to/vdj"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Collapse to paired chains</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdj_collapse_pairs_seurat.html">vdj_collapse_pairs_seurat</a></span><span class="op">(</span><span class="va">obj</span>, write_meta <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load and filter database</span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="fu"><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">db_trb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Extract TCR sequences</span></span>
+<span><span class="va">md</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span></span>
+<span><span class="va">queries</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">$</span><span class="va">vdj.trb.cdr3_aa</span><span class="op">)</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Match against VDJdb</span></span>
+<span><span class="va">hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_tcr_many_df.html">match_tcr_many_df</a></span><span class="op">(</span></span>
+<span>  <span class="va">db_trb</span>,</span>
+<span>  <span class="va">queries</span><span class="op">$</span><span class="va">vdj.trb.cdr3_aa</span>,</span>
+<span>  <span class="va">queries</span><span class="op">$</span><span class="va">vdj.trb.v_gene</span>,</span>
+<span>  <span class="va">queries</span><span class="op">$</span><span class="va">vdj.trb.j_gene</span>,</span>
+<span>  scope <span class="op">=</span> <span class="st">"3,1,2,3"</span>,</span>
+<span>  top_n <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add epitope annotations back to Seurat</span></span>
+<span><span class="va">obj</span><span class="op">$</span><span class="va">epitope</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">obj</span><span class="op">$</span><span class="va">epitope</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">hits</span><span class="op">$</span><span class="va">cell</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">hits</span><span class="op">$</span><span class="va">epitope</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <ul>
-<li>Website: <a href="https://furlan-lab.github.io/vdjmatchR/" class="uri">https://furlan-lab.github.io/vdjmatchR/</a>
+<li>
+<strong>Website:</strong> <a href="https://furlan-lab.github.io/vdjmatchR/" class="uri">https://furlan-lab.github.io/vdjmatchR/</a>
 </li>
-<li>Reference topics and vignettes are available on the site.</li>
+<li>
+<strong>Reference:</strong> Complete function documentation with examples</li>
+<li>
+<strong>Vignettes:</strong> Step-by-step guides for common workflows</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="quickstart">Quickstart<a class="anchor" aria-label="anchor" href="#quickstart"></a>
+<h2 id="database-information">Database Information<a class="anchor" aria-label="anchor" href="#database-information"></a>
 </h2>
+<p>vdjmatchR uses the <a href="https://github.com/antigenomics/vdjdb-db" class="external-link">VDJdb database</a> - a curated repository of TCR sequences with known antigen specificities.</p>
+<p><strong>Bundled Databases:</strong> - <strong>Slim</strong> (~2.3 MB compressed): Essential columns only - <strong>Fat</strong> (~5.9 MB compressed): Complete metadata</p>
+<p><strong>Database Contents:</strong> - Human and mouse TCR sequences - Known epitope specificities - V/J gene annotations - MHC restriction information - Confidence scores - Publication references</p>
+</div>
+<div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>Contributions welcome! Please:</p>
 <ol style="list-style-type: decimal">
-<li>Ensure Rust (&gt;= 1.70) and an R toolchain are installed.</li>
-<li>In R, install <code>rextendr</code> to aid linking (optional but recommended): <code>install.packages("rextendr")</code>
-</li>
-<li>Build + install the package from the package root: <code>R CMD INSTALL .</code>
-</li>
+<li>Fork the repository</li>
+<li>Create a feature branch</li>
+<li>Make your changes</li>
+<li>Add tests if applicable</li>
+<li>Submit a pull request</li>
 </ol>
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use the packaged slim VDJdb (bundled with the package)</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Optionally update the packaged database into the package's extdata and use it</span></span>
-<span><span class="co"># updated_path &lt;- vdjdb_update_latest(use_fat_db = FALSE)</span></span>
-<span><span class="co"># db &lt;- RDatabase$new_from_file(updated_path)</span></span>
-<span></span>
-<span><span class="co"># Or point to your own database file for this session</span></span>
-<span><span class="co"># vdjdb_set_user_db("/path/to/vdjdb.slim.txt.gz", use_fat_db = FALSE)</span></span>
-<span><span class="co"># path &lt;- vdjdb_path(FALSE)</span></span>
-<span><span class="co"># db &lt;- RDatabase$new_from_file(path)</span></span>
-<span></span>
-<span><span class="co"># Or use the packaged full ("fat") VDJdb</span></span>
-<span><span class="co"># path_full &lt;- vdjdb_packaged_path(use_fat_db = TRUE)</span></span>
-<span><span class="co"># db &lt;- RDatabase$new_from_file(path_full)</span></span>
-<span></span>
-<span><span class="co"># Filter for human TRB and higher-confidence entries</span></span>
-<span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Match a single clonotype; get a data.frame</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_tcr_df.html">match_tcr_df</a></span><span class="op">(</span><span class="va">fdb</span>, cdr3 <span class="op">=</span> <span class="st">"CASSLGQAYEQYF"</span>, v_segment <span class="op">=</span> <span class="st">"TRBV12-3"</span>, j_segment <span class="op">=</span> <span class="st">"TRBJ2-7"</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span>, top_n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Batch match: vectors of clonotypes</span></span>
-<span><span class="va">cdr3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CASSLGQAYEQYF"</span>, <span class="st">"CASSIRSSYEQYF"</span><span class="op">)</span></span>
-<span><span class="va">vs</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBV12-3"</span>, <span class="st">"TRBV7-9"</span><span class="op">)</span></span>
-<span><span class="va">js</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBJ2-7"</span>,  <span class="st">"TRBJ2-7"</span><span class="op">)</span></span>
-<span><span class="va">res_many</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_tcr_many_df.html">match_tcr_many_df</a></span><span class="op">(</span><span class="va">fdb</span>, <span class="va">cdr3s</span>, <span class="va">vs</span>, <span class="va">js</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res_many</span><span class="op">)</span></span></code></pre></div>
+<p>If you use vdjmatchR in your research, please cite:</p>
+<pre><code>vdjmatchR: Fast TCR sequence matching with VDJdb in R
+https://github.com/furlan-lab/vdjmatchR</code></pre>
+<p>And the VDJdb database:</p>
+<pre><code>Shugay M et al. VDJdb: a curated database of T-cell receptor sequences
+with known antigen specificity. Nucleic Acids Research (2018).</code></pre>
 </div>
 <div class="section level2">
-<h2 id="r-api">R API<a class="anchor" aria-label="anchor" href="#r-api"></a>
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>[Add your license here]</p>
+</div>
+<div class="section level2">
+<h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
 </h2>
 <ul>
-<li><code>RDatabase$new_from_file(path)</code></li>
-<li><code>RDatabase$len()</code></li>
-<li><code>RDatabase$filter(species = NULL, gene = NULL, min_vdjdb_score = 0)</code></li>
-<li><code>RDatabase$filter_by_epitope_size(min_size = 1)</code></li>
-<li>
-<code>match_tcr(db, cdr3, v_segment, j_segment, scope, top_n)</code> → list</li>
-<li>
-<code>match_tcr_df(...)</code> → data.frame</li>
-<li>
-<code>match_tcr_many(db, cdr3, v_segment, j_segment, scope, top_n)</code> → list</li>
-<li>
-<code>match_tcr_many_df(...)</code> → data.frame</li>
-<li>
-<code>vdjdb_packaged_path(use_fat_db = FALSE)</code> / <code>vdjdb_path(use_fat_db = FALSE)</code>
+<li>Built with <a href="https://extendr.github.io/" class="external-link">extendr</a>
 </li>
-<li>
-<code>vdjdb_set_user_db(path, use_fat_db = FALSE)</code> (configure your own DB file)</li>
+<li>Powered by <a href="https://github.com/antigenomics/vdjdb-db" class="external-link">VDJdb</a>
+</li>
+<li>Parallel processing via <a href="https://github.com/rayon-rs/rayon" class="external-link">Rayon</a>
+</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
-</h2>
-<ul>
-<li>Results are returned as data.frames via R wrappers for convenience; core Rust functions return plain lists for flexibility.</li>
-<li>Use <code>scope</code> like <code>"0,0,0,0"</code> for exact or e.g. <code>"2,1,2,3"</code> for controlled fuzzy matching.</li>
-</ul>
-<p>For a guided walkthrough, see the Getting started vignette: <code>vignettes/getting-started.Rmd</code>.</p>
+<hr>
+<p align="center">
+Made with ❤️ by the Furlan Lab
+</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -184,7 +422,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>vdjmatch Authors <br><small class="roles"> Author, maintainer </small>   </li>
+<li>vdjmatch Authors <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 
@@ -199,7 +437,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

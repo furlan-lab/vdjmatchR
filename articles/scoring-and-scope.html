@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Scoring and search scope • vdjmatchR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -16,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">vdjmatchR</a>
 
@@ -30,13 +36,20 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/scoring-and-scope.html">Scoring and scope</a></li>
-    <li><a class="dropdown-item" href="../articles/batch-matching.html">Batch matching</a></li>
-    <li><a class="dropdown-item" href="../articles/database-management.html">Database management</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>TCR Matching</h6></li>
+    <li><a class="dropdown-item" href="../articles/batch-matching.html">Batch Matching</a></li>
+    <li><a class="dropdown-item" href="../articles/scoring-and-scope.html">Scoring and Search Scope</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Database Tools</h6></li>
+    <li><a class="dropdown-item" href="../articles/database-management.html">Database Management</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Integration</h6></li>
+    <li><a class="dropdown-item" href="../articles/seurat-vdj-integration.html">Seurat + 10x VDJ Integration</a></li>
   </ul>
 </li>
       </ul>
@@ -44,7 +57,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/furlan-lab/vdjmatchR"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,21 +70,17 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Scoring and search scope</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Scoring and search scope</h1>
                         <h4 data-toc-skip class="author">vdjmatchR
 Authors</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/main/vignettes/scoring-and-scope.Rmd" class="external-link"><code>vignettes/scoring-and-scope.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/HEAD/vignettes/scoring-and-scope.Rmd" class="external-link"><code>vignettes/scoring-and-scope.Rmd</code></a></small>
       <div class="d-none name"><code>scoring-and-scope.Rmd</code></div>
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#| echo: false</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>collapse <span class="op">=</span> <span class="cn">TRUE</span>, comment <span class="op">=</span> <span class="st">"#&gt;"</span>, eval <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>This vignette explains how <code>scope</code> controls matching
 tolerance and how to interpret the returned scores.</p>
 <div class="section level2">
@@ -81,7 +90,7 @@ tolerance and how to interpret the returned scores.</p>
 (substitutions, insertions, deletions, maximum total edits) or
 <code>"s,id,t"</code> where insertions and deletions share a limit. For
 example:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Exact matching only</span></span>
 <span><span class="va">scope</span> <span class="op">&lt;-</span> <span class="st">"0,0,0,0"</span></span>
 <span></span>
@@ -100,10 +109,10 @@ result size per query.</p>
 mismatch counts from the pairwise alignment of CDR3 sequences. Higher is
 better for the scores shown, and lower is better for
 <code>edit_distance</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="va">RDatabase</span><span class="op">$</span><span class="fu">new_from_file</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Strict vs relaxed scope comparison</span></span>
@@ -133,7 +142,7 @@ scope.</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

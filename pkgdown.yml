@@ -1,12 +1,13 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.2.1
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   batch-matching: batch-matching.html
   database-management: database-management.html
   getting-started: getting-started.html
   scoring-and-scope: scoring-and-scope.html
-last_built: 2025-11-12T03:57Z
+  seurat-vdj-integration: seurat-vdj-integration.html
+last_built: 2025-11-14T05:56Z
 urls:
   reference: https://furlan-lab.github.io/vdjmatchR/reference
   article: https://furlan-lab.github.io/vdjmatchR/articles
