@@ -1,4 +1,10 @@
 /* Hide page header only on home page */
 .template-home .page-header {
-  display: none;
+  display: none !important;
+}
+
+/* Alternative selectors in case structure differs */
+.container.template-home .page-header,
+div.template-home div.page-header {
+  display: none !important;
 }
