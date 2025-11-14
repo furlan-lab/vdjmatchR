@@ -146,6 +146,10 @@ Understanding fuzzy matching, edit distances, and scoring methods
 [**Database management and filtering**](articles/database-management.html)
 Loading, filtering, updating databases, and converting to data.table
 
+### 📊 Analysis & Visualization
+[**TCR motif analysis**](articles/tcr-motif-analysis.html)
+Create sequence motif logos and visualize conserved patterns in epitope-specific TCRs
+
 ### 🧬 Seurat Integration
 [**Seurat v5 + 10x VDJ v2 Integration**](articles/seurat-vdj-integration.html)
 Complete workflow for integrating 10x VDJ data with Seurat single-cell analysis

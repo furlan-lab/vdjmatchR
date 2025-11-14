@@ -36,6 +36,10 @@ navbar:
       - text: Database Management
         href: articles/database-management.html
       - text: -------
+      - text: "Analysis & Visualization"
+      - text: TCR Motif Analysis
+        href: articles/tcr-motif-analysis.html
+      - text: -------
       - text: "Integration"
       - text: Seurat + 10x VDJ Integration
         href: articles/seurat-vdj-integration.html
