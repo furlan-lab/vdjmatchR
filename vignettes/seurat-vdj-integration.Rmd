@@ -227,7 +227,9 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
 
   # Rename columns to more user-friendly names
   # match_tcr_many_df returns: query_index, query_cdr3, query_v, query_j,
-  #                            cdr3_db, v_db, j_db, species, gene, epitope,
+  #                            cdr3_db, v_db, j_db, species, gene,
+  #                            antigen_epitope, antigen_gene, antigen_species,
+  #                            mhc_class, reference_id, vdjdb_score,
   #                            score, cdr3_score, v_score, j_score, edit_distance
   if ("cdr3_db" %in% colnames(hits)) names(hits)[names(hits) == "cdr3_db"] <- "epitope_cdr3"
   if ("v_db" %in% colnames(hits)) names(hits)[names(hits) == "v_db"] <- "epitope_v"
@@ -237,13 +239,16 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
   # Select and order columns
   keep_cols <- intersect(
     c("cell", "alpha_rank", "query_cdr3", "query_v", "query_j",
-      "epitope_cdr3", "epitope_v", "epitope_j", "epitope", "epitope_species",
-      "gene", "score", "cdr3_score", "v_score", "j_score", "edit_distance"),
+      "epitope_cdr3", "epitope_v", "epitope_j", "epitope_species",
+      "gene", "antigen_epitope", "antigen_gene", "antigen_species",
+      "mhc_class", "reference_id", "vdjdb_score",
+      "score", "cdr3_score", "v_score", "j_score", "edit_distance"),
     colnames(hits)
   )
 
   hits[, keep_cols, drop = FALSE]
 }
+
 
 # Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)
 top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0")

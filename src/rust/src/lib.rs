@@ -177,6 +177,11 @@ pub fn match_tcr(
     let mut species = Vec::with_capacity(n);
     let mut gene = Vec::with_capacity(n);
     let mut epitope = Vec::with_capacity(n);
+    let mut antigen_gene = Vec::with_capacity(n);
+    let mut antigen_species = Vec::with_capacity(n);
+    let mut mhc_class = Vec::with_capacity(n);
+    let mut reference_id = Vec::with_capacity(n);
+    let mut vdjdb_score = Vec::with_capacity(n);
     let mut score = Vec::with_capacity(n);
     let mut cdr3_score = Vec::with_capacity(n);
     let mut v_score = Vec::with_capacity(n);
@@ -189,7 +194,12 @@ pub fn match_tcr(
         j_db.push(m.db_entry.j_segment);
         species.push(m.db_entry.species);
         gene.push(m.db_entry.gene);
-        epitope.push(m.db_entry.antigen_epitope);
+        epitope.push(m.db_entry.antigen_epitope.clone());
+        antigen_gene.push(m.db_entry.antigen_gene.unwrap_or_default());
+        antigen_species.push(m.db_entry.antigen_species);
+        mhc_class.push(m.db_entry.mhc_class.unwrap_or_default());
+        reference_id.push(m.db_entry.reference_id.unwrap_or_default());
+        vdjdb_score.push(m.db_entry.vdjdb_score as i32);
         score.push(m.score);
         cdr3_score.push(m.cdr3_alignment_score);
         v_score.push(m.v_score);
@@ -203,7 +213,12 @@ pub fn match_tcr(
         j_db = j_db,
         species = species,
         gene = gene,
-        epitope = epitope,
+        antigen_epitope = epitope,
+        antigen_gene = antigen_gene,
+        antigen_species = antigen_species,
+        mhc_class = mhc_class,
+        reference_id = reference_id,
+        vdjdb_score = vdjdb_score,
         score = score,
         cdr3_score = cdr3_score,
         v_score = v_score,
@@ -260,6 +275,11 @@ pub fn match_tcr_many(
     let mut species = Vec::new();
     let mut gene = Vec::new();
     let mut epitope = Vec::new();
+    let mut antigen_gene = Vec::new();
+    let mut antigen_species = Vec::new();
+    let mut mhc_class = Vec::new();
+    let mut reference_id = Vec::new();
+    let mut vdjdb_score = Vec::new();
     let mut score = Vec::new();
     let mut cdr3_score = Vec::new();
     let mut v_score = Vec::new();
@@ -279,7 +299,12 @@ pub fn match_tcr_many(
             j_db.push(m.db_entry.j_segment);
             species.push(m.db_entry.species);
             gene.push(m.db_entry.gene);
-            epitope.push(m.db_entry.antigen_epitope);
+            epitope.push(m.db_entry.antigen_epitope.clone());
+            antigen_gene.push(m.db_entry.antigen_gene.unwrap_or_default());
+            antigen_species.push(m.db_entry.antigen_species);
+            mhc_class.push(m.db_entry.mhc_class.unwrap_or_default());
+            reference_id.push(m.db_entry.reference_id.unwrap_or_default());
+            vdjdb_score.push(m.db_entry.vdjdb_score as i32);
             score.push(m.score);
             cdr3_score.push(m.cdr3_alignment_score);
             v_score.push(m.v_score);
@@ -298,7 +323,12 @@ pub fn match_tcr_many(
         j_db = j_db,
         species = species,
         gene = gene,
-        epitope = epitope,
+        antigen_epitope = epitope,
+        antigen_gene = antigen_gene,
+        antigen_species = antigen_species,
+        mhc_class = mhc_class,
+        reference_id = reference_id,
+        vdjdb_score = vdjdb_score,
         score = score,
         cdr3_score = cdr3_score,
         v_score = v_score,
