@@ -12,7 +12,7 @@ rayon = "1"
 serde = { version = "1", features = ["derive"] }
 csv = "1"
 dirs = "5"
-reqwest = { version = "0.11", features = ["blocking", "rustls-tls"] }
+reqwest = { version = "0.11", default-features = false, features = ["blocking", "rustls-tls"] }
 thiserror = "1"
 regex = "1"
 lazy_static = "1"
