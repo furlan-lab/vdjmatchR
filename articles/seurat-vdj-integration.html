@@ -98,346 +98,14 @@ macOS)</li>
 <h3 id="from-github-in-r">From Github in R<a class="anchor" aria-label="anchor" href="#from-github-in-r"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using GitHub PAT from the git credential store.</span></span>
-<span><span class="co">#&gt; Downloading GitHub repo furlan-lab/vdjmatchR@HEAD</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB;">R CMD build</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; * checking for file ‘/private/var/folders/63/z3dzfmg53g31179qxhwt5cq00000gn/T/Rtmpz0Rl2n/remotesffde5bf76aa7/furlan-lab-vdjmatchR-775729e/DESCRIPTION’ ... OK</span></span>
-<span><span class="co">#&gt; * preparing ‘vdjmatchR’:</span></span>
-<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
-<span><span class="co">#&gt; * cleaning src</span></span>
-<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
-<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
-<span><span class="co">#&gt; Omitted ‘LazyData’ from DESCRIPTION</span></span>
-<span><span class="co">#&gt; * building ‘vdjmatchR_0.0.0.9000.tar.gz’</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/furlan-lab/vdjmatchR.git</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">cd</span> vdjmatchR</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; fatal: destination path 'vdjmatchR' already exists and is not an empty directory.</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; * installing to library ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; * installing *source* package ‘vdjmatchR’ ...</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; ** using staged installation</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Using cargo 1.85.1 (d73d2caf9 2024-12-31)</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; Using rustc 1.85.1 (4eb161250 2025-03-15)</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; Building for CRAN.</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; Cleaning previous `src/Makevars`.</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; Warning message:</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; In system("R CMD config MACOSX_DEPLOYMENT_TARGET", intern = TRUE) :</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;   running command 'R CMD config MACOSX_DEPLOYMENT_TARGET' had status 1</span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; Writing `src/Makevars`.</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; `tools/config.R` has finished.</span></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; ** libs</span></span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; using C compiler: ‘Apple clang version 17.0.0 (clang-1700.0.13.3)’</span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; using SDK: ‘MacOSX15.4.sdk’</span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; if [ -f ./rust/vendor.tar.xz ]; then \</span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt;      tar xf rust/vendor.tar.xz &amp;&amp; \</span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt;      mkdir -p /Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/.cargo &amp;&amp; \</span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt;      cp rust/vendor-config.toml /Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/.cargo/config.toml; \</span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt;  fi</span></span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; export CARGO_HOME=/Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/.cargo &amp;&amp; \</span></span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt;  export PATH="/Applications/Positron.app/Contents/Resources/app/extensions/positron-python/python_files/deactivate/zsh:/Users/sfurlan/.pyenv/versions/3.9.22/bin:/Applications/Positron.app/Contents/Resources/app/quarto/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/X11/bin:/Applications/Positron.app/Contents/Resources/app/quarto/bin:/Applications/Positron.app/Contents/Resources/app/extensions/positron-python/python_files/deactivate/zsh:/Users/sfurlan/.pyenv/versions/3.9.22/bin:/Users/sfurlan/micromamba/condabin:/Users/sfurlan/.pyenv/shims:/Users/sfurlan/.local/bin:/Users/sfurlan/.cargo/bin:/Users/sfurlan/.cargo/bin" &amp;&amp; \</span></span>
-<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt;  export MACOSX_DEPLOYMENT_TARGET=15.0 &amp;&amp; \</span></span>
-<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt;  RUSTFLAGS=" --print=native-static-libs" cargo build  --lib --release --manifest-path=./rust/Cargo.toml --target-dir ./rust/target </span></span>
-<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt;     Updating crates.io index</span></span>
-<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt;  Downloading crates ...</span></span>
-<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt;   Downloaded equivalent v1.0.2</span></span>
-<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt;   Downloaded socket2 v0.5.10</span></span>
-<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt;   Downloaded thiserror v1.0.69</span></span>
-<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt;   Downloaded sync_wrapper v0.1.2</span></span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt;   Downloaded option-ext v0.2.0</span></span>
-<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt;   Downloaded either v1.15.0</span></span>
-<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt;   Downloaded want v0.3.1</span></span>
-<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt;   Downloaded adler2 v2.0.1</span></span>
-<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt;   Downloaded tower-service v0.3.3</span></span>
-<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-io v0.3.31</span></span>
-<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt;   Downloaded simd-adler32 v0.3.7</span></span>
-<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt;   Downloaded try-lock v0.2.5</span></span>
-<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt;   Downloaded http-body v0.4.6</span></span>
-<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="co">#&gt;   Downloaded dirs v5.0.1</span></span>
-<span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a><span class="co">#&gt;   Downloaded system-configuration-sys v0.5.0</span></span>
-<span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a><span class="co">#&gt;   Downloaded zerofrom v0.1.6</span></span>
-<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="co">#&gt;   Downloaded httpdate v1.0.3</span></span>
-<span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-task v0.3.31</span></span>
-<span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a><span class="co">#&gt;   Downloaded form_urlencoded v1.2.2</span></span>
-<span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a><span class="co">#&gt;   Downloaded lazy_static v1.5.0</span></span>
-<span id="cb2-51"><a href="#cb2-51" tabindex="-1"></a><span class="co">#&gt;   Downloaded dirs-sys v0.4.1</span></span>
-<span id="cb2-52"><a href="#cb2-52" tabindex="-1"></a><span class="co">#&gt;   Downloaded percent-encoding v2.3.2</span></span>
-<span id="cb2-53"><a href="#cb2-53" tabindex="-1"></a><span class="co">#&gt;   Downloaded cfg-if v1.0.4</span></span>
-<span id="cb2-54"><a href="#cb2-54" tabindex="-1"></a><span class="co">#&gt;   Downloaded extendr-macros v0.6.0</span></span>
-<span id="cb2-55"><a href="#cb2-55" tabindex="-1"></a><span class="co">#&gt;   Downloaded errno v0.3.14</span></span>
-<span id="cb2-56"><a href="#cb2-56" tabindex="-1"></a><span class="co">#&gt;   Downloaded fnv v1.0.7</span></span>
-<span id="cb2-57"><a href="#cb2-57" tabindex="-1"></a><span class="co">#&gt;   Downloaded fastrand v2.3.0</span></span>
-<span id="cb2-58"><a href="#cb2-58" tabindex="-1"></a><span class="co">#&gt;   Downloaded shlex v1.3.0</span></span>
-<span id="cb2-59"><a href="#cb2-59" tabindex="-1"></a><span class="co">#&gt;   Downloaded itoa v1.0.15</span></span>
-<span id="cb2-60"><a href="#cb2-60" tabindex="-1"></a><span class="co">#&gt;   Downloaded hyper-tls v0.5.0</span></span>
-<span id="cb2-61"><a href="#cb2-61" tabindex="-1"></a><span class="co">#&gt;   Downloaded utf8_iter v1.0.4</span></span>
-<span id="cb2-62"><a href="#cb2-62" tabindex="-1"></a><span class="co">#&gt;   Downloaded synstructure v0.13.2</span></span>
-<span id="cb2-63"><a href="#cb2-63" tabindex="-1"></a><span class="co">#&gt;   Downloaded rustls-pemfile v1.0.4</span></span>
-<span id="cb2-64"><a href="#cb2-64" tabindex="-1"></a><span class="co">#&gt;   Downloaded yoke-derive v0.8.1</span></span>
-<span id="cb2-65"><a href="#cb2-65" tabindex="-1"></a><span class="co">#&gt;   Downloaded mime v0.3.17</span></span>
-<span id="cb2-66"><a href="#cb2-66" tabindex="-1"></a><span class="co">#&gt;   Downloaded paste v1.0.15</span></span>
-<span id="cb2-67"><a href="#cb2-67" tabindex="-1"></a><span class="co">#&gt;   Downloaded system-configuration v0.5.1</span></span>
-<span id="cb2-68"><a href="#cb2-68" tabindex="-1"></a><span class="co">#&gt;   Downloaded security-framework-sys v2.15.0</span></span>
-<span id="cb2-69"><a href="#cb2-69" tabindex="-1"></a><span class="co">#&gt;   Downloaded potential_utf v0.1.4</span></span>
-<span id="cb2-70"><a href="#cb2-70" tabindex="-1"></a><span class="co">#&gt;   Downloaded untrusted v0.9.0</span></span>
-<span id="cb2-71"><a href="#cb2-71" tabindex="-1"></a><span class="co">#&gt;   Downloaded crossbeam-deque v0.8.6</span></span>
-<span id="cb2-72"><a href="#cb2-72" tabindex="-1"></a><span class="co">#&gt;   Downloaded thiserror-impl v1.0.69</span></span>
-<span id="cb2-73"><a href="#cb2-73" tabindex="-1"></a><span class="co">#&gt;   Downloaded writeable v0.6.2</span></span>
-<span id="cb2-74"><a href="#cb2-74" tabindex="-1"></a><span class="co">#&gt;   Downloaded unicode-ident v1.0.22</span></span>
-<span id="cb2-75"><a href="#cb2-75" tabindex="-1"></a><span class="co">#&gt;   Downloaded slab v0.4.11</span></span>
-<span id="cb2-76"><a href="#cb2-76" tabindex="-1"></a><span class="co">#&gt;   Downloaded serde_urlencoded v0.7.1</span></span>
-<span id="cb2-77"><a href="#cb2-77" tabindex="-1"></a><span class="co">#&gt;   Downloaded pin-utils v0.1.0</span></span>
-<span id="cb2-78"><a href="#cb2-78" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-sink v0.3.31</span></span>
-<span id="cb2-79"><a href="#cb2-79" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-core v0.3.31</span></span>
-<span id="cb2-80"><a href="#cb2-80" tabindex="-1"></a><span class="co">#&gt;   Downloaded zerovec-derive v0.11.2</span></span>
-<span id="cb2-81"><a href="#cb2-81" tabindex="-1"></a><span class="co">#&gt;   Downloaded crc32fast v1.5.0</span></span>
-<span id="cb2-82"><a href="#cb2-82" tabindex="-1"></a><span class="co">#&gt;   Downloaded bitflags v1.3.2</span></span>
-<span id="cb2-83"><a href="#cb2-83" tabindex="-1"></a><span class="co">#&gt;   Downloaded stable_deref_trait v1.2.1</span></span>
-<span id="cb2-84"><a href="#cb2-84" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-channel v0.3.31</span></span>
-<span id="cb2-85"><a href="#cb2-85" tabindex="-1"></a><span class="co">#&gt;   Downloaded zerofrom-derive v0.1.6</span></span>
-<span id="cb2-86"><a href="#cb2-86" tabindex="-1"></a><span class="co">#&gt;   Downloaded csv-core v0.1.13</span></span>
-<span id="cb2-87"><a href="#cb2-87" tabindex="-1"></a><span class="co">#&gt;   Downloaded idna_adapter v1.2.1</span></span>
-<span id="cb2-88"><a href="#cb2-88" tabindex="-1"></a><span class="co">#&gt;   Downloaded yoke v0.8.1</span></span>
-<span id="cb2-89"><a href="#cb2-89" tabindex="-1"></a><span class="co">#&gt;   Downloaded ipnet v2.11.0</span></span>
-<span id="cb2-90"><a href="#cb2-90" tabindex="-1"></a><span class="co">#&gt;   Downloaded core-foundation-sys v0.8.7</span></span>
-<span id="cb2-91"><a href="#cb2-91" tabindex="-1"></a><span class="co">#&gt;   Downloaded displaydoc v0.2.5</span></span>
-<span id="cb2-92"><a href="#cb2-92" tabindex="-1"></a><span class="co">#&gt;   Downloaded native-tls v0.2.14</span></span>
-<span id="cb2-93"><a href="#cb2-93" tabindex="-1"></a><span class="co">#&gt;   Downloaded tokio-native-tls v0.3.1</span></span>
-<span id="cb2-94"><a href="#cb2-94" tabindex="-1"></a><span class="co">#&gt;   Downloaded hyper-rustls v0.24.2</span></span>
-<span id="cb2-95"><a href="#cb2-95" tabindex="-1"></a><span class="co">#&gt;   Downloaded sct v0.7.1</span></span>
-<span id="cb2-96"><a href="#cb2-96" tabindex="-1"></a><span class="co">#&gt;   Downloaded core-foundation v0.9.4</span></span>
-<span id="cb2-97"><a href="#cb2-97" tabindex="-1"></a><span class="co">#&gt;   Downloaded find-msvc-tools v0.1.5</span></span>
-<span id="cb2-98"><a href="#cb2-98" tabindex="-1"></a><span class="co">#&gt;   Downloaded tinystr v0.8.2</span></span>
-<span id="cb2-99"><a href="#cb2-99" tabindex="-1"></a><span class="co">#&gt;   Downloaded quote v1.0.42</span></span>
-<span id="cb2-100"><a href="#cb2-100" tabindex="-1"></a><span class="co">#&gt;   Downloaded tokio-rustls v0.24.1</span></span>
-<span id="cb2-101"><a href="#cb2-101" tabindex="-1"></a><span class="co">#&gt;   Downloaded litemap v0.8.1</span></span>
-<span id="cb2-102"><a href="#cb2-102" tabindex="-1"></a><span class="co">#&gt;   Downloaded smallvec v1.15.1</span></span>
-<span id="cb2-103"><a href="#cb2-103" tabindex="-1"></a><span class="co">#&gt;   Downloaded once_cell v1.21.3</span></span>
-<span id="cb2-104"><a href="#cb2-104" tabindex="-1"></a><span class="co">#&gt;   Downloaded pin-project-lite v0.2.16</span></span>
-<span id="cb2-105"><a href="#cb2-105" tabindex="-1"></a><span class="co">#&gt;   Downloaded getrandom v0.2.16</span></span>
-<span id="cb2-106"><a href="#cb2-106" tabindex="-1"></a><span class="co">#&gt;   Downloaded crossbeam-utils v0.8.21</span></span>
-<span id="cb2-107"><a href="#cb2-107" tabindex="-1"></a><span class="co">#&gt;   Downloaded log v0.4.28</span></span>
-<span id="cb2-108"><a href="#cb2-108" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_provider v2.1.1</span></span>
-<span id="cb2-109"><a href="#cb2-109" tabindex="-1"></a><span class="co">#&gt;   Downloaded crossbeam-epoch v0.9.18</span></span>
-<span id="cb2-110"><a href="#cb2-110" tabindex="-1"></a><span class="co">#&gt;   Downloaded bitflags v2.10.0</span></span>
-<span id="cb2-111"><a href="#cb2-111" tabindex="-1"></a><span class="co">#&gt;   Downloaded ryu v1.0.20</span></span>
-<span id="cb2-112"><a href="#cb2-112" tabindex="-1"></a><span class="co">#&gt;   Downloaded tempfile v3.23.0</span></span>
-<span id="cb2-113"><a href="#cb2-113" tabindex="-1"></a><span class="co">#&gt;   Downloaded zerotrie v0.2.3</span></span>
-<span id="cb2-114"><a href="#cb2-114" tabindex="-1"></a><span class="co">#&gt;   Downloaded tracing-core v0.1.34</span></span>
-<span id="cb2-115"><a href="#cb2-115" tabindex="-1"></a><span class="co">#&gt;   Downloaded getrandom v0.3.4</span></span>
-<span id="cb2-116"><a href="#cb2-116" tabindex="-1"></a><span class="co">#&gt;   Downloaded serde_derive v1.0.228</span></span>
-<span id="cb2-117"><a href="#cb2-117" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_properties v2.1.1</span></span>
-<span id="cb2-118"><a href="#cb2-118" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_locale_core v2.1.1</span></span>
-<span id="cb2-119"><a href="#cb2-119" tabindex="-1"></a><span class="co">#&gt;   Downloaded url v2.5.7</span></span>
-<span id="cb2-120"><a href="#cb2-120" tabindex="-1"></a><span class="co">#&gt;   Downloaded httparse v1.10.1</span></span>
-<span id="cb2-121"><a href="#cb2-121" tabindex="-1"></a><span class="co">#&gt;   Downloaded miniz_oxide v0.8.9</span></span>
-<span id="cb2-122"><a href="#cb2-122" tabindex="-1"></a><span class="co">#&gt;   Downloaded tracing v0.1.41</span></span>
-<span id="cb2-123"><a href="#cb2-123" tabindex="-1"></a><span class="co">#&gt;   Downloaded bytes v1.11.0</span></span>
-<span id="cb2-124"><a href="#cb2-124" tabindex="-1"></a><span class="co">#&gt;   Downloaded serde_core v1.0.228</span></span>
-<span id="cb2-125"><a href="#cb2-125" tabindex="-1"></a><span class="co">#&gt;   Downloaded rayon-core v1.13.0</span></span>
-<span id="cb2-126"><a href="#cb2-126" tabindex="-1"></a><span class="co">#&gt;   Downloaded flate2 v1.1.5</span></span>
-<span id="cb2-127"><a href="#cb2-127" tabindex="-1"></a><span class="co">#&gt;   Downloaded zerovec v0.11.5</span></span>
-<span id="cb2-128"><a href="#cb2-128" tabindex="-1"></a><span class="co">#&gt;   Downloaded cc v1.2.46</span></span>
-<span id="cb2-129"><a href="#cb2-129" tabindex="-1"></a><span class="co">#&gt;   Downloaded indexmap v2.12.0</span></span>
-<span id="cb2-130"><a href="#cb2-130" tabindex="-1"></a><span class="co">#&gt;   Downloaded security-framework v2.11.1</span></span>
-<span id="cb2-131"><a href="#cb2-131" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_collections v2.1.1</span></span>
-<span id="cb2-132"><a href="#cb2-132" tabindex="-1"></a><span class="co">#&gt;   Downloaded tokio-util v0.7.17</span></span>
-<span id="cb2-133"><a href="#cb2-133" tabindex="-1"></a><span class="co">#&gt;   Downloaded aho-corasick v1.1.4</span></span>
-<span id="cb2-134"><a href="#cb2-134" tabindex="-1"></a><span class="co">#&gt;   Downloaded http v0.2.12</span></span>
-<span id="cb2-135"><a href="#cb2-135" tabindex="-1"></a><span class="co">#&gt;   Downloaded mio v1.1.0</span></span>
-<span id="cb2-136"><a href="#cb2-136" tabindex="-1"></a><span class="co">#&gt;   Downloaded memchr v2.7.6</span></span>
-<span id="cb2-137"><a href="#cb2-137" tabindex="-1"></a><span class="co">#&gt;   Downloaded base64 v0.21.7</span></span>
-<span id="cb2-138"><a href="#cb2-138" tabindex="-1"></a><span class="co">#&gt;   Downloaded serde v1.0.228</span></span>
-<span id="cb2-139"><a href="#cb2-139" tabindex="-1"></a><span class="co">#&gt;   Downloaded hashbrown v0.16.0</span></span>
-<span id="cb2-140"><a href="#cb2-140" tabindex="-1"></a><span class="co">#&gt;   Downloaded socket2 v0.6.1</span></span>
-<span id="cb2-141"><a href="#cb2-141" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_normalizer_data v2.1.1</span></span>
-<span id="cb2-142"><a href="#cb2-142" tabindex="-1"></a><span class="co">#&gt;   Downloaded proc-macro2 v1.0.103</span></span>
-<span id="cb2-143"><a href="#cb2-143" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_normalizer v2.1.1</span></span>
-<span id="cb2-144"><a href="#cb2-144" tabindex="-1"></a><span class="co">#&gt;   Downloaded reqwest v0.11.27</span></span>
-<span id="cb2-145"><a href="#cb2-145" tabindex="-1"></a><span class="co">#&gt;   Downloaded webpki-roots v0.25.4</span></span>
-<span id="cb2-146"><a href="#cb2-146" tabindex="-1"></a><span class="co">#&gt;   Downloaded extendr-api v0.6.0</span></span>
-<span id="cb2-147"><a href="#cb2-147" tabindex="-1"></a><span class="co">#&gt;   Downloaded rustls-webpki v0.101.7</span></span>
-<span id="cb2-148"><a href="#cb2-148" tabindex="-1"></a><span class="co">#&gt;   Downloaded idna v1.1.0</span></span>
-<span id="cb2-149"><a href="#cb2-149" tabindex="-1"></a><span class="co">#&gt;   Downloaded syn v2.0.110</span></span>
-<span id="cb2-150"><a href="#cb2-150" tabindex="-1"></a><span class="co">#&gt;   Downloaded hyper v0.14.32</span></span>
-<span id="cb2-151"><a href="#cb2-151" tabindex="-1"></a><span class="co">#&gt;   Downloaded regex v1.12.2</span></span>
-<span id="cb2-152"><a href="#cb2-152" tabindex="-1"></a><span class="co">#&gt;   Downloaded rayon v1.11.0</span></span>
-<span id="cb2-153"><a href="#cb2-153" tabindex="-1"></a><span class="co">#&gt;   Downloaded rustls v0.21.12</span></span>
-<span id="cb2-154"><a href="#cb2-154" tabindex="-1"></a><span class="co">#&gt;   Downloaded icu_properties_data v2.1.1</span></span>
-<span id="cb2-155"><a href="#cb2-155" tabindex="-1"></a><span class="co">#&gt;   Downloaded h2 v0.3.27</span></span>
-<span id="cb2-156"><a href="#cb2-156" tabindex="-1"></a><span class="co">#&gt;   Downloaded futures-util v0.3.31</span></span>
-<span id="cb2-157"><a href="#cb2-157" tabindex="-1"></a><span class="co">#&gt;   Downloaded regex-syntax v0.8.8</span></span>
-<span id="cb2-158"><a href="#cb2-158" tabindex="-1"></a><span class="co">#&gt;   Downloaded rustix v1.1.2</span></span>
-<span id="cb2-159"><a href="#cb2-159" tabindex="-1"></a><span class="co">#&gt;   Downloaded libR-sys v0.6.0</span></span>
-<span id="cb2-160"><a href="#cb2-160" tabindex="-1"></a><span class="co">#&gt;   Downloaded tokio v1.48.0</span></span>
-<span id="cb2-161"><a href="#cb2-161" tabindex="-1"></a><span class="co">#&gt;   Downloaded regex-automata v0.4.13</span></span>
-<span id="cb2-162"><a href="#cb2-162" tabindex="-1"></a><span class="co">#&gt;   Downloaded libc v0.2.177</span></span>
-<span id="cb2-163"><a href="#cb2-163" tabindex="-1"></a><span class="co">#&gt;   Downloaded csv v1.4.0</span></span>
-<span id="cb2-164"><a href="#cb2-164" tabindex="-1"></a><span class="co">#&gt;   Downloaded encoding_rs v0.8.35</span></span>
-<span id="cb2-165"><a href="#cb2-165" tabindex="-1"></a><span class="co">#&gt;   Downloaded ring v0.17.14</span></span>
-<span id="cb2-166"><a href="#cb2-166" tabindex="-1"></a><span class="co">#&gt;    Compiling libc v0.2.177</span></span>
-<span id="cb2-167"><a href="#cb2-167" tabindex="-1"></a><span class="co">#&gt;    Compiling proc-macro2 v1.0.103</span></span>
-<span id="cb2-168"><a href="#cb2-168" tabindex="-1"></a><span class="co">#&gt;    Compiling quote v1.0.42</span></span>
-<span id="cb2-169"><a href="#cb2-169" tabindex="-1"></a><span class="co">#&gt;    Compiling unicode-ident v1.0.22</span></span>
-<span id="cb2-170"><a href="#cb2-170" tabindex="-1"></a><span class="co">#&gt;    Compiling cfg-if v1.0.4</span></span>
-<span id="cb2-171"><a href="#cb2-171" tabindex="-1"></a><span class="co">#&gt;    Compiling stable_deref_trait v1.2.1</span></span>
-<span id="cb2-172"><a href="#cb2-172" tabindex="-1"></a><span class="co">#&gt;    Compiling pin-project-lite v0.2.16</span></span>
-<span id="cb2-173"><a href="#cb2-173" tabindex="-1"></a><span class="co">#&gt;    Compiling once_cell v1.21.3</span></span>
-<span id="cb2-174"><a href="#cb2-174" tabindex="-1"></a><span class="co">#&gt;    Compiling shlex v1.3.0</span></span>
-<span id="cb2-175"><a href="#cb2-175" tabindex="-1"></a><span class="co">#&gt;    Compiling bytes v1.11.0</span></span>
-<span id="cb2-176"><a href="#cb2-176" tabindex="-1"></a><span class="co">#&gt;    Compiling find-msvc-tools v0.1.5</span></span>
-<span id="cb2-177"><a href="#cb2-177" tabindex="-1"></a><span class="co">#&gt;    Compiling memchr v2.7.6</span></span>
-<span id="cb2-178"><a href="#cb2-178" tabindex="-1"></a><span class="co">#&gt;    Compiling itoa v1.0.15</span></span>
-<span id="cb2-179"><a href="#cb2-179" tabindex="-1"></a><span class="co">#&gt;    Compiling core-foundation-sys v0.8.7</span></span>
-<span id="cb2-180"><a href="#cb2-180" tabindex="-1"></a><span class="co">#&gt;    Compiling writeable v0.6.2</span></span>
-<span id="cb2-181"><a href="#cb2-181" tabindex="-1"></a><span class="co">#&gt;    Compiling litemap v0.8.1</span></span>
-<span id="cb2-182"><a href="#cb2-182" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-core v0.3.31</span></span>
-<span id="cb2-183"><a href="#cb2-183" tabindex="-1"></a><span class="co">#&gt;    Compiling bitflags v2.10.0</span></span>
-<span id="cb2-184"><a href="#cb2-184" tabindex="-1"></a><span class="co">#&gt;    Compiling getrandom v0.3.4</span></span>
-<span id="cb2-185"><a href="#cb2-185" tabindex="-1"></a><span class="co">#&gt;    Compiling serde_core v1.0.228</span></span>
-<span id="cb2-186"><a href="#cb2-186" tabindex="-1"></a><span class="co">#&gt;    Compiling untrusted v0.9.0</span></span>
-<span id="cb2-187"><a href="#cb2-187" tabindex="-1"></a><span class="co">#&gt;    Compiling rustix v1.1.2</span></span>
-<span id="cb2-188"><a href="#cb2-188" tabindex="-1"></a><span class="co">#&gt;    Compiling cc v1.2.46</span></span>
-<span id="cb2-189"><a href="#cb2-189" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_properties_data v2.1.1</span></span>
-<span id="cb2-190"><a href="#cb2-190" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_normalizer_data v2.1.1</span></span>
-<span id="cb2-191"><a href="#cb2-191" tabindex="-1"></a><span class="co">#&gt;    Compiling fnv v1.0.7</span></span>
-<span id="cb2-192"><a href="#cb2-192" tabindex="-1"></a><span class="co">#&gt;    Compiling tracing-core v0.1.34</span></span>
-<span id="cb2-193"><a href="#cb2-193" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-task v0.3.31</span></span>
-<span id="cb2-194"><a href="#cb2-194" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-io v0.3.31</span></span>
-<span id="cb2-195"><a href="#cb2-195" tabindex="-1"></a><span class="co">#&gt;    Compiling hashbrown v0.16.0</span></span>
-<span id="cb2-196"><a href="#cb2-196" tabindex="-1"></a><span class="co">#&gt;    Compiling crossbeam-utils v0.8.21</span></span>
-<span id="cb2-197"><a href="#cb2-197" tabindex="-1"></a><span class="co">#&gt;    Compiling httparse v1.10.1</span></span>
-<span id="cb2-198"><a href="#cb2-198" tabindex="-1"></a><span class="co">#&gt;    Compiling pin-utils v0.1.0</span></span>
-<span id="cb2-199"><a href="#cb2-199" tabindex="-1"></a><span class="co">#&gt;    Compiling equivalent v1.0.2</span></span>
-<span id="cb2-200"><a href="#cb2-200" tabindex="-1"></a><span class="co">#&gt;    Compiling http v0.2.12</span></span>
-<span id="cb2-201"><a href="#cb2-201" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-sink v0.3.31</span></span>
-<span id="cb2-202"><a href="#cb2-202" tabindex="-1"></a><span class="co">#&gt;    Compiling slab v0.4.11</span></span>
-<span id="cb2-203"><a href="#cb2-203" tabindex="-1"></a><span class="co">#&gt;    Compiling tracing v0.1.41</span></span>
-<span id="cb2-204"><a href="#cb2-204" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-util v0.3.31</span></span>
-<span id="cb2-205"><a href="#cb2-205" tabindex="-1"></a><span class="co">#&gt;    Compiling indexmap v2.12.0</span></span>
-<span id="cb2-206"><a href="#cb2-206" tabindex="-1"></a><span class="co">#&gt;    Compiling rustls v0.21.12</span></span>
-<span id="cb2-207"><a href="#cb2-207" tabindex="-1"></a><span class="co">#&gt;    Compiling native-tls v0.2.14</span></span>
-<span id="cb2-208"><a href="#cb2-208" tabindex="-1"></a><span class="co">#&gt;    Compiling smallvec v1.15.1</span></span>
-<span id="cb2-209"><a href="#cb2-209" tabindex="-1"></a><span class="co">#&gt;    Compiling serde v1.0.228</span></span>
-<span id="cb2-210"><a href="#cb2-210" tabindex="-1"></a><span class="co">#&gt;    Compiling try-lock v0.2.5</span></span>
-<span id="cb2-211"><a href="#cb2-211" tabindex="-1"></a><span class="co">#&gt;    Compiling fastrand v2.3.0</span></span>
-<span id="cb2-212"><a href="#cb2-212" tabindex="-1"></a><span class="co">#&gt;    Compiling want v0.3.1</span></span>
-<span id="cb2-213"><a href="#cb2-213" tabindex="-1"></a><span class="co">#&gt;    Compiling ring v0.17.14</span></span>
-<span id="cb2-214"><a href="#cb2-214" tabindex="-1"></a><span class="co">#&gt;    Compiling syn v2.0.110</span></span>
-<span id="cb2-215"><a href="#cb2-215" tabindex="-1"></a><span class="co">#&gt;    Compiling http-body v0.4.6</span></span>
-<span id="cb2-216"><a href="#cb2-216" tabindex="-1"></a><span class="co">#&gt;    Compiling socket2 v0.6.1</span></span>
-<span id="cb2-217"><a href="#cb2-217" tabindex="-1"></a><span class="co">#&gt;    Compiling mio v1.1.0</span></span>
-<span id="cb2-218"><a href="#cb2-218" tabindex="-1"></a><span class="co">#&gt;    Compiling getrandom v0.2.16</span></span>
-<span id="cb2-219"><a href="#cb2-219" tabindex="-1"></a><span class="co">#&gt;    Compiling core-foundation v0.9.4</span></span>
-<span id="cb2-220"><a href="#cb2-220" tabindex="-1"></a><span class="co">#&gt;    Compiling errno v0.3.14</span></span>
-<span id="cb2-221"><a href="#cb2-221" tabindex="-1"></a><span class="co">#&gt;    Compiling security-framework-sys v2.15.0</span></span>
-<span id="cb2-222"><a href="#cb2-222" tabindex="-1"></a><span class="co">#&gt;    Compiling socket2 v0.5.10</span></span>
-<span id="cb2-223"><a href="#cb2-223" tabindex="-1"></a><span class="co">#&gt;    Compiling security-framework v2.11.1</span></span>
-<span id="cb2-224"><a href="#cb2-224" tabindex="-1"></a><span class="co">#&gt;    Compiling tokio v1.48.0</span></span>
-<span id="cb2-225"><a href="#cb2-225" tabindex="-1"></a><span class="co">#&gt;    Compiling futures-channel v0.3.31</span></span>
-<span id="cb2-226"><a href="#cb2-226" tabindex="-1"></a><span class="co">#&gt;    Compiling log v0.4.28</span></span>
-<span id="cb2-227"><a href="#cb2-227" tabindex="-1"></a><span class="co">#&gt;    Compiling libR-sys v0.6.0</span></span>
-<span id="cb2-228"><a href="#cb2-228" tabindex="-1"></a><span class="co">#&gt;    Compiling tower-service v0.3.3</span></span>
-<span id="cb2-229"><a href="#cb2-229" tabindex="-1"></a><span class="co">#&gt;    Compiling percent-encoding v2.3.2</span></span>
-<span id="cb2-230"><a href="#cb2-230" tabindex="-1"></a><span class="co">#&gt;    Compiling system-configuration-sys v0.5.0</span></span>
-<span id="cb2-231"><a href="#cb2-231" tabindex="-1"></a><span class="co">#&gt;    Compiling httpdate v1.0.3</span></span>
-<span id="cb2-232"><a href="#cb2-232" tabindex="-1"></a><span class="co">#&gt;    Compiling form_urlencoded v1.2.2</span></span>
-<span id="cb2-233"><a href="#cb2-233" tabindex="-1"></a><span class="co">#&gt;    Compiling paste v1.0.15</span></span>
-<span id="cb2-234"><a href="#cb2-234" tabindex="-1"></a><span class="co">#&gt;    Compiling utf8_iter v1.0.4</span></span>
-<span id="cb2-235"><a href="#cb2-235" tabindex="-1"></a><span class="co">#&gt;    Compiling rayon-core v1.13.0</span></span>
-<span id="cb2-236"><a href="#cb2-236" tabindex="-1"></a><span class="co">#&gt;    Compiling ryu v1.0.20</span></span>
-<span id="cb2-237"><a href="#cb2-237" tabindex="-1"></a><span class="co">#&gt;    Compiling crc32fast v1.5.0</span></span>
-<span id="cb2-238"><a href="#cb2-238" tabindex="-1"></a><span class="co">#&gt;    Compiling crossbeam-epoch v0.9.18</span></span>
-<span id="cb2-239"><a href="#cb2-239" tabindex="-1"></a><span class="co">#&gt;    Compiling aho-corasick v1.1.4</span></span>
-<span id="cb2-240"><a href="#cb2-240" tabindex="-1"></a><span class="co">#&gt;    Compiling bitflags v1.3.2</span></span>
-<span id="cb2-241"><a href="#cb2-241" tabindex="-1"></a><span class="co">#&gt;    Compiling tempfile v3.23.0</span></span>
-<span id="cb2-242"><a href="#cb2-242" tabindex="-1"></a><span class="co">#&gt;    Compiling crossbeam-deque v0.8.6</span></span>
-<span id="cb2-243"><a href="#cb2-243" tabindex="-1"></a><span class="co">#&gt;    Compiling regex-syntax v0.8.8</span></span>
-<span id="cb2-244"><a href="#cb2-244" tabindex="-1"></a><span class="co">#&gt;    Compiling simd-adler32 v0.3.7</span></span>
-<span id="cb2-245"><a href="#cb2-245" tabindex="-1"></a><span class="co">#&gt;    Compiling option-ext v0.2.0</span></span>
-<span id="cb2-246"><a href="#cb2-246" tabindex="-1"></a><span class="co">#&gt;    Compiling extendr-api v0.6.0</span></span>
-<span id="cb2-247"><a href="#cb2-247" tabindex="-1"></a><span class="co">#&gt;    Compiling adler2 v2.0.1</span></span>
-<span id="cb2-248"><a href="#cb2-248" tabindex="-1"></a><span class="co">#&gt;    Compiling thiserror v1.0.69</span></span>
-<span id="cb2-249"><a href="#cb2-249" tabindex="-1"></a><span class="co">#&gt;    Compiling base64 v0.21.7</span></span>
-<span id="cb2-250"><a href="#cb2-250" tabindex="-1"></a><span class="co">#&gt;    Compiling miniz_oxide v0.8.9</span></span>
-<span id="cb2-251"><a href="#cb2-251" tabindex="-1"></a><span class="co">#&gt;    Compiling synstructure v0.13.2</span></span>
-<span id="cb2-252"><a href="#cb2-252" tabindex="-1"></a><span class="co">#&gt;    Compiling rustls-pemfile v1.0.4</span></span>
-<span id="cb2-253"><a href="#cb2-253" tabindex="-1"></a><span class="co">#&gt;    Compiling dirs-sys v0.4.1</span></span>
-<span id="cb2-254"><a href="#cb2-254" tabindex="-1"></a><span class="co">#&gt;    Compiling system-configuration v0.5.1</span></span>
-<span id="cb2-255"><a href="#cb2-255" tabindex="-1"></a><span class="co">#&gt;    Compiling csv-core v0.1.13</span></span>
-<span id="cb2-256"><a href="#cb2-256" tabindex="-1"></a><span class="co">#&gt;    Compiling encoding_rs v0.8.35</span></span>
-<span id="cb2-257"><a href="#cb2-257" tabindex="-1"></a><span class="co">#&gt;    Compiling sync_wrapper v0.1.2</span></span>
-<span id="cb2-258"><a href="#cb2-258" tabindex="-1"></a><span class="co">#&gt;    Compiling either v1.15.0</span></span>
-<span id="cb2-259"><a href="#cb2-259" tabindex="-1"></a><span class="co">#&gt;    Compiling webpki-roots v0.25.4</span></span>
-<span id="cb2-260"><a href="#cb2-260" tabindex="-1"></a><span class="co">#&gt;    Compiling ipnet v2.11.0</span></span>
-<span id="cb2-261"><a href="#cb2-261" tabindex="-1"></a><span class="co">#&gt;    Compiling mime v0.3.17</span></span>
-<span id="cb2-262"><a href="#cb2-262" tabindex="-1"></a><span class="co">#&gt;    Compiling rayon v1.11.0</span></span>
-<span id="cb2-263"><a href="#cb2-263" tabindex="-1"></a><span class="co">#&gt;    Compiling csv v1.4.0</span></span>
-<span id="cb2-264"><a href="#cb2-264" tabindex="-1"></a><span class="co">#&gt;    Compiling dirs v5.0.1</span></span>
-<span id="cb2-265"><a href="#cb2-265" tabindex="-1"></a><span class="co">#&gt;    Compiling flate2 v1.1.5</span></span>
-<span id="cb2-266"><a href="#cb2-266" tabindex="-1"></a><span class="co">#&gt;    Compiling tokio-util v0.7.17</span></span>
-<span id="cb2-267"><a href="#cb2-267" tabindex="-1"></a><span class="co">#&gt;    Compiling tokio-native-tls v0.3.1</span></span>
-<span id="cb2-268"><a href="#cb2-268" tabindex="-1"></a><span class="co">#&gt;    Compiling lazy_static v1.5.0</span></span>
-<span id="cb2-269"><a href="#cb2-269" tabindex="-1"></a><span class="co">#&gt;    Compiling regex-automata v0.4.13</span></span>
-<span id="cb2-270"><a href="#cb2-270" tabindex="-1"></a><span class="co">#&gt;    Compiling h2 v0.3.27</span></span>
-<span id="cb2-271"><a href="#cb2-271" tabindex="-1"></a><span class="co">#&gt;    Compiling zerofrom-derive v0.1.6</span></span>
-<span id="cb2-272"><a href="#cb2-272" tabindex="-1"></a><span class="co">#&gt;    Compiling yoke-derive v0.8.1</span></span>
-<span id="cb2-273"><a href="#cb2-273" tabindex="-1"></a><span class="co">#&gt;    Compiling zerovec-derive v0.11.2</span></span>
-<span id="cb2-274"><a href="#cb2-274" tabindex="-1"></a><span class="co">#&gt;    Compiling displaydoc v0.2.5</span></span>
-<span id="cb2-275"><a href="#cb2-275" tabindex="-1"></a><span class="co">#&gt;    Compiling serde_derive v1.0.228</span></span>
-<span id="cb2-276"><a href="#cb2-276" tabindex="-1"></a><span class="co">#&gt;    Compiling thiserror-impl v1.0.69</span></span>
-<span id="cb2-277"><a href="#cb2-277" tabindex="-1"></a><span class="co">#&gt;    Compiling extendr-macros v0.6.0</span></span>
-<span id="cb2-278"><a href="#cb2-278" tabindex="-1"></a><span class="co">#&gt;    Compiling zerofrom v0.1.6</span></span>
-<span id="cb2-279"><a href="#cb2-279" tabindex="-1"></a><span class="co">#&gt;    Compiling yoke v0.8.1</span></span>
-<span id="cb2-280"><a href="#cb2-280" tabindex="-1"></a><span class="co">#&gt;    Compiling regex v1.12.2</span></span>
-<span id="cb2-281"><a href="#cb2-281" tabindex="-1"></a><span class="co">#&gt;    Compiling zerovec v0.11.5</span></span>
-<span id="cb2-282"><a href="#cb2-282" tabindex="-1"></a><span class="co">#&gt;    Compiling zerotrie v0.2.3</span></span>
-<span id="cb2-283"><a href="#cb2-283" tabindex="-1"></a><span class="co">#&gt;    Compiling hyper v0.14.32</span></span>
-<span id="cb2-284"><a href="#cb2-284" tabindex="-1"></a><span class="co">#&gt;    Compiling tinystr v0.8.2</span></span>
-<span id="cb2-285"><a href="#cb2-285" tabindex="-1"></a><span class="co">#&gt;    Compiling potential_utf v0.1.4</span></span>
-<span id="cb2-286"><a href="#cb2-286" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_collections v2.1.1</span></span>
-<span id="cb2-287"><a href="#cb2-287" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_locale_core v2.1.1</span></span>
-<span id="cb2-288"><a href="#cb2-288" tabindex="-1"></a><span class="co">#&gt;    Compiling serde_urlencoded v0.7.1</span></span>
-<span id="cb2-289"><a href="#cb2-289" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_provider v2.1.1</span></span>
-<span id="cb2-290"><a href="#cb2-290" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_normalizer v2.1.1</span></span>
-<span id="cb2-291"><a href="#cb2-291" tabindex="-1"></a><span class="co">#&gt;    Compiling icu_properties v2.1.1</span></span>
-<span id="cb2-292"><a href="#cb2-292" tabindex="-1"></a><span class="co">#&gt;    Compiling sct v0.7.1</span></span>
-<span id="cb2-293"><a href="#cb2-293" tabindex="-1"></a><span class="co">#&gt;    Compiling rustls-webpki v0.101.7</span></span>
-<span id="cb2-294"><a href="#cb2-294" tabindex="-1"></a><span class="co">#&gt;    Compiling idna_adapter v1.2.1</span></span>
-<span id="cb2-295"><a href="#cb2-295" tabindex="-1"></a><span class="co">#&gt;    Compiling idna v1.1.0</span></span>
-<span id="cb2-296"><a href="#cb2-296" tabindex="-1"></a><span class="co">#&gt;    Compiling hyper-tls v0.5.0</span></span>
-<span id="cb2-297"><a href="#cb2-297" tabindex="-1"></a><span class="co">#&gt;    Compiling url v2.5.7</span></span>
-<span id="cb2-298"><a href="#cb2-298" tabindex="-1"></a><span class="co">#&gt;    Compiling tokio-rustls v0.24.1</span></span>
-<span id="cb2-299"><a href="#cb2-299" tabindex="-1"></a><span class="co">#&gt;    Compiling hyper-rustls v0.24.2</span></span>
-<span id="cb2-300"><a href="#cb2-300" tabindex="-1"></a><span class="co">#&gt;    Compiling reqwest v0.11.27</span></span>
-<span id="cb2-301"><a href="#cb2-301" tabindex="-1"></a><span class="co">#&gt;    Compiling vdjmatchR v0.0.1 (/Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/rust)</span></span>
-<span id="cb2-302"><a href="#cb2-302" tabindex="-1"></a><span class="co">#&gt; note: Link against the following native artifacts when linking against this static library. The order and any duplication can be significant on some platforms.</span></span>
-<span id="cb2-303"><a href="#cb2-303" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-304"><a href="#cb2-304" tabindex="-1"></a><span class="co">#&gt; note: native-static-libs: -framework SystemConfiguration -framework Security -framework CoreFoundation -liconv -lR -lSystem -lc -lm</span></span>
-<span id="cb2-305"><a href="#cb2-305" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-306"><a href="#cb2-306" tabindex="-1"></a><span class="co">#&gt;     Finished `release` profile [optimized] target(s) in 11.20s</span></span>
-<span id="cb2-307"><a href="#cb2-307" tabindex="-1"></a><span class="co">#&gt; # Always clean up CARGOTMP</span></span>
-<span id="cb2-308"><a href="#cb2-308" tabindex="-1"></a><span class="co">#&gt; rm -Rf /Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/.cargo;</span></span>
-<span id="cb2-309"><a href="#cb2-309" tabindex="-1"></a><span class="co">#&gt; clang -arch arm64 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -o vdjmatchR.so entrypoint.o -L./rust/target/release -lvdjmatchR -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation</span></span>
-<span id="cb2-310"><a href="#cb2-310" tabindex="-1"></a><span class="co">#&gt; rm -Rf /Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/.cargo /Users/sfurlan/develop/vdjmatchR/vignettes/vdjmatchR/src/vendor ./rust/target</span></span>
-<span id="cb2-311"><a href="#cb2-311" tabindex="-1"></a><span class="co">#&gt; installing to /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/00LOCK-vdjmatchR/00new/vdjmatchR/libs</span></span>
-<span id="cb2-312"><a href="#cb2-312" tabindex="-1"></a><span class="co">#&gt; ** R</span></span>
-<span id="cb2-313"><a href="#cb2-313" tabindex="-1"></a><span class="co">#&gt; ** inst</span></span>
-<span id="cb2-314"><a href="#cb2-314" tabindex="-1"></a><span class="co">#&gt; ** byte-compile and prepare package for lazy loading</span></span>
-<span id="cb2-315"><a href="#cb2-315" tabindex="-1"></a><span class="co">#&gt; ** help</span></span>
-<span id="cb2-316"><a href="#cb2-316" tabindex="-1"></a><span class="co">#&gt; *** installing help indices</span></span>
-<span id="cb2-317"><a href="#cb2-317" tabindex="-1"></a><span class="co">#&gt; *** copying figures</span></span>
-<span id="cb2-318"><a href="#cb2-318" tabindex="-1"></a><span class="co">#&gt; ** building package indices</span></span>
-<span id="cb2-319"><a href="#cb2-319" tabindex="-1"></a><span class="co">#&gt; ** installing vignettes</span></span>
-<span id="cb2-320"><a href="#cb2-320" tabindex="-1"></a><span class="co">#&gt; ** testing if installed package can be loaded from temporary location</span></span>
-<span id="cb2-321"><a href="#cb2-321" tabindex="-1"></a><span class="co">#&gt; ** checking absolute paths in shared objects and dynamic libraries</span></span>
-<span id="cb2-322"><a href="#cb2-322" tabindex="-1"></a><span class="co">#&gt; ** testing if installed package can be loaded from final location</span></span>
-<span id="cb2-323"><a href="#cb2-323" tabindex="-1"></a><span class="co">#&gt; ** testing if installed package keeps a record of temporary installation path</span></span>
-<span id="cb2-324"><a href="#cb2-324" tabindex="-1"></a><span class="co">#&gt; * DONE (vdjmatchR)</span></span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -455,7 +123,7 @@ guarded to run only if files exist.</p>
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span>       <span class="co"># v5</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: SeuratObject</span></span>
 <span><span class="co">#&gt; Loading required package: sp</span></span>
 <span><span class="co">#&gt; 'SeuratObject' was built under R 4.4.1 but the current version is</span></span>
@@ -477,8 +145,6 @@ guarded to run only if files exist.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Edit these to your environment</span></span>
 <span><span class="va">seurat_rds</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"</span></span>
-<span><span class="co">#/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS</span></span>
-<span><span class="co"># Example 10x VDJ v2 directory (replace as needed)</span></span>
 <span><span class="va">vdj_dir</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -710,50 +376,45 @@ edit distance tolerance</p>
 <span><span class="co">#&gt; [4] SeuratObject_5.1.0   sp_2.2-0            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] RColorBrewer_1.1-3     jsonlite_2.0.0         spatstat.utils_3.1-4  </span></span>
-<span><span class="co">#&gt;   [4] farver_2.1.2           rmarkdown_2.29         fs_1.6.6              </span></span>
-<span><span class="co">#&gt;   [7] ragg_1.4.0             vctrs_0.6.5            ROCR_1.0-11           </span></span>
-<span><span class="co">#&gt;  [10] memoise_2.0.1          spatstat.explore_3.4-3 htmltools_0.5.8.1     </span></span>
-<span><span class="co">#&gt;  [13] usethis_3.1.0          curl_6.4.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt;  [16] sctransform_0.4.2      parallelly_1.45.0      KernSmooth_2.23-26    </span></span>
-<span><span class="co">#&gt;  [19] bslib_0.9.0            htmlwidgets_1.6.4      desc_1.4.3            </span></span>
-<span><span class="co">#&gt;  [22] ica_1.0-3              plyr_1.8.9             plotly_4.11.0         </span></span>
-<span><span class="co">#&gt;  [25] zoo_1.8-14             cachem_1.1.0           igraph_2.1.4          </span></span>
-<span><span class="co">#&gt;  [28] mime_0.13              lifecycle_1.0.4        pkgconfig_2.0.3       </span></span>
-<span><span class="co">#&gt;  [31] Matrix_1.7-3           R6_2.6.1               fastmap_1.2.0         </span></span>
-<span><span class="co">#&gt;  [34] fitdistrplus_1.2-2     future_1.58.0          shiny_1.10.0          </span></span>
-<span><span class="co">#&gt;  [37] digest_0.6.37          colorspace_2.1-1       patchwork_1.3.1       </span></span>
-<span><span class="co">#&gt;  [40] ps_1.9.0               tensor_1.5.1           RSpectra_0.16-2       </span></span>
-<span><span class="co">#&gt;  [43] irlba_2.3.5.1          pkgload_1.4.0          textshaping_1.0.0     </span></span>
-<span><span class="co">#&gt;  [46] progressr_0.15.1       spatstat.sparse_3.1-0  httr_1.4.7            </span></span>
-<span><span class="co">#&gt;  [49] polyclip_1.10-7        abind_1.4-8            compiler_4.4.3        </span></span>
-<span><span class="co">#&gt;  [52] remotes_2.5.0          fastDummies_1.7.5      pkgbuild_1.4.7        </span></span>
-<span><span class="co">#&gt;  [55] MASS_7.3-65            sessioninfo_1.2.3      tools_4.4.3           </span></span>
-<span><span class="co">#&gt;  [58] lmtest_0.9-40          httpuv_1.6.16          future.apply_1.20.0   </span></span>
-<span><span class="co">#&gt;  [61] goftest_1.2-3          glue_1.8.0             callr_3.7.6           </span></span>
-<span><span class="co">#&gt;  [64] nlme_3.1-168           promises_1.3.3         grid_4.4.3            </span></span>
-<span><span class="co">#&gt;  [67] Rtsne_0.17             cluster_2.1.8.1        reshape2_1.4.4        </span></span>
-<span><span class="co">#&gt;  [70] generics_0.1.4         gtable_0.3.6           spatstat.data_3.1-6   </span></span>
-<span><span class="co">#&gt;  [73] tidyr_1.3.1            data.table_1.17.6      spatstat.geom_3.4-1   </span></span>
-<span><span class="co">#&gt;  [76] RcppAnnoy_0.0.22       ggrepel_0.9.6          RANN_2.6.2            </span></span>
-<span><span class="co">#&gt;  [79] pillar_1.10.2          stringr_1.5.1          spam_2.11-1           </span></span>
-<span><span class="co">#&gt;  [82] RcppHNSW_0.6.0         later_1.4.2            splines_4.4.3         </span></span>
-<span><span class="co">#&gt;  [85] dplyr_1.1.4            lattice_0.22-7         deldir_2.0-4          </span></span>
-<span><span class="co">#&gt;  [88] survival_3.8-3         tidyselect_1.2.1       miniUI_0.1.2          </span></span>
-<span><span class="co">#&gt;  [91] pbapply_1.7-2          knitr_1.50             gridExtra_2.3         </span></span>
-<span><span class="co">#&gt;  [94] scattermore_1.2        xfun_0.52              devtools_2.4.5        </span></span>
-<span><span class="co">#&gt;  [97] matrixStats_1.5.0      stringi_1.8.7          lazyeval_0.2.2        </span></span>
-<span><span class="co">#&gt; [100] yaml_2.3.10            evaluate_1.0.4         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [103] tibble_3.3.0           cli_3.6.5              uwot_0.2.3            </span></span>
-<span><span class="co">#&gt; [106] xtable_1.8-4           reticulate_1.42.0      systemfonts_1.2.2     </span></span>
-<span><span class="co">#&gt; [109] processx_3.8.6         jquerylib_0.1.4        dichromat_2.0-0.1     </span></span>
-<span><span class="co">#&gt; [112] Rcpp_1.0.14            spatstat.random_3.4-1  globals_0.18.0        </span></span>
-<span><span class="co">#&gt; [115] png_0.1-8              spatstat.univar_3.1-3  parallel_4.4.3        </span></span>
-<span><span class="co">#&gt; [118] ellipsis_0.3.2         pkgdown_2.1.1          ggplot2_3.5.2         </span></span>
-<span><span class="co">#&gt; [121] dotCall64_1.2          profvis_0.4.0          urlchecker_1.0.1      </span></span>
-<span><span class="co">#&gt; [124] listenv_0.9.1          viridisLite_0.4.2      scales_1.4.0          </span></span>
-<span><span class="co">#&gt; [127] ggridges_0.5.6         purrr_1.0.4            rlang_1.1.6           </span></span>
-<span><span class="co">#&gt; [130] cowplot_1.1.3</span></span></code></pre></div>
+<span><span class="co">#&gt;   [1] deldir_2.0-4           pbapply_1.7-2          gridExtra_2.3         </span></span>
+<span><span class="co">#&gt;   [4] rlang_1.1.6            RcppAnnoy_0.0.22       spatstat.geom_3.4-1   </span></span>
+<span><span class="co">#&gt;   [7] matrixStats_1.5.0      ggridges_0.5.6         compiler_4.4.3        </span></span>
+<span><span class="co">#&gt;  [10] png_0.1-8              systemfonts_1.2.2      vctrs_0.6.5           </span></span>
+<span><span class="co">#&gt;  [13] reshape2_1.4.4         stringr_1.5.1          pkgconfig_2.0.3       </span></span>
+<span><span class="co">#&gt;  [16] fastmap_1.2.0          promises_1.3.3         rmarkdown_2.29        </span></span>
+<span><span class="co">#&gt;  [19] ragg_1.4.0             purrr_1.0.4            xfun_0.52             </span></span>
+<span><span class="co">#&gt;  [22] cachem_1.1.0           jsonlite_2.0.0         goftest_1.2-3         </span></span>
+<span><span class="co">#&gt;  [25] later_1.4.2            spatstat.utils_3.1-4   irlba_2.3.5.1         </span></span>
+<span><span class="co">#&gt;  [28] parallel_4.4.3         cluster_2.1.8.1        R6_2.6.1              </span></span>
+<span><span class="co">#&gt;  [31] ica_1.0-3              spatstat.data_3.1-6    stringi_1.8.7         </span></span>
+<span><span class="co">#&gt;  [34] bslib_0.9.0            RColorBrewer_1.1-3     reticulate_1.42.0     </span></span>
+<span><span class="co">#&gt;  [37] spatstat.univar_3.1-3  parallelly_1.45.0      lmtest_0.9-40         </span></span>
+<span><span class="co">#&gt;  [40] jquerylib_0.1.4        scattermore_1.2        Rcpp_1.0.14           </span></span>
+<span><span class="co">#&gt;  [43] knitr_1.50             tensor_1.5.1           future.apply_1.20.0   </span></span>
+<span><span class="co">#&gt;  [46] zoo_1.8-14             sctransform_0.4.2      httpuv_1.6.16         </span></span>
+<span><span class="co">#&gt;  [49] Matrix_1.7-3           splines_4.4.3          igraph_2.1.4          </span></span>
+<span><span class="co">#&gt;  [52] tidyselect_1.2.1       abind_1.4-8            dichromat_2.0-0.1     </span></span>
+<span><span class="co">#&gt;  [55] yaml_2.3.10            spatstat.random_3.4-1  spatstat.explore_3.4-3</span></span>
+<span><span class="co">#&gt;  [58] codetools_0.2-20       miniUI_0.1.2           listenv_0.9.1         </span></span>
+<span><span class="co">#&gt;  [61] lattice_0.22-7         tibble_3.3.0           plyr_1.8.9            </span></span>
+<span><span class="co">#&gt;  [64] shiny_1.10.0           ROCR_1.0-11            evaluate_1.0.4        </span></span>
+<span><span class="co">#&gt;  [67] Rtsne_0.17             future_1.58.0          fastDummies_1.7.5     </span></span>
+<span><span class="co">#&gt;  [70] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       </span></span>
+<span><span class="co">#&gt;  [73] fitdistrplus_1.2-2     pillar_1.10.2          KernSmooth_2.23-26    </span></span>
+<span><span class="co">#&gt;  [76] plotly_4.11.0          generics_0.1.4         RcppHNSW_0.6.0        </span></span>
+<span><span class="co">#&gt;  [79] ggplot2_3.5.2          scales_1.4.0           globals_0.18.0        </span></span>
+<span><span class="co">#&gt;  [82] xtable_1.8-4           glue_1.8.0             lazyeval_0.2.2        </span></span>
+<span><span class="co">#&gt;  [85] tools_4.4.3            data.table_1.17.6      RSpectra_0.16-2       </span></span>
+<span><span class="co">#&gt;  [88] RANN_2.6.2             fs_1.6.6               dotCall64_1.2         </span></span>
+<span><span class="co">#&gt;  [91] cowplot_1.1.3          grid_4.4.3             tidyr_1.3.1           </span></span>
+<span><span class="co">#&gt;  [94] colorspace_2.1-1       nlme_3.1-168           patchwork_1.3.1       </span></span>
+<span><span class="co">#&gt;  [97] cli_3.6.5              spatstat.sparse_3.1-0  textshaping_1.0.0     </span></span>
+<span><span class="co">#&gt; [100] spam_2.11-1            viridisLite_0.4.2      dplyr_1.1.4           </span></span>
+<span><span class="co">#&gt; [103] uwot_0.2.3             gtable_0.3.6           sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [106] digest_0.6.37          progressr_0.15.1       ggrepel_0.9.6         </span></span>
+<span><span class="co">#&gt; [109] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     </span></span>
+<span><span class="co">#&gt; [112] pkgdown_2.1.1          lifecycle_1.0.4        httr_1.4.7            </span></span>
+<span><span class="co">#&gt; [115] mime_0.13              MASS_7.3-65</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
