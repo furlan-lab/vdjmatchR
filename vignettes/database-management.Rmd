@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = T)
 ```
 
 ## Installation
@@ -22,13 +22,13 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 
 ### From Github in R
 
-```{r}
+```{r, eval = F}
 devtools::install_github("furlan-lab/vdjmatchR")
 ```
 
 ### Clone and install (from source) in shell
 
-```{sh}
+```{sh, eval = F}
 git clone https://github.com/furlan-lab/vdjmatchR.git
 cd vdjmatchR
 R CMD INSTALL .
@@ -126,7 +126,7 @@ df <- db_to_df(db)
 
 Once converted, you can use standard R operations:
 
-```{r}
+```{r, eval=T}
 # Count entries by species
 dt[, .N, by = species][order(-N)]
 
