@@ -1,7 +1,7 @@
 # vdjmatchR
 
 <p align="center">
-  <img src="blob/logo2.png" alt="vdjmatchR logo" width="300">
+  <img src="man/figures/logo2.png" alt="vdjmatchR logo" width="300">
 </p>
 
 R interface to a Rust implementation of TCR sequence matching (derived from `vdjmatch-rs`), built via [`extendr`](https://extendr.github.io/).
