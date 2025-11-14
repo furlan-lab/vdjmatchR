@@ -1,0 +1,4 @@
+/* Hide page header only on home page */
+body.home .page-header {
+  display: none;
+}

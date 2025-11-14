@@ -16,10 +16,12 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="vdjmatchR - Fast TCR sequence matching in R">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<meta property="og:title" content="vdjmatchR - Fast TCR sequence matching in R">
 <meta name="description" content="High-performance TCR sequence matching against VDJdb with Rust-powered parallel processing">
 <meta property="og:description" content="High-performance TCR sequence matching against VDJdb with Rust-powered parallel processing">
 <meta property="og:image" content="https://furlan-lab.github.io/vdjmatchR/logo.png">
+<link rel="stylesheet" href="extra.css">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -73,9 +75,8 @@
 <img src="logo.png" class="logo" alt=""><h1 id="vdjmatchr">vdjmatchR<a class="anchor" aria-label="anchor" href="#vdjmatchr"></a>
 </h1>
 </div>
-<!-- <p align="center">
-  <img src="man/figures/logo2.png" alt="vdjmatchR logo" width="300">
-</p> -->
+<p align="center">
+<img src="reference/figures/logo2.png" alt="vdjmatchR logo" width="300"></p>
 <p align="center">
 <strong>Fast TCR sequence matching with VDJdb in R</strong>
 </p>
@@ -112,14 +113,14 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
 </div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
-</h1>
+<div class="section level3">
+<h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/furlan-lab/vdjmatchR.git</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">cd</span> vdjmatchR</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
+</div>
+</div>
 <div class="section level2">
 <h2 id="quickstart">Quickstart<a class="anchor" aria-label="anchor" href="#quickstart"></a>
 </h2>
@@ -398,7 +399,6 @@ Made with ❤️ by the Furlan Lab
 </p>
 </div>
 </div>
-
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
