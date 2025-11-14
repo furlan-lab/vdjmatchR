@@ -291,7 +291,9 @@ edit distance tolerance</p>
 <span></span>
 <span>  <span class="co"># Rename columns to more user-friendly names</span></span>
 <span>  <span class="co"># match_tcr_many_df returns: query_index, query_cdr3, query_v, query_j,</span></span>
-<span>  <span class="co">#                            cdr3_db, v_db, j_db, species, gene, epitope,</span></span>
+<span>  <span class="co">#                            cdr3_db, v_db, j_db, species, gene,</span></span>
+<span>  <span class="co">#                            antigen_epitope, antigen_gene, antigen_species,</span></span>
+<span>  <span class="co">#                            mhc_class, reference_id, vdjdb_score,</span></span>
 <span>  <span class="co">#                            score, cdr3_score, v_score, j_score, edit_distance</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"cdr3_db"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"cdr3_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_cdr3"</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"v_db"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"v_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_v"</span></span>
@@ -301,13 +303,16 @@ edit distance tolerance</p>
 <span>  <span class="co"># Select and order columns</span></span>
 <span>  <span class="va">keep_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cell"</span>, <span class="st">"alpha_rank"</span>, <span class="st">"query_cdr3"</span>, <span class="st">"query_v"</span>, <span class="st">"query_j"</span>,</span>
-<span>      <span class="st">"epitope_cdr3"</span>, <span class="st">"epitope_v"</span>, <span class="st">"epitope_j"</span>, <span class="st">"epitope"</span>, <span class="st">"epitope_species"</span>,</span>
-<span>      <span class="st">"gene"</span>, <span class="st">"score"</span>, <span class="st">"cdr3_score"</span>, <span class="st">"v_score"</span>, <span class="st">"j_score"</span>, <span class="st">"edit_distance"</span><span class="op">)</span>,</span>
+<span>      <span class="st">"epitope_cdr3"</span>, <span class="st">"epitope_v"</span>, <span class="st">"epitope_j"</span>, <span class="st">"epitope_species"</span>,</span>
+<span>      <span class="st">"gene"</span>, <span class="st">"antigen_epitope"</span>, <span class="st">"antigen_gene"</span>, <span class="st">"antigen_species"</span>,</span>
+<span>      <span class="st">"mhc_class"</span>, <span class="st">"reference_id"</span>, <span class="st">"vdjdb_score"</span>,</span>
+<span>      <span class="st">"score"</span>, <span class="st">"cdr3_score"</span>, <span class="st">"v_score"</span>, <span class="st">"j_score"</span>, <span class="st">"edit_distance"</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">hits</span><span class="op">[</span>, <span class="va">keep_cols</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="op">}</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)</span></span>
 <span><span class="va">top_trb</span> <span class="op">&lt;-</span> <span class="fu">get_top_hits</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, chain <span class="op">=</span> <span class="st">"TRB"</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span><span class="op">)</span></span>
