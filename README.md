@@ -1,5 +1,3 @@
-# vdjmatchR
-
 <p align="center">
   <img src="man/figures/logo2.png" alt="vdjmatchR logo" width="300">
 </p>
