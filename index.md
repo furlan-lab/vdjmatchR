@@ -2,7 +2,13 @@
 
 <p align="center">
   <img src="man/figures/logo2.png" alt="vdjmatchR logo" width="300">
+</p>
+
+<p align="center">
   <strong>Fast TCR sequence matching with VDJdb in R</strong>
+</p>
+
+<p align="center">
   <a href="https://furlan-lab.github.io/vdjmatchR/">Documentation</a> •
   <a href="#installation">Installation</a> •
   <a href="#quickstart">Quickstart</a> •

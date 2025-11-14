@@ -30,13 +30,13 @@ knitr::opts_chunk$set(
 
 ### From Github in R
 
-```{r}
+```{r, eval = F}
 devtools::install_github("furlan-lab/vdjmatchR")
 ```
 
 ### Clone and install (from source) in shell
 
-```{sh}
+```{sh, eval = F}
 git clone https://github.com/furlan-lab/vdjmatchR.git
 cd vdjmatchR
 R CMD INSTALL .
@@ -56,7 +56,7 @@ Note: paths below reference user-specific data; code chunks are guarded to run o
 ## Load packages
 
 ```{r packages}
-library(Seurat)       # v5
+library(Seurat)
 library(vdjmatchR)
 library(magrittr)
 ```
@@ -68,8 +68,6 @@ Set the path to a Seurat v5 object (RDS) and to the 10x VDJ directory (`vdj_t`).
 ```{r params, eval=FALSE}
 # Edit these to your environment
 seurat_rds <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
-#/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS
-# Example 10x VDJ v2 directory (replace as needed)
 vdj_dir <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
 
 ```
@@ -277,9 +275,6 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
 # Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)
 top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0")
 top_tra <- get_top_hits(obj, db, chain = "TRA", scope = "0,0,0,0")
-
-
-
 
 ```
 

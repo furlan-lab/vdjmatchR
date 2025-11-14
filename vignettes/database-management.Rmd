@@ -81,6 +81,146 @@ vdjdb_set_user_db("/path/to/vdjdb.txt.gz", use_fat_db = TRUE)
 path <- vdjdb_path(use_fat_db = TRUE)
 ```
 
+## Converting database to R objects for exploration
+
+The VDJdb database can be converted to standard R data structures for exploration,
+analysis, and visualization using familiar R tools.
+
+### Database summary
+
+Get a quick overview of database contents:
+
+```{r}
+# Print summary statistics
+db_summary(db)
+```
+
+### Convert to data.table
+
+For interactive exploration and manipulation, convert the database to a data.table:
+
+```{r}
+library(data.table)
+
+# Convert full database to data.table
+dt <- db_to_table(db)
+
+# Or convert filtered database
+dt_filtered <- db_to_table(fdb)
+
+# Inspect structure
+str(dt)
+head(dt)
+```
+
+### Convert to data.frame
+
+Alternatively, convert to a standard data.frame:
+
+```{r}
+# Convert to data.frame
+df <- db_to_df(db)
+```
+
+### Exploring the database
+
+Once converted, you can use standard R operations:
+
+```{r}
+# Count entries by species
+dt[, .N, by = species][order(-N)]
+
+# Count entries by gene
+dt[, .N, by = gene][order(-N)]
+
+# Find most common epitopes
+dt[, .N, by = antigen_epitope][order(-N)][1:10]
+
+# Explore specific viral epitopes
+viral_epitopes <- dt[antigen_species %in% c("CMV", "EBV", "InfluenzaA")]
+viral_epitopes[, .N, by = .(antigen_species, antigen_epitope)][order(-N)][1:15]
+
+# Check VDJdb score distribution
+dt[, .N, by = vdjdb_score][order(vdjdb_score)]
+```
+
+### Visualizing database contents
+
+Create visualizations to understand database composition:
+
+```{r}
+library(ggplot2)
+
+# Epitope frequency distribution
+epitope_counts <- dt[, .N, by = antigen_epitope][order(-N)][1:20]
+ggplot(epitope_counts, aes(x = reorder(antigen_epitope, N), y = N)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Top 20 Most Common Epitopes in VDJdb",
+       x = "Epitope", y = "Number of TCR Sequences") +
+  theme_minimal()
+
+# Species distribution
+species_counts <- dt[, .N, by = species]
+ggplot(species_counts, aes(x = reorder(species, N), y = N)) +
+  geom_col(fill = "coral") +
+  coord_flip() +
+  labs(title = "TCR Sequences by Species",
+       x = "Species", y = "Count") +
+  theme_minimal()
+
+# Gene distribution
+gene_counts <- dt[, .N, by = gene]
+ggplot(gene_counts, aes(x = gene, y = N, fill = gene)) +
+  geom_col() +
+  labs(title = "TCR Sequences by Gene",
+       x = "Gene", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# VDJdb score distribution
+score_dist <- dt[, .N, by = vdjdb_score]
+ggplot(score_dist, aes(x = factor(vdjdb_score), y = N)) +
+  geom_col(fill = "darkgreen") +
+  labs(title = "Distribution of VDJdb Confidence Scores",
+       x = "VDJdb Score", y = "Count") +
+  theme_minimal()
+
+# CDR3 length distribution
+dt[, cdr3_length := nchar(cdr3)]
+ggplot(dt[cdr3_length < 30], aes(x = cdr3_length)) +
+  geom_histogram(binwidth = 1, fill = "purple", alpha = 0.7) +
+  labs(title = "CDR3 Sequence Length Distribution",
+       x = "CDR3 Length (amino acids)", y = "Count") +
+  theme_minimal()
+
+# Antigen species breakdown for common pathogens
+pathogen_counts <- dt[antigen_species %in% c("CMV", "EBV", "InfluenzaA",
+                                               "SARS-CoV-2", "HIV-1", "YFV"),
+                      .N, by = antigen_species][order(-N)]
+ggplot(pathogen_counts, aes(x = reorder(antigen_species, N), y = N)) +
+  geom_col(fill = "firebrick") +
+  coord_flip() +
+  labs(title = "TCR Sequences for Common Pathogens",
+       x = "Pathogen", y = "Number of TCR Sequences") +
+  theme_minimal()
+```
+
+### Subsetting and exporting
+
+Extract specific subsets for further analysis:
+
+```{r}
+# Extract all CMV-specific TCRs
+cmv_tcrs <- dt[antigen_species == "CMV"]
+
+# Extract high-confidence entries
+high_conf <- dt[vdjdb_score >= 2]
+
+# Export to CSV for external analysis
+fwrite(cmv_tcrs, "cmv_tcrs.csv")
+```
+
 ## Reproducibility hints
 
 - Record the file path used (`vdjdb_path()`) and include it in your analysis metadata.
