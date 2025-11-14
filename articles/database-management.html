@@ -83,13 +83,45 @@ Authors</h4>
 
     
     
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h3>
+<ul>
+<li>R (&gt;= 4.0)</li>
+<li>Rust (&gt;= 1.70) - <a href="https://www.rust-lang.org/tools/install" class="external-link">Install Rust</a>
+</li>
+<li>R development tools (Rtools on Windows, Xcode Command Line Tools on
+macOS)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="from-github-in-r">From Github in R<a class="anchor" aria-label="anchor" href="#from-github-in-r"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/furlan-lab/vdjmatchR.git</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">cd</span> vdjmatchR</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
 <p>This vignette covers using the packaged VDJdb, filtering it for
 common use cases, and how to point the package to your own database
 file.</p>
+</div>
 <div class="section level2">
 <h2 id="packaged-database-and-updates">Packaged database and updates<a class="anchor" aria-label="anchor" href="#packaged-database-and-updates"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span><span class="co"># Use the slim VDJdb bundled with the package</span></span>
 <span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -103,28 +135,28 @@ file.</p>
 <div class="section level2">
 <h2 id="load-and-inspect">Load and inspect<a class="anchor" aria-label="anchor" href="#load-and-inspect"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/vdjdb_len.html">vdjdb_len</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="filter-by-species-gene-and-vdjdb-score">Filter by species, gene, and VDJdb score<a class="anchor" aria-label="anchor" href="#filter-by-species-gene-and-vdjdb-score"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Human TRB, minimum VDJdb score 2</span></span>
 <span><span class="va">fdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db.html">filter_db</a></span><span class="op">(</span><span class="va">db</span>, species <span class="op">=</span> <span class="st">"HomoSapiens"</span>, gene <span class="op">=</span> <span class="st">"TRB"</span>, min_vdjdb_score <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="filter-by-epitope-size">Filter by epitope size<a class="anchor" aria-label="anchor" href="#filter-by-epitope-size"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Keep epitopes with at least 5 unique CDR3 entries</span></span>
 <span><span class="va">fdb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_db_by_epitope_size.html">filter_db_by_epitope_size</a></span><span class="op">(</span><span class="va">fdb</span>, min_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="use-your-own-database-file">Use your own database file<a class="anchor" aria-label="anchor" href="#use-your-own-database-file"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tell vdjmatchR where your own VDJdb file is for this session</span></span>
 <span><span class="fu"><a href="../reference/vdjdb_set_user_db.html">vdjdb_set_user_db</a></span><span class="op">(</span><span class="st">"/path/to/vdjdb.txt.gz"</span>, use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_path.html">vdjdb_path</a></span><span class="op">(</span>use_fat_db <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>

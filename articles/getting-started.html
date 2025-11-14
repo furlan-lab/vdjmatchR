@@ -86,17 +86,30 @@ Authors</h4>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<div class="section level3">
+<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h3>
 <ul>
-<li>Install Rust (&gt;= 1.70) from <a href="https://rustup.rs" class="external-link uri">https://rustup.rs</a>.</li>
-<li>In R, install the helper package:</li>
+<li>R (&gt;= 4.0)</li>
+<li>Rust (&gt;= 1.70) - <a href="https://www.rust-lang.org/tools/install" class="external-link">Install Rust</a>
+</li>
+<li>R development tools (Rtools on Windows, Xcode Command Line Tools on
+macOS)</li>
 </ul>
+</div>
+<div class="section level3">
+<h3 id="from-github-in-r">From Github in R<a class="anchor" aria-label="anchor" href="#from-github-in-r"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rextendr"</span><span class="op">)</span></span></code></pre></div>
-<ul>
-<li>Build and install this package (from the repo root):</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># in a shell</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>R CMD INSTALL .</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/furlan-lab/vdjmatchR.git</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">cd</span> vdjmatchR</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="quick-tour">Quick tour<a class="anchor" aria-label="anchor" href="#quick-tour"></a>

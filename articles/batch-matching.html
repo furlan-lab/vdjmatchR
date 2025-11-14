@@ -83,12 +83,44 @@ Authors</h4>
 
     
     
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h3>
+<ul>
+<li>R (&gt;= 4.0)</li>
+<li>Rust (&gt;= 1.70) - <a href="https://www.rust-lang.org/tools/install" class="external-link">Install Rust</a>
+</li>
+<li>R development tools (Rtools on Windows, Xcode Command Line Tools on
+macOS)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="from-github-in-r">From Github in R<a class="anchor" aria-label="anchor" href="#from-github-in-r"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/furlan-lab/vdjmatchR.git</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">cd</span> vdjmatchR</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
 <p>This vignette demonstrates how to match multiple clonotypes
 efficiently using <code><a href="../reference/match_tcr_many_df.html">match_tcr_many_df()</a></code>.</p>
+</div>
 <div class="section level2">
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_packaged_path.html">vdjdb_packaged_path</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdjdb_open_file.html">vdjdb_open_file</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
@@ -97,7 +129,7 @@ efficiently using <code><a href="../reference/match_tcr_many_df.html">match_tcr_
 <div class="section level2">
 <h2 id="prepare-inputs">Prepare inputs<a class="anchor" aria-label="anchor" href="#prepare-inputs"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdr3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CASSLGQAYEQYF"</span>, <span class="st">"CASSIRSSYEQYF"</span>, <span class="st">"CASSPGQGYEQYF"</span><span class="op">)</span></span>
 <span><span class="va">vs</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBV12-3"</span>,      <span class="st">"TRBV7-9"</span>,       <span class="st">"TRBV20-1"</span><span class="op">)</span></span>
 <span><span class="va">js</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRBJ2-7"</span>,       <span class="st">"TRBJ2-7"</span>,       <span class="st">"TRBJ2-5"</span><span class="op">)</span></span></code></pre></div>
@@ -105,7 +137,7 @@ efficiently using <code><a href="../reference/match_tcr_many_df.html">match_tcr_
 <div class="section level2">
 <h2 id="run-batch-matching">Run batch matching<a class="anchor" aria-label="anchor" href="#run-batch-matching"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_tcr_many_df.html">match_tcr_many_df</a></span><span class="op">(</span><span class="va">fdb</span>, <span class="va">cdr3s</span>, <span class="va">vs</span>, <span class="va">js</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <p>Each result row includes the 1-based <code>query_index</code> that
