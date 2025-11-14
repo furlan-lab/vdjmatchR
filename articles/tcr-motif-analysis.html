@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>TCR Motif Analysis and Visualization • vdjmatchR</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -37,7 +36,7 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started</a></li>
@@ -79,7 +78,7 @@
 Authors</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/HEAD/vignettes/tcr-motif-analysis.Rmd" class="external-link"><code>vignettes/tcr-motif-analysis.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/furlan-lab/vdjmatchR/blob/main/vignettes/tcr-motif-analysis.Rmd" class="external-link"><code>vignettes/tcr-motif-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>tcr-motif-analysis.Rmd</code></div>
     </div>
 
@@ -103,7 +102,7 @@ macOS)</li>
 <h3 id="from-github-in-r">From Github in R<a class="anchor" aria-label="anchor" href="#from-github-in-r"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"furlan-lab/vdjmatchR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clone-and-install-from-source-in-shell">Clone and install (from source) in shell<a class="anchor" aria-label="anchor" href="#clone-and-install-from-source-in-shell"></a>
@@ -119,8 +118,8 @@ macOS)</li>
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">"BiocManager"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"motifStack"</span><span class="op">)</span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"Biostrings"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"motifStack"</span><span class="op">)</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"Biostrings"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -145,7 +144,7 @@ recognizing the same epitope.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">motifStack</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biostrings" class="external-link">Biostrings</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biostrings</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -172,12 +171,12 @@ recognizing the same epitope.</p>
 sequences:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count TCRs per epitope</span></span>
-<span><span class="va">epitope_counts</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">antigen_epitope</span>, <span class="va">antigen_species</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">epitope_counts</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">antigen_epitope</span>, <span class="va">antigen_species</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epitope_counts</span>, <span class="fl">20</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filter epitopes with at least 10 unique CDR3 sequences</span></span>
 <span><span class="va">epitopes_sufficient</span> <span class="op">&lt;-</span> <span class="va">epitope_counts</span><span class="op">[</span><span class="va">N</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d epitopes with &gt;=10 TCR sequences\n"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">epitopes_sufficient</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d epitopes with &gt;=10 TCR sequences\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">epitopes_sufficient</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="helper-function-create-motif-from-cdr3-sequences">Helper function: Create motif from CDR3 sequences<a class="anchor" aria-label="anchor" href="#helper-function-create-motif-from-cdr3-sequences"></a>
@@ -211,28 +210,28 @@ sequences:</p>
 <span>  <span class="co"># Pad sequences to same length (center alignment)</span></span>
 <span>  <span class="va">max_len</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">filtered_seqs</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="va">aligned_seqs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">filtered_seqs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">seq</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">aligned_seqs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">filtered_seqs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">seq</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">len</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">seq</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">len</span> <span class="op">&lt;</span> <span class="va">max_len</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="va">pad_total</span> <span class="op">&lt;-</span> <span class="va">max_len</span> <span class="op">-</span> <span class="va">len</span></span>
 <span>      <span class="va">pad_left</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">pad_total</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
 <span>      <span class="va">pad_right</span> <span class="op">&lt;-</span> <span class="va">pad_total</span> <span class="op">-</span> <span class="va">pad_left</span></span>
-<span>      <span class="va">seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">pad_left</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
+<span>      <span class="va">seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">pad_left</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
 <span>                   <span class="va">seq</span>,</span>
-<span>                   <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">pad_right</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="va">pad_right</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="va">seq</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Create AAStringSet</span></span>
-<span>  <span class="va">aa_set</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">AAStringSet</a></span><span class="op">(</span><span class="va">aligned_seqs</span><span class="op">)</span></span>
+<span>  <span class="va">aa_set</span> <span class="op">&lt;-</span> <span class="fu">AAStringSet</span><span class="op">(</span><span class="va">aligned_seqs</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Create position frequency matrix with probabilities</span></span>
-<span>  <span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/letterFrequency.html" class="external-link">consensusMatrix</a></span><span class="op">(</span><span class="va">aa_set</span>, as.prob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu">consensusMatrix</span><span class="op">(</span><span class="va">aa_set</span>, as.prob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Remove gap row if present</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"-"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">pfm</span> <span class="op">&lt;-</span> <span class="va">pfm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"-"</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"-"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">pfm</span> <span class="op">&lt;-</span> <span class="va">pfm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"-"</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span>    <span class="co"># Renormalize after removing gaps</span></span>
 <span>    <span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">pfm</span>, <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span>, <span class="st">"/"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
@@ -244,7 +243,7 @@ sequences:</p>
 <span>  <span class="va">pfm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.nan</a></span><span class="op">(</span><span class="va">pfm</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span></span>
 <span>  <span class="co"># Convert to pfm object for motifStack</span></span>
-<span>  <span class="va">pfm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">pfm</span>, name <span class="op">=</span> <span class="va">name</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/colorset.html" class="external-link">colorset</a></span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"chemistry"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">pfm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">pfm</span>, name <span class="op">=</span> <span class="va">name</span>, color <span class="op">=</span> <span class="fu">colorset</span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"chemistry"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pfm_obj</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -259,7 +258,7 @@ sequences:</p>
 <span>    <span class="va">motif_name</span> <span class="op">&lt;-</span> <span class="va">epitope_name</span></span>
 <span>  <span class="op">}</span></span>
 <span></span>
-<span>  <span class="fu">create_tcr_motif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seqs</span><span class="op">)</span>, name <span class="op">=</span> <span class="va">motif_name</span><span class="op">)</span></span>
+<span>  <span class="fu">create_tcr_motif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seqs</span><span class="op">)</span>, name <span class="op">=</span> <span class="va">motif_name</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -270,13 +269,13 @@ sequences:</p>
 <code class="sourceCode R"><span><span class="co"># CMV pp65 epitope NLVPMVATV - one of the most studied</span></span>
 <span><span class="va">cmv_pp65</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">antigen_epitope</span> <span class="op">==</span> <span class="st">"NLVPMVATV"</span> <span class="op">&amp;</span> <span class="va">antigen_species</span> <span class="op">==</span> <span class="st">"CMV"</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d unique CDR3 sequences for CMV NLVPMVATV\n"</span>,</span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cmv_pp65</span><span class="op">$</span><span class="va">cdr3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cmv_pp65</span><span class="op">$</span><span class="va">cdr3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create motif</span></span>
 <span><span class="va">cmv_motif</span> <span class="op">&lt;-</span> <span class="fu">create_epitope_motif</span><span class="op">(</span><span class="va">dt</span>, <span class="st">"NLVPMVATV"</span>, <span class="st">"CMV"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot motif logo</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogo.html" class="external-link">plotMotifLogo</a></span><span class="op">(</span><span class="va">cmv_motif</span>,</span>
+<span><span class="fu">plotMotifLogo</span><span class="op">(</span><span class="va">cmv_motif</span>,</span>
 <span>              font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>              ic.scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>              motifName <span class="op">=</span> <span class="st">"CMV pp65 NLVPMVATV-specific TCR CDR3 Motif"</span><span class="op">)</span></span></code></pre></div>
@@ -287,11 +286,11 @@ sequences:</p>
 <p>Compare TCR motifs for different CMV epitopes:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get top CMV epitopes</span></span>
-<span><span class="va">cmv_epitopes</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">antigen_species</span> <span class="op">==</span> <span class="st">"CMV"</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
+<span><span class="va">cmv_epitopes</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">antigen_species</span> <span class="op">==</span> <span class="st">"CMV"</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Create motifs for top CMV epitopes with sufficient sequences</span></span>
 <span><span class="va">cmv_motif_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">cmv_epitopes</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">cmv_epitopes</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">epi</span> <span class="op">&lt;-</span> <span class="va">cmv_epitopes</span><span class="op">$</span><span class="va">antigen_epitope</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="va">cmv_epitopes</span><span class="op">$</span><span class="va">N</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span></span>
@@ -307,7 +306,7 @@ sequences:</p>
 <span></span>
 <span><span class="co"># Plot motifs side by side</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cmv_motif_list</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogoStack.html" class="external-link">plotMotifLogoStack</a></span><span class="op">(</span><span class="va">cmv_motif_list</span>,</span>
+<span>  <span class="fu">plotMotifLogoStack</span><span class="op">(</span><span class="va">cmv_motif_list</span>,</span>
 <span>                     font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>                     ic.scale <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -325,7 +324,7 @@ sequences:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">viral_motifs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">viral_epitopes</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">viral_epitopes</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">epi</span> <span class="op">&lt;-</span> <span class="va">viral_epitopes</span><span class="op">$</span><span class="va">epitope</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span>  <span class="va">sp</span> <span class="op">&lt;-</span> <span class="va">viral_epitopes</span><span class="op">$</span><span class="va">species</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span></span>
@@ -334,7 +333,7 @@ sequences:</p>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">n</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>      <span class="va">motif</span> <span class="op">&lt;-</span> <span class="fu">create_epitope_motif</span><span class="op">(</span><span class="va">dt</span>, <span class="va">epi</span>, <span class="va">sp</span><span class="op">)</span></span>
-<span>      <span class="va">viral_motifs</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">sp</span>, <span class="va">epi</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">motif</span></span>
+<span>      <span class="va">viral_motifs</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">sp</span>, <span class="va">epi</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">motif</span></span>
 <span>    <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Could not create motif for %s %s: %s"</span>, <span class="va">sp</span>, <span class="va">epi</span>, <span class="va">e</span><span class="op">$</span><span class="va">message</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span><span class="op">)</span></span>
@@ -343,7 +342,7 @@ sequences:</p>
 <span></span>
 <span><span class="co"># Plot comparison</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">viral_motifs</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogoStack.html" class="external-link">plotMotifLogoStack</a></span><span class="op">(</span><span class="va">viral_motifs</span>,</span>
+<span>  <span class="fu">plotMotifLogoStack</span><span class="op">(</span><span class="va">viral_motifs</span>,</span>
 <span>                     font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>                     ic.scale <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -360,21 +359,21 @@ sequences:</p>
 <span><span class="co"># hits &lt;- match_tcr_many_df(db_filtered, query_cdr3s, query_vs, query_js, ...)</span></span>
 <span></span>
 <span><span class="co"># Group by epitope and create motifs for abundant hits</span></span>
-<span><span class="va">epitope_hits</span> <span class="op">&lt;-</span> <span class="va">hits</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">epitope_hits</span> <span class="op">&lt;-</span> <span class="va">hits</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Create motif for your most common epitope hit</span></span>
 <span><span class="va">top_epitope</span> <span class="op">&lt;-</span> <span class="va">epitope_hits</span><span class="op">$</span><span class="va">antigen_epitope</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">my_tcrs</span> <span class="op">&lt;-</span> <span class="va">hits</span><span class="op">[</span><span class="va">antigen_epitope</span> <span class="op">==</span> <span class="va">top_epitope</span>, <span class="va">query_cdr3</span><span class="op">]</span></span>
 <span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">my_tcrs</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">my_motif</span> <span class="op">&lt;-</span> <span class="fu">create_tcr_motif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">my_tcrs</span><span class="op">)</span>,</span>
-<span>                               name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"My data:"</span>, <span class="va">top_epitope</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">my_tcrs</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">my_motif</span> <span class="op">&lt;-</span> <span class="fu">create_tcr_motif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">my_tcrs</span><span class="op">)</span>,</span>
+<span>                               name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"My data:"</span>, <span class="va">top_epitope</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Compare to VDJdb reference for same epitope</span></span>
 <span>  <span class="va">ref_motif</span> <span class="op">&lt;-</span> <span class="fu">create_epitope_motif</span><span class="op">(</span><span class="va">dt</span>, <span class="va">top_epitope</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Plot comparison</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogoStack.html" class="external-link">plotMotifLogoStack</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">my_motif</span>, <span class="va">ref_motif</span><span class="op">)</span>,</span>
+<span>  <span class="fu">plotMotifLogoStack</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">my_motif</span>, <span class="va">ref_motif</span><span class="op">)</span>,</span>
 <span>                     font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>                     ic.scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     motifName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Your TCRs vs VDJdb Reference: %s"</span>, <span class="va">top_epitope</span><span class="op">)</span><span class="op">)</span></span>
@@ -389,10 +388,10 @@ sequences:</p>
 <span><span class="va">dt</span><span class="op">[</span>, <span class="va">cdr3_length</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">cdr3</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Get top epitopes</span></span>
-<span><span class="va">top_epitopes</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">antigen_epitope</span><span class="op">]</span></span>
+<span><span class="va">top_epitopes</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">antigen_epitope</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Plot length distribution for top epitopes</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dt</span><span class="op">[</span><span class="va">antigen_epitope</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">top_epitopes</span><span class="op">]</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dt</span><span class="op">[</span><span class="va">antigen_epitope</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_epitopes</span><span class="op">]</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cdr3_length</span>, fill <span class="op">=</span> <span class="va">antigen_epitope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">antigen_epitope</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
@@ -414,7 +413,7 @@ sequences:</p>
 <span></span>
 <span>  <span class="co"># Calculate Shannon entropy per position</span></span>
 <span>  <span class="co"># Background frequency for amino acids (uniform)</span></span>
-<span>  <span class="va">n_aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">prob_matrix</span><span class="op">)</span></span>
+<span>  <span class="va">n_aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">prob_matrix</span><span class="op">)</span></span>
 <span>  <span class="va">max_entropy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">n_aa</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">ic_per_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">prob_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
@@ -501,13 +500,13 @@ sequence alignment</li>
 <p>motifStack supports different color schemes:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Chemistry-based coloring (default for amino acids)</span></span>
-<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/colorset.html" class="external-link">colorset</a></span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"chemistry"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu">colorset</span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"chemistry"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Hydrophobicity-based</span></span>
-<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/colorset.html" class="external-link">colorset</a></span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"hydrophobicity"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu">colorset</span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"hydrophobicity"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Custom colors</span></span>
-<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/colorset.html" class="external-link">colorset</a></span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"custom"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">pfm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"pfm"</span>, mat <span class="op">=</span> <span class="va">matrix</span>, color <span class="op">=</span> <span class="fu">colorset</span><span class="op">(</span>alphabet <span class="op">=</span> <span class="st">"AA"</span>, colorScheme <span class="op">=</span> <span class="st">"custom"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -539,7 +538,7 @@ typically contact peptide-MHC</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

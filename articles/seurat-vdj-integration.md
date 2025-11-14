@@ -1,0 +1,337 @@
+# Seurat v5 + 10x VDJ v2 Integration
+
+## Installation
+
+### Prerequisites
+
+- R (\>= 4.0)
+- Rust (\>= 1.70) - [Install
+  Rust](https://www.rust-lang.org/tools/install)
+- R development tools (Rtools on Windows, Xcode Command Line Tools on
+  macOS)
+
+### From Github in R
+
+``` r
+devtools::install_github("furlan-lab/vdjmatchR")
+```
+
+### Clone and install (from source) in shell
+
+``` sh
+git clone https://github.com/furlan-lab/vdjmatchR.git
+cd vdjmatchR
+R CMD INSTALL .
+```
+
+## Overview
+
+This vignette shows how to: - Start from a Seurat v5 object. - Attach
+10x 5’ VDJ v2 outputs to the object with flexible cell-name mapping. -
+Inspect mapping diagnostics and basic metadata written by vdjmatchR.
+
+Later sections (placeholders) will add pairing/QC, clonotype
+definitions, and vdjmatchR matching.
+
+Note: paths below reference user-specific data; code chunks are guarded
+to run only if files exist.
+
+## Load packages
+
+``` r
+library(Seurat)
+#> Loading required package: SeuratObject
+#> Loading required package: sp
+#> 
+#> Attaching package: 'SeuratObject'
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, t
+library(vdjmatchR)
+library(magrittr)
+```
+
+## Provide your inputs
+
+Set the path to a Seurat v5 object (RDS) and to the 10x VDJ directory
+(`vdj_t`).
+
+``` r
+# Edit these to your environment
+seurat_rds <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
+vdj_dir <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
+```
+
+## Load Seurat object
+
+``` r
+if (nzchar(seurat_rds) && file.exists(seurat_rds)) {
+  orig <- readRDS(seurat_rds)
+} else {
+  message("Set SEURAT_RDS_PATH to a Seurat v5 RDS file to run this vignette end-to-end.")
+}
+
+prefixes <- sub("[ACGT]{16}-\\d+$", "", Cells(orig)) %>% unique()
+folders2 <- sub("^[^_]+_(.+)_$", "\\1", prefixes)
+folders1 <- sub("_[^_]+$", "", folders2)
+matchdf <- data.frame(PREFIXES=prefixes, FOLDERNAME1=folders1, FOLDERNAME2=folders2)
+```
+
+## Attach 10x VDJ v2 to Seurat
+
+The function
+[`vdj_attach_10x_vdj_v2()`](https://furlan-lab.github.io/vdjmatchR/reference/vdj_attach_10x_vdj_v2.md)
+reads `filtered_contig_annotations.csv` and `clonotypes.csv`, maps 10x
+barcodes to Seurat cell names (with flexible strategies), and stores
+heavy tables in `obj@tools$vdj`. Minimal metadata (10x clonotype
+id/size) can be written per cell.
+
+``` r
+
+obj <- vdj_attach_10x_vdj_v2_batch(
+  orig,
+  matchdf,
+  vdj_dir_template = vdj_dir)
+
+obj$vdj.cdr3_aa_both <- paste0(obj$vdj.tra.cdr3_aa, "_", obj$vdj.trb.cdr3_aa)
+obj$nomatchprior <- obj$vdj.cdr3_aa_both != obj$cdr3
+
+
+table(obj$nomatchprior)[2]/(table(obj$nomatchprior)[1]+table(obj$nomatchprior)[2])
+DimPlot(obj, group.by = "nomatchprior")
+```
+
+### Collapse to TRA1/TRB (dominant) and optional TRA2/TRB (secondary)
+
+``` r
+
+# Select 1 TRB and up to 2 TRA per cell; write metadata and a pairs table
+obj <- vdj_collapse_pairs_seurat(
+  obj,
+  drop_multi_trb = TRUE,
+  keep_two_alpha = TRUE,
+  alpha_support = "umis",
+  require_productive = TRUE,
+  write_meta = TRUE,
+  update_primary_meta = TRUE
+)
+
+# Overall dual-TRA fraction
+if ("vdj.has_tra2" %in% colnames(obj@meta.data)) {
+  frac_dual <- mean(obj$vdj.has_tra2 %in% TRUE, na.rm = TRUE)
+  cat(sprintf("Dual-TRA fraction: %.1f%%\n", 100 * frac_dual))
+}
+
+# Per-cluster dual-TRA rates when cluster labels exist
+group_col <- NULL
+if ("seurat_clusters" %in% colnames(obj@meta.data)) group_col <- "seurat_clusters"
+if (!is.null(group_col)) {
+  g <- obj@meta.data[[group_col]]
+  p <- tapply(obj$vdj.has_tra2 %in% TRUE, g, function(x) mean(x, na.rm = TRUE))
+  print(round(100 * p, 1))
+}
+
+# Preview pairs table (first 6 rows)
+if (!is.null(obj@tools$vdj$pairs)) {
+  print(utils::head(obj@tools$vdj$pairs, 6))
+}
+```
+
+### Inspect attached tables and metadata
+
+``` r
+
+cat("Contigs rows:", nrow(obj@tools$vdj$contigs), "\n")
+print(utils::head(obj@tools$vdj$contigs[ , c("barcode","chain","v_gene","j_gene","cdr3","umis","cell","sample_id")], 5))
+
+
+cols <- intersect(c("vdj.clone_id_10x","vdj.clone_size_10x"), colnames(obj@meta.data))
+if (length(cols)) print(utils::head(obj@meta.data[, cols, drop = FALSE]))
+```
+
+## Match Seurat TCRs to VDJdb
+
+This section shows how to take the TRA/TRB sequences written into Seurat
+metadata and match them against VDJdb, producing a compact table of each
+cell’s top hit per chain.
+
+**Performance features:** - Parallel processing using Rayon (Rust) for
+fast matching across multiple CPU cores - Progress bar for large
+datasets (\>5000 queries) - Configurable fuzzy matching with edit
+distance tolerance
+
+``` r
+
+
+
+# 1) Load a VDJdb (use fat database for more complete annotations)
+db_path <- vdjdb_packaged_path(use_fat_db = TRUE)
+db <- vdjdb_open_file(db_path)
+
+# Helper to build queries from metadata and get top-1 hit per query
+# For TRA: emits one query per alpha (TRA1 and TRA2 when present)
+get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
+  chain <- match.arg(chain)
+  ch <- tolower(chain)
+  md <- obj@meta.data
+  queries <- NULL
+
+  if (chain == "TRB") {
+    cols <- c(paste0("vdj.", ch, ".cdr3_aa"), paste0("vdj.", ch, ".v_gene"), paste0("vdj.", ch, ".j_gene"))
+    if (!all(cols %in% colnames(md))) return(NULL)
+    cdr3_col <- cols[1]; v_col <- cols[2]; j_col <- cols[3]
+    keep <- which(!is.na(md[[cdr3_col]]) & nzchar(md[[cdr3_col]]))
+    if (!length(keep)) return(NULL)
+    queries <- data.frame(
+      cell = rownames(md)[keep],
+      cdr3 = as.character(md[[cdr3_col]][keep]),
+      v    = as.character(md[[v_col]][keep]),
+      j    = as.character(md[[j_col]][keep]),
+      alpha_rank = NA_integer_,
+      stringsAsFactors = FALSE
+    )
+  } else {
+    # TRA: build from tra1 and tra2 if present
+    cols1 <- c("vdj.tra1.cdr3_aa", "vdj.tra1.v_gene", "vdj.tra1.j_gene")
+    cols2 <- c("vdj.tra2.cdr3_aa", "vdj.tra2.v_gene", "vdj.tra2.j_gene")
+    have1 <- all(cols1 %in% colnames(md))
+    have2 <- all(cols2 %in% colnames(md))
+    qlist <- list()
+    if (have1) {
+      keep1 <- which(!is.na(md[[cols1[1]]]) & nzchar(md[[cols1[1]]]))
+      if (length(keep1)) qlist[[length(qlist)+1L]] <- data.frame(
+        cell = rownames(md)[keep1],
+        cdr3 = as.character(md[[cols1[1]]][keep1]),
+        v    = as.character(md[[cols1[2]]][keep1]),
+        j    = as.character(md[[cols1[3]]][keep1]),
+        alpha_rank = 1L,
+        stringsAsFactors = FALSE
+      )
+    }
+    if (have2) {
+      keep2 <- which(!is.na(md[[cols2[1]]]) & nzchar(md[[cols2[1]]]))
+      if (length(keep2)) qlist[[length(qlist)+1L]] <- data.frame(
+        cell = rownames(md)[keep2],
+        cdr3 = as.character(md[[cols2[1]]][keep2]),
+        v    = as.character(md[[cols2[2]]][keep2]),
+        j    = as.character(md[[cols2[3]]][keep2]),
+        alpha_rank = 2L,
+        stringsAsFactors = FALSE
+      )
+    }
+    if (!length(qlist)) return(NULL)
+    queries <- do.call(rbind, qlist)
+  }
+
+  # Filter DB to species/gene
+  db_chain <- filter_db(db, species = "HomoSapiens", gene = chain, min_vdjdb_score = 0)
+
+  # Match and get top hit per query (uses parallel processing and shows progress)
+  hits <- match_tcr_many_df(db_chain, queries$cdr3, queries$v, queries$j,
+                            scope = scope, top_n = 1L, progress = TRUE)
+  if (!nrow(hits)) return(NULL)
+
+  # Attach cell metadata back to hits
+  qi <- as.integer(hits$query_index)
+  hits$cell <- queries$cell[qi]
+  if ("alpha_rank" %in% colnames(queries)) hits$alpha_rank <- queries$alpha_rank[qi]
+
+  # Rename columns to more user-friendly names
+  # match_tcr_many_df returns: query_index, query_cdr3, query_v, query_j,
+  #                            cdr3_db, v_db, j_db, species, gene,
+  #                            antigen_epitope, antigen_gene, antigen_species,
+  #                            mhc_class, reference_id, vdjdb_score,
+  #                            score, cdr3_score, v_score, j_score, edit_distance
+  if ("cdr3_db" %in% colnames(hits)) names(hits)[names(hits) == "cdr3_db"] <- "epitope_cdr3"
+  if ("v_db" %in% colnames(hits)) names(hits)[names(hits) == "v_db"] <- "epitope_v"
+  if ("j_db" %in% colnames(hits)) names(hits)[names(hits) == "j_db"] <- "epitope_j"
+  if ("species" %in% colnames(hits)) names(hits)[names(hits) == "species"] <- "epitope_species"
+
+  # Select and order columns
+  keep_cols <- intersect(
+    c("cell", "alpha_rank", "query_cdr3", "query_v", "query_j",
+      "epitope_cdr3", "epitope_v", "epitope_j", "epitope_species",
+      "gene", "antigen_epitope", "antigen_gene", "antigen_species",
+      "mhc_class", "reference_id", "vdjdb_score",
+      "score", "cdr3_score", "v_score", "j_score", "edit_distance"),
+    colnames(hits)
+  )
+
+  hits[, keep_cols, drop = FALSE]
+}
+
+
+# Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)
+top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0")
+top_tra <- get_top_hits(obj, db, chain = "TRA", scope = "0,0,0,0")
+```
+
+## Session info
+
+``` r
+sessionInfo()
+#> R version 4.5.2 (2025-10-31)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.3 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: UTC
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] magrittr_2.0.4       vdjmatchR_0.0.0.9000 Seurat_5.3.1        
+#> [4] SeuratObject_5.2.0   sp_2.2-0            
+#> 
+#> loaded via a namespace (and not attached):
+#>   [1] deldir_2.0-4           pbapply_1.7-4          gridExtra_2.3         
+#>   [4] rlang_1.1.6            RcppAnnoy_0.0.22       otel_0.2.0            
+#>   [7] spatstat.geom_3.6-0    matrixStats_1.5.0      ggridges_0.5.7        
+#>  [10] compiler_4.5.2         png_0.1-8              systemfonts_1.3.1     
+#>  [13] vctrs_0.6.5            reshape2_1.4.5         stringr_1.6.0         
+#>  [16] pkgconfig_2.0.3        fastmap_1.2.0          promises_1.5.0        
+#>  [19] rmarkdown_2.30         ragg_1.5.0             purrr_1.2.0           
+#>  [22] xfun_0.54              cachem_1.1.0           jsonlite_2.0.0        
+#>  [25] goftest_1.2-3          later_1.4.4            spatstat.utils_3.2-0  
+#>  [28] irlba_2.3.5.1          parallel_4.5.2         cluster_2.1.8.1       
+#>  [31] R6_2.6.1               ica_1.0-3              spatstat.data_3.1-9   
+#>  [34] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    
+#>  [37] reticulate_1.44.0      spatstat.univar_3.1-4  parallelly_1.45.1     
+#>  [40] lmtest_0.9-40          jquerylib_0.1.4        scattermore_1.2       
+#>  [43] Rcpp_1.1.0             knitr_1.50             tensor_1.5.1          
+#>  [46] future.apply_1.20.0    zoo_1.8-14             sctransform_0.4.2     
+#>  [49] httpuv_1.6.16          Matrix_1.7-4           splines_4.5.2         
+#>  [52] igraph_2.2.1           tidyselect_1.2.1       abind_1.4-8           
+#>  [55] yaml_2.3.10            spatstat.random_3.4-2  spatstat.explore_3.5-3
+#>  [58] codetools_0.2-20       miniUI_0.1.2           listenv_0.10.0        
+#>  [61] lattice_0.22-7         tibble_3.3.0           plyr_1.8.9            
+#>  [64] shiny_1.11.1           S7_0.2.1               ROCR_1.0-11           
+#>  [67] evaluate_1.0.5         Rtsne_0.17             future_1.67.0         
+#>  [70] fastDummies_1.7.5      desc_1.4.3             survival_3.8-3        
+#>  [73] polyclip_1.10-7        fitdistrplus_1.2-4     pillar_1.11.1         
+#>  [76] KernSmooth_2.23-26     plotly_4.11.0          generics_0.1.4        
+#>  [79] RcppHNSW_0.6.0         ggplot2_4.0.1          scales_1.4.0          
+#>  [82] globals_0.18.0         xtable_1.8-4           glue_1.8.0            
+#>  [85] lazyeval_0.2.2         tools_4.5.2            data.table_1.17.8     
+#>  [88] RSpectra_0.16-2        RANN_2.6.2             fs_1.6.6              
+#>  [91] dotCall64_1.2          cowplot_1.2.0          grid_4.5.2            
+#>  [94] tidyr_1.3.1            nlme_3.1-168           patchwork_1.3.2       
+#>  [97] cli_3.6.5              spatstat.sparse_3.1-0  textshaping_1.0.4     
+#> [100] spam_2.11-1            viridisLite_0.4.2      dplyr_1.1.4           
+#> [103] uwot_0.2.4             gtable_0.3.6           sass_0.4.10           
+#> [106] digest_0.6.38          progressr_0.18.0       ggrepel_0.9.6         
+#> [109] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     
+#> [112] pkgdown_2.2.0          lifecycle_1.0.4        httr_1.4.7            
+#> [115] mime_0.13              MASS_7.3-65
+```

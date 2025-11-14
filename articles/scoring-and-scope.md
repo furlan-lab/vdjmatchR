@@ -1,0 +1,73 @@
+# Scoring and search scope
+
+## Installation
+
+### Prerequisites
+
+- R (\>= 4.0)
+- Rust (\>= 1.70) - [Install
+  Rust](https://www.rust-lang.org/tools/install)
+- R development tools (Rtools on Windows, Xcode Command Line Tools on
+  macOS)
+
+### From Github in R
+
+``` r
+devtools::install_github("furlan-lab/vdjmatchR")
+```
+
+### Clone and install (from source) in shell
+
+``` sh
+git clone https://github.com/furlan-lab/vdjmatchR.git
+cd vdjmatchR
+R CMD INSTALL .
+```
+
+## Overview
+
+This vignette explains how `scope` controls matching tolerance and how
+to interpret the returned scores.
+
+## Search scope
+
+`scope` uses the format `"s,i,d,t"` (substitutions, insertions,
+deletions, maximum total edits) or `"s,id,t"` where insertions and
+deletions share a limit. For example:
+
+``` r
+# Exact matching only
+scope <- "0,0,0,0"
+
+# Allow up to 2 substitutions, 1 insertion, 2 deletions, 3 edits total
+scope <- "2,1,2,3"
+```
+
+Increasing tolerance typically increases the number of hits but may
+dilute the specificity of results. Use `top_n` to constrain result size
+per query.
+
+## Scores
+
+The current R interface returns a per-hit `score` plus `cdr3_score`,
+`v_score`, `j_score`, and `edit_distance`. By default, scoring is based
+on simple mismatch counts from the pairwise alignment of CDR3 sequences.
+Higher is better for the scores shown, and lower is better for
+`edit_distance`.
+
+``` r
+library(vdjmatchR)
+path <- vdjdb_packaged_path(FALSE)
+db <- vdjdb_open_file(path)
+fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
+
+# Strict vs relaxed scope comparison
+res_strict  <- match_tcr_df(fdb, "CASSLGQAYEQYF", "TRBV12-3", "TRBJ2-7", scope = "0,0,0,0", top_n = 5)
+res_relaxed <- match_tcr_df(fdb, "CASSLGQAYEQYF", "TRBV12-3", "TRBJ2-7", scope = "2,1,2,3", top_n = 5)
+```
+
+## Practical guidance
+
+- Start with exact (`"0,0,0,0"`), then relax only if needed.
+- For exploratory searches, try modest tolerance such as `"1,1,1,2"`.
+- Use database filters (species/gene/score) before broadening scope.
