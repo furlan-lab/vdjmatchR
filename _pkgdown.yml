@@ -3,6 +3,7 @@ url: https://furlan-lab.github.io/vdjmatchR/
 template:
   bootstrap: 5
   bootswatch: lumen
+  assets: pkgdown
 
 home:
   title: "vdjmatchR - Fast TCR sequence matching in R"

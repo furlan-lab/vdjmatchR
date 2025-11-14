@@ -12,6 +12,30 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
 
+## Installation
+
+### Prerequisites
+
+- R (>= 4.0)
+- Rust (>= 1.70) - [Install Rust](https://www.rust-lang.org/tools/install)
+- R development tools (Rtools on Windows, Xcode Command Line Tools on macOS)
+
+### From Github in R
+
+```{r}
+devtools::install_github("furlan-lab/vdjmatchR")
+```
+
+### Clone and install (from source) in shell
+
+```{sh}
+git clone https://github.com/furlan-lab/vdjmatchR.git
+cd vdjmatchR
+R CMD INSTALL .
+```
+
+## Overview
+
 This vignette covers using the packaged VDJdb, filtering it for common use cases, and how to point the package to your own database file.
 
 ## Packaged database and updates

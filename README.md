@@ -24,10 +24,14 @@ Fast TCR sequence matching against the VDJdb database with a Rust-powered core.
 
 ## Quickstart
 1. Ensure Rust (>= 1.70) and an R toolchain are installed.
-2. In R, install `rextendr` to aid linking (optional but recommended):
-   `install.packages("rextendr")`
-3. Build + install the package from the package root:
-   `R CMD INSTALL .`
+2. In R, install by running `devtools::install_github("furlan-lab/vdjmatchR")`
+3. To build + install the package from the package root after cloning (using a shell language - i.e. bash):
+
+```sh
+git clone https://github.com/furlan-lab/vdjmatchR.git
+cd vdjmatchR
+R CMD INSTALL .
+```
 
 ## Examples
 ```r

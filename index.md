@@ -1,14 +1,8 @@
 # vdjmatchR
 
-<!-- <p align="center">
+<p align="center">
   <img src="man/figures/logo2.png" alt="vdjmatchR logo" width="300">
-</p> -->
-
-<p align="center">
   <strong>Fast TCR sequence matching with VDJdb in R</strong>
-</p>
-
-<p align="center">
   <a href="https://furlan-lab.github.io/vdjmatchR/">Documentation</a> •
   <a href="#installation">Installation</a> •
   <a href="#quickstart">Quickstart</a> •
@@ -38,13 +32,15 @@ vdjmatchR provides a high-performance R interface to TCR sequence matching again
 - Rust (>= 1.70) - [Install Rust](https://www.rust-lang.org/tools/install)
 - R development tools (Rtools on Windows, Xcode Command Line Tools on macOS)
 
-### From Source
+### From Github in R
 
 ```r
-# Install rextendr for easier building (recommended)
-install.packages("rextendr")
+devtools::install_github("furlan-lab/vdjmatchR")
+```
 
-# Clone and install
+
+### Clone and install (from source) in shell
+```sh
 git clone https://github.com/furlan-lab/vdjmatchR.git
 cd vdjmatchR
 R CMD INSTALL .

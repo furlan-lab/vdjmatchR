@@ -20,6 +20,30 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Installation
+
+### Prerequisites
+
+- R (>= 4.0)
+- Rust (>= 1.70) - [Install Rust](https://www.rust-lang.org/tools/install)
+- R development tools (Rtools on Windows, Xcode Command Line Tools on macOS)
+
+### From Github in R
+
+```{r}
+devtools::install_github("furlan-lab/vdjmatchR")
+```
+
+### Clone and install (from source) in shell
+
+```{sh}
+git clone https://github.com/furlan-lab/vdjmatchR.git
+cd vdjmatchR
+R CMD INSTALL .
+```
+
+## Overview
+
 This vignette shows how to:
 - Start from a Seurat v5 object.
 - Attach 10x 5' VDJ v2 outputs to the object with flexible cell-name mapping.
@@ -29,7 +53,7 @@ Later sections (placeholders) will add pairing/QC, clonotype definitions, and vd
 
 Note: paths below reference user-specific data; code chunks are guarded to run only if files exist.
 
-## Prerequisites
+## Load packages
 
 ```{r packages}
 library(Seurat)       # v5
