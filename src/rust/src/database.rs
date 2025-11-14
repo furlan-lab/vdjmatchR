@@ -81,37 +81,66 @@ impl Database {
         
         let headers = reader.headers()?;
         let columns: Vec<String> = headers.iter().map(|s| s.to_string()).collect();
-        
+
+        // Build column name -> index map for flexible column ordering
+        let mut col_map = HashMap::new();
+        for (i, col_name) in columns.iter().enumerate() {
+            col_map.insert(col_name.as_str(), i);
+        }
+
+        // Required column names
+        let gene_idx = col_map.get("gene").copied();
+        let cdr3_idx = col_map.get("cdr3").copied();
+        let species_idx = col_map.get("species").copied();
+        let v_segm_idx = col_map.get("v.segm").copied();
+        let j_segm_idx = col_map.get("j.segm").copied();
+        let antigen_epitope_idx = col_map.get("antigen.epitope").copied();
+        let antigen_gene_idx = col_map.get("antigen.gene").copied();
+        let antigen_species_idx = col_map.get("antigen.species").copied();
+        let mhc_class_idx = col_map.get("mhc.class").copied();
+        let reference_id_idx = col_map.get("reference.id").copied();
+        let vdjdb_score_idx = col_map.get("vdjdb.score").copied();
+        let method_idx = col_map.get("method").copied();
+        let meta_idx = col_map.get("meta").copied();
+        let cdr3fix_idx = col_map.get("cdr3fix").copied();
+
         let mut entries = Vec::new();
-        
+
         for result in reader.records() {
             let record = result?;
-            
-            // Parse record into DatabaseEntry
-            // Note: This is simplified - real implementation should handle all VDJdb columns
-        if record.len() >= 8 {
+
+            // Parse record into DatabaseEntry using column names
             let entry = DatabaseEntry {
-                cdr3: record.get(1).unwrap_or("").to_string(),           // Column 1
-                v_segment: record.get(7).unwrap_or("").to_string(),      // Column 7 (v.segm)
-                j_segment: record.get(8).unwrap_or("").to_string(),      // Column 8 (j.segm)
-                species: record.get(2).unwrap_or("").to_string(),        // Column 2
-                gene: record.get(0).unwrap_or("").to_string(),           // Column 0
-                mhc_class: Some(record.get(11).unwrap_or("").to_string()), // Column 11
-                antigen_epitope: record.get(3).unwrap_or("").to_string(), // Column 3
-                antigen_gene: Some(record.get(4).unwrap_or("").to_string()), // Column 4
-                antigen_species: record.get(5).unwrap_or("").to_string(), // Column 5
-                reference_id: record.get(12).map(|s| s.to_string()),     // Column 12
-                method: None,  // Not in slim version
-                meta: None,    // Not in slim version
-                cdr3_fix: None, // Not in slim version
-                vdjdb_score: record.get(13)
+                gene: gene_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                cdr3: cdr3_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                v_segment: v_segm_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                j_segment: j_segm_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                species: species_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                antigen_epitope: antigen_epitope_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                antigen_gene: antigen_gene_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                antigen_species: antigen_species_idx.and_then(|i| record.get(i)).unwrap_or("").to_string(),
+                mhc_class: mhc_class_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                reference_id: reference_id_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                method: method_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                meta: meta_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                cdr3_fix: cdr3fix_idx.and_then(|i| record.get(i).map(|s| s.to_string())),
+                vdjdb_score: vdjdb_score_idx
+                    .and_then(|i| record.get(i))
                     .and_then(|s| s.parse().ok())
                     .unwrap_or(0),
             };
-                entries.push(entry);
-            }
+            entries.push(entry);
         }
-        
+
+        // eprintln!("DEBUG: Loaded {} entries from database", entries.len());
+        // if !entries.is_empty() {
+        //     eprintln!("DEBUG: First 3 loaded entries:");
+        //     for (i, entry) in entries.iter().take(3).enumerate() {
+        //         eprintln!("  Entry {}: gene='{}' species='{}' cdr3='{}' v='{}' j='{}'",
+        //                   i+1, entry.gene, entry.species, entry.cdr3, entry.v_segment, entry.j_segment);
+        //     }
+        // }
+
         Ok(Self {
             entries,
             metadata: DatabaseMetadata {
@@ -155,7 +184,8 @@ impl Database {
             .cloned()
             .collect();
 
-        // eprintln!("DEBUG: First 3 entries:");
+        // eprintln!("DEBUG: After filtering: {} entries", filtered_entries.len());
+        // eprintln!("DEBUG: First 3 filtered entries:");
         // for (i, entry) in filtered_entries.iter().take(3).enumerate() {
         //     eprintln!("  Entry {}: gene='{}' species='{}' cdr3='{}'",
         //               i+1, entry.gene, entry.species, entry.cdr3);

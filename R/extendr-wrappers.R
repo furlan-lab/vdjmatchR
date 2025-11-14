@@ -16,6 +16,7 @@ NULL
 match_tcr <- function(db, cdr3, v_segment, j_segment, scope, top_n) .Call(wrap__match_tcr, db, cdr3, v_segment, j_segment, scope, top_n)
 
 #' Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.
+#' Uses parallel processing via Rayon for improved performance.
 match_tcr_many <- function(db, cdr3, v_segment, j_segment, scope, top_n) .Call(wrap__match_tcr_many, db, cdr3, v_segment, j_segment, scope, top_n)
 
 #' Open a VDJdb TSV/TSV.GZ via the Rust backend.
@@ -57,6 +58,8 @@ RDatabase$len <- function() .Call(wrap__RDatabase__len, self)
 RDatabase$filter <- function(species, gene, min_vdjdb_score) .Call(wrap__RDatabase__filter, self, species, gene, min_vdjdb_score)
 
 RDatabase$filter_by_epitope_size <- function(min_size) .Call(wrap__RDatabase__filter_by_epitope_size, self, min_size)
+
+RDatabase$to_columns <- function() .Call(wrap__RDatabase__to_columns, self)
 
 #' @export
 `$.RDatabase` <- function (self, name) { func <- RDatabase[[name]]; environment(func) <- environment(); func }

@@ -1,35 +1,105 @@
 url: https://furlan-lab.github.io/vdjmatchR/
+
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bootswatch: lumen
+
+home:
+  title: "vdjmatchR - Fast TCR sequence matching in R"
+  description: "High-performance TCR sequence matching against VDJdb with Rust-powered parallel processing"
 
 navbar:
-  title: "vdjmatchR"
-  left:
-  - text: "Reference"
-    href: reference/index.html
-  - text: "Articles"
-    menu:
-    - text: "Getting started"
-      href: articles/getting-started.html
-    - text: "Scoring and scope"
-      href: articles/scoring-and-scope.html
-    - text: "Batch matching"
-      href: articles/batch-matching.html
-    - text: "Database management"
-      href: articles/database-management.html
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Vignettes
+      menu:
+      - text: Getting Started
+        href: articles/getting-started.html
+      - text: -------
+      - text: "TCR Matching"
+      - text: Batch Matching
+        href: articles/batch-matching.html
+      - text: Scoring and Search Scope
+        href: articles/scoring-and-scope.html
+      - text: -------
+      - text: "Database Tools"
+      - text: Database Management
+        href: articles/database-management.html
+      - text: -------
+      - text: "Integration"
+      - text: Seurat + 10x VDJ Integration
+        href: articles/seurat-vdj-integration.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/furlan-lab/vdjmatchR
 
 reference:
-- title: "Core functions"
+- title: "TCR Matching"
+  desc: "Core functions for matching TCR sequences against VDJdb"
   contents:
-  - matches("^match_tcr")
-  - matches("^vdjdb_")
-- title: "Database object"
+  - match_tcr
+  - match_tcr_df
+  - match_tcr_many
+  - match_tcr_many_df
+
+- title: "Database Loading & Management"
+  desc: "Functions to load, filter, and manage VDJdb databases"
   contents:
-  - "RDatabase"
-- title: "Helpers"
+  - vdjdb_open_file
+  - vdjdb_open
+  - vdjdb_open_packaged
+  - vdjdb_packaged_path
+  - vdjdb_path
+  - vdjdb_set_user_db
+  - vdjdb_len
+  - vdjdb_download
+  - vdjdb_ensure
+  - vdjdb_update
+  - vdjdb_update_all
+  - vdjdb_update_latest
+  - vdjdb_ensure_into
+  - vdjdb_update_into
+
+- title: "Database Filtering"
+  desc: "Filter databases by species, gene, score, and epitope representation"
   contents:
-  - matches("^filter_db")
-- title: "Package"
+  - filter_db
+  - filter_db_by_epitope_size
+
+- title: "Database Conversion & Exploration"
+  desc: "Convert databases to R data structures for easy manipulation"
+  contents:
+  - db_to_table
+  - db_to_df
+  - db_summary
+
+- title: "Seurat Integration"
+  desc: "Functions for integrating 10x VDJ data with Seurat objects"
+  contents:
+  - vdj_attach_10x_vdj_v2
+  - vdj_attach_10x_vdj_v2_batch
+  - vdj_collapse_pairs_seurat
+
+- title: "Package Information"
   contents:
   - vdjmatchR-package
+
+figures:
+  dev: ragg::agg_png
+  dpi: 96
+  dev.args: []
+  fig.ext: png
+  fig.width: 7.2916667
+  fig.height: ~
+  fig.retina: 2
+  fig.asp: 1.618
+  bg: NA

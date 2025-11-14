@@ -3,10 +3,12 @@ title: "Getting started with vdjmatchR"
 author: "vdjmatchR Authors"
 output: rmarkdown::html_vignette
 vignette: >
-  %\n  VignetteIndexEntry{Getting started with vdjmatchR}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Getting started with vdjmatchR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```r
+```{r}
 #| echo: false
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
@@ -16,20 +18,20 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 - Install Rust (>= 1.70) from <https://rustup.rs>.
 - In R, install the helper package:
 
-```r
+```{r}
 install.packages("rextendr")
 ```
 
 - Build and install this package (from the repo root):
 
-```r
+```{r}
 # in a shell
 R CMD INSTALL .
 ```
 
 ## Quick tour
 
-```r
+```{r}
 library(vdjmatchR)
 
 # Use the packaged slim VDJdb bundled with the package
@@ -69,7 +71,7 @@ The `scope` argument controls fuzzy matching tolerance using the format
 insertions and deletions share the same limit. Use `"0,0,0,0"` for exact
 matching.
 
-```r
+```{r}
 # Allow up to 2 substitutions and 1 insertion/deletion, total up to 3 edits
 scope <- "2,1,2,3"
 ```

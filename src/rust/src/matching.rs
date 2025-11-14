@@ -59,16 +59,17 @@ pub fn match_clonotype(
     let mut matches = Vec::new();
     
     for db_entry in &database.entries {
-        // Check segment matches if required
-        if config.match_v {
+        // Check segment matches if required and if query has non-empty segments
+        // Skip segment matching if query segment is empty (user wants CDR3-only matching)
+        if config.match_v && !clonotype.v_segment.is_empty() {
             let v_match = Clonotype::normalize_segment(&clonotype.v_segment)
                 == Clonotype::normalize_segment(&db_entry.v_segment);
             if !v_match {
                 continue;
             }
         }
-        
-        if config.match_j {
+
+        if config.match_j && !clonotype.j_segment.is_empty() {
             let j_match = Clonotype::normalize_segment(&clonotype.j_segment)
                 == Clonotype::normalize_segment(&db_entry.j_segment);
             if !j_match {

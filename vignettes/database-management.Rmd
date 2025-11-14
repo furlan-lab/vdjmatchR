@@ -3,11 +3,12 @@ title: "Database management and filtering"
 author: "vdjmatchR Authors"
 output: rmarkdown::html_vignette
 vignette: >
-  %\n  VignetteIndexEntry{Database management and filtering}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Database management and filtering}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```r
-#| echo: false
+```{r, echo=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
 
@@ -15,7 +16,7 @@ This vignette covers using the packaged VDJdb, filtering it for common use cases
 
 ## Packaged database and updates
 
-```r
+```{r}
 library(vdjmatchR)
 # Use the slim VDJdb bundled with the package
 path <- vdjdb_packaged_path(use_fat_db = FALSE)
@@ -29,28 +30,28 @@ path <- vdjdb_packaged_path(use_fat_db = FALSE)
 
 ## Load and inspect
 
-```r
+```{r}
 db <- vdjdb_open_file(path)
 vdjdb_len(db)
 ```
 
 ## Filter by species, gene, and VDJdb score
 
-```r
+```{r}
 # Human TRB, minimum VDJdb score 2
 fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
 ```
 
 ## Filter by epitope size
 
-```r
+```{r}
 # Keep epitopes with at least 5 unique CDR3 entries
 fdb2 <- filter_db_by_epitope_size(fdb, min_size = 5)
 ```
 
 ## Use your own database file
 
-```r
+```{r, eval=FALSE}
 # Tell vdjmatchR where your own VDJdb file is for this session
 vdjdb_set_user_db("/path/to/vdjdb.txt.gz", use_fat_db = TRUE)
 path <- vdjdb_path(use_fat_db = TRUE)

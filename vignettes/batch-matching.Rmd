@@ -3,10 +3,12 @@ title: "Batch matching clonotypes"
 author: "vdjmatchR Authors"
 output: rmarkdown::html_vignette
 vignette: >
-  %\n  VignetteIndexEntry{Batch matching clonotypes}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Batch matching clonotypes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```r
+```{r}
 #| echo: false
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
@@ -16,7 +18,7 @@ This vignette demonstrates how to match multiple clonotypes efficiently using
 
 ## Setup
 
-```r
+```{r}
 library(vdjmatchR)
 path <- vdjdb_packaged_path(FALSE)
 db <- vdjdb_open_file(path)
@@ -25,7 +27,7 @@ fdb <- filter_db(db, species = "HomoSapiens", gene = "TRB", min_vdjdb_score = 2)
 
 ## Prepare inputs
 
-```r
+```{r}
 cdr3s <- c("CASSLGQAYEQYF", "CASSIRSSYEQYF", "CASSPGQGYEQYF")
 vs    <- c("TRBV12-3",      "TRBV7-9",       "TRBV20-1")
 js    <- c("TRBJ2-7",       "TRBJ2-7",       "TRBJ2-5")
@@ -33,7 +35,7 @@ js    <- c("TRBJ2-7",       "TRBJ2-7",       "TRBJ2-5")
 
 ## Run batch matching
 
-```r
+```{r}
 res <- match_tcr_many_df(fdb, cdr3s, vs, js, scope = "0,0,0,0", top_n = 3)
 head(res)
 ```

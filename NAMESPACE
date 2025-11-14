@@ -2,6 +2,9 @@
 
 S3method("$",RDatabase)
 S3method("[[",RDatabase)
+export(db_summary)
+export(db_to_df)
+export(db_to_table)
 export(filter_db)
 export(filter_db_by_epitope_size)
 export(match_tcr_df)

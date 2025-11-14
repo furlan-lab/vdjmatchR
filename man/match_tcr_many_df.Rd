@@ -10,7 +10,9 @@ match_tcr_many_df(
   v_segment,
   j_segment,
   scope = "0,0,0,0",
-  top_n = 0L
+  top_n = 0L,
+  progress = TRUE,
+  chunk_size = 5000L
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ match_tcr_many_df(
 \item{scope}{search scope string like "0,0,0,0" or "2,1,2,3"}
 
 \item{top_n}{keep top N hits per query}
+
+\item{progress}{show progress bar (default TRUE)}
+
+\item{chunk_size}{number of queries to process per chunk (default 5000)}
 }
 \value{
 data.frame with query metadata and hit columns

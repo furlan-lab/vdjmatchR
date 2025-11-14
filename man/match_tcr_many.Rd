@@ -2,10 +2,12 @@
 % Please edit documentation in R/extendr-wrappers.R
 \name{match_tcr_many}
 \alias{match_tcr_many}
-\title{Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.}
+\title{Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.
+Uses parallel processing via Rayon for improved performance.}
 \usage{
 match_tcr_many(db, cdr3, v_segment, j_segment, scope, top_n)
 }
 \description{
 Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.
+Uses parallel processing via Rayon for improved performance.
 }

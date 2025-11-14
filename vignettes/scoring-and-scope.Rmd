@@ -3,10 +3,12 @@ title: "Scoring and search scope"
 author: "vdjmatchR Authors"
 output: rmarkdown::html_vignette
 vignette: >
-  %\n  VignetteIndexEntry{Scoring and search scope}\n  VignetteEngine{knitr::rmarkdown}\n  VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Scoring and search scope}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```r
+```{r}
 #| echo: false
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 ```
@@ -20,7 +22,7 @@ interpret the returned scores.
 maximum total edits) or `"s,id,t"` where insertions and deletions share a
 limit. For example:
 
-```r
+```{r}
 # Exact matching only
 scope <- "0,0,0,0"
 
@@ -38,7 +40,7 @@ The current R interface returns a per-hit `score` plus `cdr3_score`, `v_score`,
 counts from the pairwise alignment of CDR3 sequences. Higher is better for the
 scores shown, and lower is better for `edit_distance`.
 
-```r
+```{r}
 library(vdjmatchR)
 path <- vdjdb_packaged_path(FALSE)
 db <- vdjdb_open_file(path)

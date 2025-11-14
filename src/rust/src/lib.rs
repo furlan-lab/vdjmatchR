@@ -52,6 +52,51 @@ impl RDatabase {
         let filtered = self.inner.filter_by_epitope_size(min_size as usize);
         Self { inner: filtered }
     }
+
+    /// Convert database to column vectors for R data.frame/data.table
+    pub fn to_columns(&self) -> List {
+        let n = self.inner.entries.len();
+
+        let mut gene = Vec::with_capacity(n);
+        let mut cdr3 = Vec::with_capacity(n);
+        let mut v_segment = Vec::with_capacity(n);
+        let mut j_segment = Vec::with_capacity(n);
+        let mut species = Vec::with_capacity(n);
+        let mut antigen_epitope = Vec::with_capacity(n);
+        let mut antigen_gene = Vec::with_capacity(n);
+        let mut antigen_species = Vec::with_capacity(n);
+        let mut mhc_class = Vec::with_capacity(n);
+        let mut reference_id = Vec::with_capacity(n);
+        let mut vdjdb_score = Vec::with_capacity(n);
+
+        for entry in &self.inner.entries {
+            gene.push(entry.gene.clone());
+            cdr3.push(entry.cdr3.clone());
+            v_segment.push(entry.v_segment.clone());
+            j_segment.push(entry.j_segment.clone());
+            species.push(entry.species.clone());
+            antigen_epitope.push(entry.antigen_epitope.clone());
+            antigen_gene.push(entry.antigen_gene.clone().unwrap_or_default());
+            antigen_species.push(entry.antigen_species.clone());
+            mhc_class.push(entry.mhc_class.clone().unwrap_or_default());
+            reference_id.push(entry.reference_id.clone().unwrap_or_default());
+            vdjdb_score.push(entry.vdjdb_score as i32);
+        }
+
+        list!(
+            gene = gene,
+            cdr3 = cdr3,
+            v_segment = v_segment,
+            j_segment = j_segment,
+            species = species,
+            antigen_epitope = antigen_epitope,
+            antigen_gene = antigen_gene,
+            antigen_species = antigen_species,
+            mhc_class = mhc_class,
+            reference_id = reference_id,
+            vdjdb_score = vdjdb_score
+        )
+    }
 }
 
 /// Open a VDJdb TSV/TSV.GZ via the Rust backend.
@@ -168,6 +213,7 @@ pub fn match_tcr(
 }
 
 /// Batch match: vectors of cdr3/v/j; returns stacked results with query metadata.
+/// Uses parallel processing via Rayon for improved performance.
 #[extendr]
 pub fn match_tcr_many(
     db: &RDatabase,
@@ -183,6 +229,26 @@ pub fn match_tcr_many(
 
     let search_scope = sequence::SearchScope::parse(scope).unwrap_or(sequence::SearchScope::EXACT);
 
+    // Build clonotypes for parallel matching
+    let clonotypes: Vec<sequence::Clonotype> = cdr3
+        .iter()
+        .zip(v_segment.iter().zip(j_segment.iter()))
+        .map(|(cdr3i, (vi, ji))| {
+            sequence::Clonotype::new(cdr3i.clone(), vi.clone(), ji.clone(), 1, 0.0)
+        })
+        .collect();
+
+    // Configure matching
+    let mut config = matching::MatchConfig::default();
+    config.search_scope = search_scope;
+    config.match_v = true;  // Matching logic handles empty segments
+    config.match_j = true;  // Matching logic handles empty segments
+    if top_n > 0 { config.top_n_hits = Some(top_n as usize); }
+
+    // Use parallel matching
+    let all_matches = matching::match_clonotypes_parallel(&clonotypes, &db.inner, &config);
+
+    // Flatten results
     let mut all_query_index: Vec<i32> = Vec::new();
     let mut all_query_cdr3: Vec<String> = Vec::new();
     let mut all_query_v: Vec<String> = Vec::new();
@@ -200,16 +266,9 @@ pub fn match_tcr_many(
     let mut j_score = Vec::new();
     let mut edit_distance = Vec::new();
 
-    for (i, (cdr3i, (vi, ji))) in cdr3.into_iter().zip(v_segment.into_iter().zip(j_segment.into_iter())).enumerate() {
-        let clonotype = sequence::Clonotype::new(cdr3i.clone(), vi.clone(), ji.clone(), 1, 0.0);
-        let mut config = matching::MatchConfig::default();
-        config.search_scope = search_scope;
-        config.match_v = !vi.is_empty();
-        config.match_j = !ji.is_empty();
-        if top_n > 0 { config.top_n_hits = Some(top_n as usize); }
-
-        let hits = matching::match_clonotype(&clonotype, &db.inner, &config);
-        for m in hits.into_iter() {
+    for (i, matches) in all_matches.into_iter().enumerate() {
+        let clonotype = &clonotypes[i];
+        for m in matches.into_iter() {
             all_query_index.push((i as i32) + 1); // 1-based index for R
             all_query_cdr3.push(clonotype.cdr3_aa.sequence.clone());
             all_query_v.push(clonotype.v_segment.clone());
