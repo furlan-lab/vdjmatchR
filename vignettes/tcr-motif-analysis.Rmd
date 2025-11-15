@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r setup, echo=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = T)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = T, warning=F)
 ```
 
 ## Installation
