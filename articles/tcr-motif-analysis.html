@@ -146,7 +146,55 @@ recognizing the same epitope.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://furlan-lab.github.io/vdjmatchR">vdjmatchR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">motifStack</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: grid</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biostrings" class="external-link">Biostrings</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: BiocGenerics</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'BiocGenerics'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:motifStack':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.data.frame</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     IQR, mad, sd, var, xtabs</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     anyDuplicated, aperm, append, as.data.frame, basename, cbind,</span></span>
+<span><span class="co">#&gt;     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
+<span><span class="co">#&gt;     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,</span></span>
+<span><span class="co">#&gt;     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span></span>
+<span><span class="co">#&gt;     Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,</span></span>
+<span><span class="co">#&gt;     table, tapply, union, unique, unsplit, which.max, which.min</span></span>
+<span><span class="co">#&gt; Loading required package: S4Vectors</span></span>
+<span><span class="co">#&gt; Loading required package: stats4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'S4Vectors'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:data.table':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     first, second</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     findMatches</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     expand.grid, I, unname</span></span>
+<span><span class="co">#&gt; Loading required package: IRanges</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'IRanges'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:data.table':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     shift</span></span>
+<span><span class="co">#&gt; Loading required package: XVector</span></span>
+<span><span class="co">#&gt; Loading required package: GenomeInfoDb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'Biostrings'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:grid':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     pattern</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     strsplit</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -175,10 +223,34 @@ sequences:</p>
 <code class="sourceCode R"><span><span class="co"># Count TCRs per epitope</span></span>
 <span><span class="va">epitope_counts</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">antigen_epitope</span>, <span class="va">antigen_species</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epitope_counts</span>, <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          antigen_epitope      antigen_species     N</span></span>
+<span><span class="co">#&gt;                   &lt;char&gt;               &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:            GILGFVFTL           InfluenzaA  4645</span></span>
+<span><span class="co">#&gt;  2:            NLVPMVATV                  CMV  1348</span></span>
+<span><span class="co">#&gt;  3:            GLCTLVAML                  EBV   478</span></span>
+<span><span class="co">#&gt;  4:            FLRGRAYGL                  EBV   215</span></span>
+<span><span class="co">#&gt;  5:             RAKFKQLL                  EBV   175</span></span>
+<span><span class="co">#&gt;  6:           ELAGIGILTV          HomoSapiens   142</span></span>
+<span><span class="co">#&gt;  7:            RPIIRPATL           InfluenzaB   119</span></span>
+<span><span class="co">#&gt;  8:          HPNGYKSLSTL           InfluenzaB    89</span></span>
+<span><span class="co">#&gt;  9:             QMMVKAGL           InfluenzaB    70</span></span>
+<span><span class="co">#&gt; 10:           TPRVTGGGAM                  CMV    69</span></span>
+<span><span class="co">#&gt; 11:           KLVALGINAV                  HCV    64</span></span>
+<span><span class="co">#&gt; 12:            YVLDHLIVV                  EBV    63</span></span>
+<span><span class="co">#&gt; 13:      PSDKHIKEYLNKIQN PlasmodiumFalciparum    63</span></span>
+<span><span class="co">#&gt; 14:      HIKEYLNKIQNSLST PlasmodiumFalciparum    63</span></span>
+<span><span class="co">#&gt; 15:      YLNKIQNSLSTEWSP PlasmodiumFalciparum    63</span></span>
+<span><span class="co">#&gt; 16:            RPPIFIRRL                  EBV    39</span></span>
+<span><span class="co">#&gt; 17: FRDYVDRFYKTLRAEQASQE                HIV-1    37</span></span>
+<span><span class="co">#&gt; 18:            CRVLCCYVL                  CMV    31</span></span>
+<span><span class="co">#&gt; 19:          RPHERNGFTVL                  CMV    30</span></span>
+<span><span class="co">#&gt; 20:          PQPELPYPQPQ     TriticumAestivum    30</span></span>
+<span><span class="co">#&gt;          antigen_epitope      antigen_species     N</span></span>
 <span></span>
 <span><span class="co"># Filter epitopes with at least 10 unique CDR3 sequences</span></span>
 <span><span class="va">epitopes_sufficient</span> <span class="op">&lt;-</span> <span class="va">epitope_counts</span><span class="op">[</span><span class="va">N</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d epitopes with &gt;=10 TCR sequences\n"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">epitopes_sufficient</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d epitopes with &gt;=10 TCR sequences\n"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">epitopes_sufficient</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Found 49 epitopes with &gt;=10 TCR sequences</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="helper-function-create-motif-from-cdr3-sequences">Helper function: Create motif from CDR3 sequences<a class="anchor" aria-label="anchor" href="#helper-function-create-motif-from-cdr3-sequences"></a>
@@ -272,6 +344,7 @@ sequences:</p>
 <span><span class="va">cmv_pp65</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">antigen_epitope</span> <span class="op">==</span> <span class="st">"NLVPMVATV"</span> <span class="op">&amp;</span> <span class="va">antigen_species</span> <span class="op">==</span> <span class="st">"CMV"</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found %d unique CDR3 sequences for CMV NLVPMVATV\n"</span>,</span>
 <span>            <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cmv_pp65</span><span class="op">$</span><span class="va">cdr3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Found 638 unique CDR3 sequences for CMV NLVPMVATV</span></span>
 <span></span>
 <span><span class="co"># Create motif</span></span>
 <span><span class="va">cmv_motif</span> <span class="op">&lt;-</span> <span class="fu">create_epitope_motif</span><span class="op">(</span><span class="va">dt</span>, <span class="st">"NLVPMVATV"</span>, <span class="st">"CMV"</span><span class="op">)</span></span>
@@ -280,7 +353,67 @@ sequences:</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogo.html" class="external-link">plotMotifLogo</a></span><span class="op">(</span><span class="va">cmv_motif</span>,</span>
 <span>              font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>              ic.scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              motifName <span class="op">=</span> <span class="st">"CMV pp65 NLVPMVATV-specific TCR CDR3 Motif"</span><span class="op">)</span></span></code></pre></div>
+<span>              motifName <span class="op">=</span> <span class="st">"CMV pp65 NLVPMVATV-specific TCR CDR3 Motif"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required namespace: Cairo</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span></code></pre></div>
+<p><img src="tcr-motif-analysis_files/figure-html/single-motif-1.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="example-2-compare-motifs-across-epitopes">Example 2: Compare motifs across epitopes<a class="anchor" aria-label="anchor" href="#example-2-compare-motifs-across-epitopes"></a>
@@ -311,7 +444,66 @@ sequences:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogoStack.html" class="external-link">plotMotifLogoStack</a></span><span class="op">(</span><span class="va">cmv_motif_list</span>,</span>
 <span>                     font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>                     ic.scale <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span></code></pre></div>
+<p><img src="tcr-motif-analysis_files/figure-html/compare-cmv-1.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="example-3-compare-across-viral-species">Example 3: Compare across viral species<a class="anchor" aria-label="anchor" href="#example-3-compare-across-viral-species"></a>
@@ -347,7 +539,66 @@ sequences:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/motifStack/man/plotMotifLogoStack.html" class="external-link">plotMotifLogoStack</a></span><span class="op">(</span><span class="va">viral_motifs</span>,</span>
 <span>                     font <span class="op">=</span> <span class="st">"helvetica"</span>,</span>
 <span>                     ic.scale <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span>
+<span><span class="co">#&gt; Warning in checkValidSVG(doc, warn = warn): This picture may not have been</span></span>
+<span><span class="co">#&gt; generated by Cairo graphics; errors may result</span></span></code></pre></div>
+<p><img src="tcr-motif-analysis_files/figure-html/viral-comparison-1.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="example-4-analyze-motifs-in-your-matched-data">Example 4: Analyze motifs in your matched data<a class="anchor" aria-label="anchor" href="#example-4-analyze-motifs-in-your-matched-data"></a>
@@ -402,6 +653,7 @@ sequences:</p>
 <span>       y <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tcr-motif-analysis_files/figure-html/length-dist-1.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="advanced-information-content-analysis">Advanced: Information content analysis<a class="anchor" aria-label="anchor" href="#advanced-information-content-analysis"></a>
@@ -445,7 +697,13 @@ sequences:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Information Content per CDR3 Position - CMV NLVPMVATV"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Position"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Information Content (bits)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<p><img src="tcr-motif-analysis_files/figure-html/ic-analysis-1.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="practical-considerations">Practical considerations<a class="anchor" aria-label="anchor" href="#practical-considerations"></a>
@@ -527,7 +785,88 @@ typically contact peptide-MHC</p>
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.4.3 (2025-02-28)</span></span>
+<span><span class="co">#&gt; Platform: aarch64-apple-darwin20</span></span>
+<span><span class="co">#&gt; Running under: macOS Sequoia 15.4.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib </span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: America/Los_Angeles</span></span>
+<span><span class="co">#&gt; tzcode source: internal</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats4    grid      stats     graphics  grDevices utils     datasets </span></span>
+<span><span class="co">#&gt; [8] methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt;  [1] ggplot2_3.5.2        Biostrings_2.74.1    GenomeInfoDb_1.42.3 </span></span>
+<span><span class="co">#&gt;  [4] XVector_0.46.0       IRanges_2.40.1       S4Vectors_0.44.0    </span></span>
+<span><span class="co">#&gt;  [7] BiocGenerics_0.52.0  motifStack_1.50.0    data.table_1.17.6   </span></span>
+<span><span class="co">#&gt; [10] vdjmatchR_0.0.0.9000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] DBI_1.2.3                   bitops_1.0-9               </span></span>
+<span><span class="co">#&gt;   [3] rlang_1.1.6                 magrittr_2.0.3             </span></span>
+<span><span class="co">#&gt;   [5] ade4_1.7-23                 matrixStats_1.5.0          </span></span>
+<span><span class="co">#&gt;   [7] compiler_4.4.3              RSQLite_2.3.9              </span></span>
+<span><span class="co">#&gt;   [9] png_0.1-8                   systemfonts_1.2.2          </span></span>
+<span><span class="co">#&gt;  [11] vctrs_0.6.5                 reshape2_1.4.4             </span></span>
+<span><span class="co">#&gt;  [13] stringr_1.5.1               pwalign_1.2.0              </span></span>
+<span><span class="co">#&gt;  [15] pkgconfig_2.0.3             crayon_1.5.3               </span></span>
+<span><span class="co">#&gt;  [17] fastmap_1.2.0               labeling_0.4.3             </span></span>
+<span><span class="co">#&gt;  [19] caTools_1.18.3              Rsamtools_2.22.0           </span></span>
+<span><span class="co">#&gt;  [21] rmarkdown_2.29              tzdb_0.5.0                 </span></span>
+<span><span class="co">#&gt;  [23] UCSC.utils_1.2.0            ragg_1.4.0                 </span></span>
+<span><span class="co">#&gt;  [25] DirichletMultinomial_1.48.0 bit_4.6.0                  </span></span>
+<span><span class="co">#&gt;  [27] xfun_0.52                   zlibbioc_1.52.0            </span></span>
+<span><span class="co">#&gt;  [29] cachem_1.1.0                CNEr_1.42.0                </span></span>
+<span><span class="co">#&gt;  [31] jsonlite_2.0.0              blob_1.2.4                 </span></span>
+<span><span class="co">#&gt;  [33] DelayedArray_0.32.0         BiocParallel_1.40.2        </span></span>
+<span><span class="co">#&gt;  [35] jpeg_0.1-11                 parallel_4.4.3             </span></span>
+<span><span class="co">#&gt;  [37] R6_2.6.1                    bslib_0.9.0                </span></span>
+<span><span class="co">#&gt;  [39] stringi_1.8.7               RColorBrewer_1.1-3         </span></span>
+<span><span class="co">#&gt;  [41] rtracklayer_1.66.0          GenomicRanges_1.58.0       </span></span>
+<span><span class="co">#&gt;  [43] jquerylib_0.1.4             Rcpp_1.0.14                </span></span>
+<span><span class="co">#&gt;  [45] SummarizedExperiment_1.36.0 knitr_1.50                 </span></span>
+<span><span class="co">#&gt;  [47] base64enc_0.1-3             R.utils_2.13.0             </span></span>
+<span><span class="co">#&gt;  [49] readr_2.1.5                 Matrix_1.7-3               </span></span>
+<span><span class="co">#&gt;  [51] tidyselect_1.2.1            dichromat_2.0-0.1          </span></span>
+<span><span class="co">#&gt;  [53] abind_1.4-8                 yaml_2.3.10                </span></span>
+<span><span class="co">#&gt;  [55] codetools_0.2-20            curl_6.4.0                 </span></span>
+<span><span class="co">#&gt;  [57] lattice_0.22-7              tibble_3.3.0               </span></span>
+<span><span class="co">#&gt;  [59] plyr_1.8.9                  withr_3.0.2                </span></span>
+<span><span class="co">#&gt;  [61] KEGGREST_1.46.0             Biobase_2.66.0             </span></span>
+<span><span class="co">#&gt;  [63] evaluate_1.0.4              desc_1.4.3                 </span></span>
+<span><span class="co">#&gt;  [65] pillar_1.10.2               MatrixGenerics_1.18.1      </span></span>
+<span><span class="co">#&gt;  [67] generics_0.1.4              grImport2_0.3-3            </span></span>
+<span><span class="co">#&gt;  [69] RCurl_1.98-1.17             hms_1.1.3                  </span></span>
+<span><span class="co">#&gt;  [71] scales_1.4.0                gtools_3.9.5               </span></span>
+<span><span class="co">#&gt;  [73] xtable_1.8-4                glue_1.8.0                 </span></span>
+<span><span class="co">#&gt;  [75] seqLogo_1.72.0              tools_4.4.3                </span></span>
+<span><span class="co">#&gt;  [77] TFMPvalue_0.0.9             BiocIO_1.16.0              </span></span>
+<span><span class="co">#&gt;  [79] BSgenome_1.74.0             annotate_1.84.0            </span></span>
+<span><span class="co">#&gt;  [81] GenomicAlignments_1.42.0    fs_1.6.6                   </span></span>
+<span><span class="co">#&gt;  [83] XML_3.99-0.18               Cairo_1.6-2                </span></span>
+<span><span class="co">#&gt;  [85] TFBSTools_1.44.0            poweRlaw_1.0.0             </span></span>
+<span><span class="co">#&gt;  [87] colorspace_2.1-1            AnnotationDbi_1.68.0       </span></span>
+<span><span class="co">#&gt;  [89] GenomeInfoDbData_1.2.13     restfulr_0.0.15            </span></span>
+<span><span class="co">#&gt;  [91] cli_3.6.5                   textshaping_1.0.0          </span></span>
+<span><span class="co">#&gt;  [93] S4Arrays_1.6.0              dplyr_1.1.4                </span></span>
+<span><span class="co">#&gt;  [95] gtable_0.3.6                R.methodsS3_1.8.2          </span></span>
+<span><span class="co">#&gt;  [97] sass_0.4.10                 digest_0.6.37              </span></span>
+<span><span class="co">#&gt;  [99] SparseArray_1.6.2           rjson_0.2.23               </span></span>
+<span><span class="co">#&gt; [101] htmlwidgets_1.6.4           farver_2.1.2               </span></span>
+<span><span class="co">#&gt; [103] R.oo_1.27.0                 memoise_2.0.1              </span></span>
+<span><span class="co">#&gt; [105] htmltools_0.5.8.1           pkgdown_2.1.1              </span></span>
+<span><span class="co">#&gt; [107] lifecycle_1.0.4             httr_1.4.7                 </span></span>
+<span><span class="co">#&gt; [109] GO.db_3.20.0                bit64_4.6.0-1              </span></span>
+<span><span class="co">#&gt; [111] MASS_7.3-65</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
