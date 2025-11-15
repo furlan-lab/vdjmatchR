@@ -9,8 +9,15 @@
 <url><loc>https://furlan-lab.github.io/vdjmatchR/articles/scoring-and-scope.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/articles/seurat-vdj-integration.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/articles/tcr-motif-analysis.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/tcrdist-analysis.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/vdjmatchR/vignettes/batch-matching.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/vdjmatchR/vignettes/database-management.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/vdjmatchR/vignettes/getting-started.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/vdjmatchR/vignettes/scoring-and-scope.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/articles/vdjmatchR/vignettes/seurat-vdj-integration.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/authors.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/index.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/reference/calculate_tcrdist.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/db_summary.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/db_to_df.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/db_to_table.html</loc></url>
@@ -21,6 +28,7 @@
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/match_tcr_df.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/match_tcr_many.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/match_tcr_many_df.html</loc></url>
+<url><loc>https://furlan-lab.github.io/vdjmatchR/reference/tcrdist_single.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/vdj_attach_10x_vdj_v2.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/vdj_attach_10x_vdj_v2_batch.html</loc></url>
 <url><loc>https://furlan-lab.github.io/vdjmatchR/reference/vdj_collapse_pairs_seurat.html</loc></url>
