@@ -15,6 +15,7 @@ Fast TCR sequence matching against the VDJdb database with a Rust-powered core.
 📊 **Database Tools** - Easy filtering and conversion to data.table
 🧬 **Seurat Integration** - Seamless integration with 10x VDJ data
 📈 **Progress Tracking** - Real-time progress bars for large datasets
+🧮 **TCRdist** - Sequence-based distance calculation with BLOSUM62 scoring
 
 ## Documentation
 
@@ -70,6 +71,8 @@ head(res_many)
 ```
 
 ## R API
+
+### Database & Matching
 - `vdjdb_open_file(path)` / `vdjdb_open_packaged(use_fat_db = FALSE)` / `vdjdb_open(use_fat_db = FALSE)`
 - `vdjdb_len(db)`
 - `filter_db(db, species = NULL, gene = NULL, min_vdjdb_score = 0)`
@@ -81,6 +84,10 @@ head(res_many)
 - `vdjdb_packaged_path(use_fat_db = FALSE)` / `vdjdb_path(use_fat_db = FALSE)`
 - `vdjdb_set_user_db(path, use_fat_db = FALSE)` (configure your own DB file)
 
+### TCRdist Distance Calculation
+- `calculate_tcrdist(cdr1_a, cdr2_a, cdr3_a, cdr1_b, cdr2_b, cdr3_b)` → pairwise distance matrix
+- `tcrdist_single(cdr1_a_1, ..., cdr3_b_2)` → single distance value
+
 ## Vignettes
 
 Comprehensive guides covering all aspects of vdjmatchR:
@@ -89,6 +96,7 @@ Comprehensive guides covering all aspects of vdjmatchR:
 - 🚀 **[Batch matching](https://furlan-lab.github.io/vdjmatchR/articles/batch-matching.html)** - High-throughput matching with parallel processing
 - 🎯 **[Scoring and search](https://furlan-lab.github.io/vdjmatchR/articles/scoring-and-scope.html)** - Understanding fuzzy matching and scoring
 - 💾 **[Database management](https://furlan-lab.github.io/vdjmatchR/articles/database-management.html)** - Loading, filtering, and exploring databases
+- 🧮 **[TCRdist analysis](https://furlan-lab.github.io/vdjmatchR/articles/tcrdist-analysis.html)** - Sequence-based distance calculation and clustering
 - 🧬 **[Seurat integration](https://furlan-lab.github.io/vdjmatchR/articles/seurat-vdj-integration.html)** - Complete 10x VDJ workflow
 
 ## Notes

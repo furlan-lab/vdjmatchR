@@ -29,6 +29,7 @@ vdjmatchR provides a high-performance R interface to TCR sequence matching again
 🧬 **Seurat Integration** - Seamless integration with 10x Genomics VDJ data
 📈 **Progress Tracking** - Real-time progress bars for large datasets
 🎯 **VDJdb Compatible** - Works with both slim and full VDJdb formats
+🧮 **TCRdist** - Sequence-based distance calculation with BLOSUM62 scoring
 
 ## Installation
 
@@ -120,6 +121,18 @@ Examples:
 - `"2,1,2,3"` - Max 2 substitutions, 1 insertion, 2 deletions, 3 total edits
 - `"3,1,2,3"` - More permissive fuzzy matching
 
+### TCRdist Distance Calculation
+
+- **`calculate_tcrdist(cdr1_a, cdr2_a, cdr3_a, cdr1_b, cdr2_b, cdr3_b)`** - Calculate pairwise distances between TCRs
+- **`tcrdist_single(cdr1_a_1, cdr2_a_1, cdr3_a_1, cdr1_b_1, cdr2_b_1, cdr3_b_1, cdr1_a_2, cdr2_a_2, cdr3_a_2, cdr1_b_2, cdr2_b_2, cdr3_b_2)`** - Distance between two TCRs
+
+**Features:**
+- BLOSUM62 amino acid substitution scoring
+- Needleman-Wunsch alignment
+- CDR3 weighted 3x more than CDR1/2
+- Supports both alpha and beta chains
+- Fast Rust implementation
+
 ### Seurat Integration
 
 - **`vdj_attach_10x_vdj_v2(obj, vdj_dir, ...)`** - Attach 10x VDJ data to Seurat object
@@ -149,6 +162,10 @@ Loading, filtering, updating databases, and converting to data.table
 ### 📊 Analysis & Visualization
 [**TCR motif analysis**](articles/tcr-motif-analysis.html)
 Create sequence motif logos and visualize conserved patterns in epitope-specific TCRs
+
+### 🧮 TCRdist Distance Analysis
+[**TCRdist: Sequence-Based Distance Calculation**](articles/tcrdist-analysis.html)
+Calculate TCR distances using BLOSUM62 scoring with complete visualization examples including heatmaps, clustering, MDS plots, and network graphs
 
 ### 🧬 Seurat Integration
 [**Seurat v5 + 10x VDJ v2 Integration**](articles/seurat-vdj-integration.html)
@@ -236,6 +253,47 @@ hits <- match_tcr_many_df(
 # Add epitope annotations back to Seurat
 obj$epitope <- NA
 obj$epitope[match(hits$cell, rownames(obj@meta.data))] <- hits$epitope
+```
+
+### Calculate TCR Distances
+
+```r
+library(vdjmatchR)
+library(pheatmap)
+
+# Example TCR data
+tcr_data <- data.frame(
+  id = paste0("TCR_", 1:5),
+  cdr3_a = c("CAASNRGSTLGRLYF", "CAASIRSSYKLIF", "CAASNRGSTLGRLYF",
+             "CALSDPNQAGTALIF", "CAASKQGAQKLVF"),
+  cdr3_b = c("CASSLTGNTEAFF", "CASSLGQGAYEQYF", "CASSLTGNTEAFF",
+             "CASSLGQGAYEQYF", "CASSVGQGGELFF")
+)
+
+# Calculate pairwise distances (using CDR3 only, pass "" for CDR1/2)
+result <- calculate_tcrdist(
+  cdr1_a = rep("", 5),
+  cdr2_a = rep("", 5),
+  cdr3_a = tcr_data$cdr3_a,
+  cdr1_b = rep("", 5),
+  cdr2_b = rep("", 5),
+  cdr3_b = tcr_data$cdr3_b
+)
+
+# Convert to distance matrix
+n <- result$n
+dist_matrix <- matrix(result$distance, nrow = n, ncol = n)
+rownames(dist_matrix) <- tcr_data$id
+colnames(dist_matrix) <- tcr_data$id
+
+# Visualize with heatmap
+pheatmap(dist_matrix,
+         main = "TCR Distance Heatmap",
+         clustering_method = "ward.D2")
+
+# Hierarchical clustering
+hc <- hclust(as.dist(dist_matrix), method = "ward.D2")
+plot(hc, main = "TCR Dendrogram")
 ```
 
 ## Documentation

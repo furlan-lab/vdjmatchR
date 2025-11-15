@@ -12,7 +12,7 @@ Encoding: UTF-8
 LazyData: true
 SystemRequirements: Cargo (Rust's package manager), rustc (>= 1.70)
 Imports: methods
-Suggests: rextendr, knitr, rmarkdown, roxygen2, pkgdown, Seurat
+Suggests: rextendr, knitr, rmarkdown, roxygen2, pkgdown, Seurat, pheatmap, igraph
 Config/rextendr/version: 0.4.2
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE, load = "source")

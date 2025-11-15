@@ -39,6 +39,8 @@ navbar:
       - text: "Analysis & Visualization"
       - text: TCR Motif Analysis
         href: articles/tcr-motif-analysis.html
+      - text: TCRdist Distance Analysis
+        href: articles/tcrdist-analysis.html
       - text: -------
       - text: "Integration"
       - text: Seurat + 10x VDJ Integration
@@ -86,6 +88,12 @@ reference:
   - db_to_table
   - db_to_df
   - db_summary
+
+- title: "TCRdist Distance Calculation"
+  desc: "Calculate sequence-based distances between TCRs using BLOSUM62 and Needleman-Wunsch alignment"
+  contents:
+  - calculate_tcrdist
+  - tcrdist_single
 
 - title: "Seurat Integration"
   desc: "Functions for integrating 10x VDJ data with Seurat objects"

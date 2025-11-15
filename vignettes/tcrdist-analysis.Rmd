@@ -1,0 +1,376 @@
+---
+title: "TCRdist: Sequence-Based Distance Calculation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TCRdist: Sequence-Based Distance Calculation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 6,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+The **tcrdist** algorithm calculates sequence-based distances between T-cell receptors (TCRs)
+using a combination of BLOSUM62 substitution matrices and Needleman-Wunsch alignment. This
+approach is inspired by the original tcrdist paper and provides a biologically meaningful
+measure of TCR similarity.
+
+### Key Features
+
+- **BLOSUM62 scoring**: Amino acid substitution matrix for biological relevance
+- **CDR region weighting**: CDR3 weighted 3x more than CDR1/2
+- **Gap penalties**: 4 for CDR1/2, 8 for CDR3
+- **Alpha/beta chains**: Combines distances from both chains
+- **Rust implementation**: Fast, parallel computation
+
+## Quick Start
+
+Load the package and create example TCR data:
+
+```{r load}
+library(vdjmatchR)
+
+# Example TCR data with CDR3 sequences for alpha and beta chains
+tcr_data <- data.frame(
+  id = paste0("TCR_", 1:10),
+  # Alpha chain CDR3
+  cdr3_a = c(
+    "CAASNRGSTLGRLYF",
+    "CAASIRSSYKLIF",
+    "CAASNRGSTLGRLYF",  # duplicate
+    "CALSDPNQAGTALIF",
+    "CAASKQGAQKLVF",
+    "CAASNRDSSYKLIF",   # similar to #2
+    "CALSERPGQNFVF",
+    "CAVNDYKLSF",
+    "CALSDPNQAGTALIF",  # duplicate of #4
+    "CAVEDTGGFKTIF"
+  ),
+  # Beta chain CDR3
+  cdr3_b = c(
+    "CASSLTGNTEAFF",
+    "CASSLGQGAYEQYF",
+    "CASSLTGNTEAFF",     # duplicate
+    "CASSLGQGAYEQYF",    # same as #2
+    "CASSVGQGGELFF",
+    "CASSLGQGAYEQYF",    # same as #2
+    "CASSYRGQNTLYF",
+    "CASSLAGNQPQHF",
+    "CASSFPWDRVDTQYF",
+    "CASSQDRTGELF"
+  ),
+  stringsAsFactors = FALSE
+)
+
+# For this example, we'll use empty strings for CDR1/2 (not available in our data)
+# In practice, you would provide actual CDR1/2 sequences if available
+tcr_data$cdr1_a <- ""
+tcr_data$cdr2_a <- ""
+tcr_data$cdr1_b <- ""
+tcr_data$cdr2_b <- ""
+
+head(tcr_data)
+```
+
+## Calculating TCRdist
+
+Calculate pairwise distances between all TCRs:
+
+```{r calculate}
+# Calculate pairwise tcrdist
+result <- calculate_tcrdist(
+  cdr1_a = tcr_data$cdr1_a,
+  cdr2_a = tcr_data$cdr2_a,
+  cdr3_a = tcr_data$cdr3_a,
+  cdr1_b = tcr_data$cdr1_b,
+  cdr2_b = tcr_data$cdr2_b,
+  cdr3_b = tcr_data$cdr3_b
+)
+
+# Convert to distance matrix
+n <- result$n
+dist_matrix <- matrix(result$distance, nrow = n, ncol = n)
+rownames(dist_matrix) <- tcr_data$id
+colnames(dist_matrix) <- tcr_data$id
+
+# Show distance matrix
+print(round(dist_matrix, 1))
+```
+
+## Visualizations
+
+### 1. Distance Heatmap
+
+Visualize the pairwise distance matrix as a heatmap:
+
+```{r heatmap, fig.width=10, fig.height=8}
+library(pheatmap)
+
+# Create heatmap with hierarchical clustering
+pheatmap(
+  dist_matrix,
+  main = "TCRdist Pairwise Distance Matrix",
+  color = colorRampPalette(c("blue", "white", "red"))(100),
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  clustering_method = "ward.D2",
+  fontsize = 10,
+  cellwidth = 30,
+  cellheight = 30,
+  display_numbers = round(dist_matrix, 0),
+  number_color = "black",
+  fontsize_number = 8
+)
+```
+
+### 2. Hierarchical Clustering Dendrogram
+
+Use tcrdist as a distance metric for clustering:
+
+```{r dendrogram, fig.width=10, fig.height=6}
+# Convert to dist object
+dist_obj <- as.dist(dist_matrix)
+
+# Perform hierarchical clustering
+hc <- hclust(dist_obj, method = "ward.D2")
+
+# Plot dendrogram
+plot(hc,
+     main = "Hierarchical Clustering of TCRs (tcrdist)",
+     xlab = "TCR ID",
+     ylab = "tcrdist Distance",
+     cex = 0.8)
+
+# Add rectangles around clusters
+rect.hclust(hc, k = 3, border = 2:4)
+```
+
+### 3. Multidimensional Scaling (MDS)
+
+Project high-dimensional TCR distances into 2D space:
+
+```{r mds, fig.width=10, fig.height=8}
+# Perform classical MDS
+mds <- cmdscale(dist_obj, k = 2)
+colnames(mds) <- c("MDS1", "MDS2")
+
+# Plot
+plot(mds,
+     type = "n",
+     main = "MDS Plot of TCR Distances",
+     xlab = "MDS Dimension 1",
+     ylab = "MDS Dimension 2")
+text(mds[,1], mds[,2],
+     labels = tcr_data$id,
+     cex = 0.8)
+
+# Add points
+points(mds, pch = 19, col = "steelblue", cex = 2)
+
+# Connect duplicates/similar sequences
+# TCR_1 and TCR_3 are identical
+segments(mds[1,1], mds[1,2], mds[3,1], mds[3,2], col = "red", lwd = 2)
+```
+
+### 4. Network Graph
+
+Visualize TCR similarity as a network (edges = distance < threshold):
+
+```{r network, fig.width=10, fig.height=10}
+library(igraph)
+
+# Create similarity network (connect if distance < threshold)
+threshold <- 50
+adj_matrix <- dist_matrix < threshold
+diag(adj_matrix) <- FALSE  # Remove self-loops
+
+# Create graph
+g <- graph_from_adjacency_matrix(adj_matrix, mode = "undirected")
+
+# Set vertex attributes
+V(g)$label <- tcr_data$id
+V(g)$size <- 15
+
+# Set edge weights based on distances
+# Get edge list to properly assign weights
+edges <- as_edgelist(g, names = FALSE)
+edge_weights <- sapply(1:nrow(edges), function(i) {
+  1 / (dist_matrix[edges[i,1], edges[i,2]] + 1)
+})
+E(g)$weight <- edge_weights
+E(g)$width <- E(g)$weight * 3
+
+# Layout
+layout <- layout_with_fr(g)
+
+# Plot
+plot(g,
+     layout = layout,
+     vertex.color = "lightblue",
+     vertex.label.cex = 0.8,
+     vertex.label.color = "black",
+     edge.color = "gray70",
+     main = "TCR Similarity Network (distance < 50)")
+```
+
+### 5. Distance Distribution
+
+Examine the distribution of pairwise distances:
+
+```{r distribution, fig.width=10, fig.height=6}
+# Extract upper triangle (avoid duplicates and diagonal)
+distances <- dist_matrix[upper.tri(dist_matrix)]
+
+# Create histogram
+hist(distances,
+     breaks = 30,
+     col = "steelblue",
+     border = "white",
+     main = "Distribution of Pairwise TCRdist Distances",
+     xlab = "tcrdist Distance",
+     ylab = "Frequency")
+
+# Add density curve
+lines(density(distances), col = "red", lwd = 2)
+
+# Add summary statistics
+abline(v = median(distances), col = "darkgreen", lwd = 2, lty = 2)
+abline(v = mean(distances), col = "orange", lwd = 2, lty = 2)
+legend("topright",
+       legend = c("Density", "Median", "Mean"),
+       col = c("red", "darkgreen", "orange"),
+       lty = c(1, 2, 2),
+       lwd = 2)
+```
+
+## Advanced Example: Identifying TCR Clusters
+
+Use tcrdist to identify groups of similar TCRs:
+
+```{r clusters}
+# Cut dendrogram to get clusters
+clusters <- cutree(hc, k = 3)
+
+# Add cluster assignments to data
+tcr_data$cluster <- clusters
+
+# Show cluster membership
+print(tcr_data[, c("id", "cdr3_a", "cdr3_b", "cluster")])
+
+# Calculate within-cluster vs between-cluster distances
+within_cluster <- sapply(unique(clusters), function(k) {
+  idx <- which(clusters == k)
+  if (length(idx) > 1) {
+    mean(dist_matrix[idx, idx][upper.tri(dist_matrix[idx, idx])])
+  } else {
+    NA
+  }
+})
+
+between_cluster <- mean(dist_matrix[outer(clusters, clusters, "!=")])
+
+cat("\nAverage within-cluster distance:", mean(within_cluster, na.rm = TRUE), "\n")
+cat("Average between-cluster distance:", between_cluster, "\n")
+```
+
+### Colored Cluster Visualization
+
+```{r cluster_viz, fig.width=10, fig.height=8}
+# Color by cluster
+cluster_colors <- c("red", "blue", "green")[clusters]
+
+# MDS with cluster colors
+plot(mds,
+     type = "n",
+     main = "TCR Clusters (tcrdist + hierarchical clustering)",
+     xlab = "MDS Dimension 1",
+     ylab = "MDS Dimension 2")
+points(mds, pch = 19, col = cluster_colors, cex = 3)
+text(mds[,1], mds[,2],
+     labels = tcr_data$id,
+     cex = 0.7,
+     pos = 3)
+legend("topright",
+       legend = paste("Cluster", 1:3),
+       col = c("red", "blue", "green"),
+       pch = 19,
+       cex = 1.2)
+```
+
+## Single Pair Distance Calculation
+
+For comparing just two TCRs:
+
+```{r single}
+# Compare two specific TCRs
+dist_single <- tcrdist_single(
+  cdr1_a_1 = "", cdr2_a_1 = "", cdr3_a_1 = "CAASNRGSTLGRLYF",
+  cdr1_b_1 = "", cdr2_b_1 = "", cdr3_b_1 = "CASSLTGNTEAFF",
+  cdr1_a_2 = "", cdr2_a_2 = "", cdr3_a_2 = "CAASIRSSYKLIF",
+  cdr1_b_2 = "", cdr2_b_2 = "", cdr3_b_2 = "CASSLGQGAYEQYF"
+)
+
+cat("Distance between TCR_1 and TCR_2:", dist_single, "\n")
+```
+
+## Interpretation Guide
+
+### Distance Values
+
+- **0**: Identical TCRs
+- **< 50**: Very similar TCRs (likely recognize same epitope)
+- **50-100**: Moderate similarity
+- **> 100**: Dissimilar TCRs
+
+### CDR Weighting
+
+The algorithm weights CDR regions differently:
+
+- **CDR1**: weight = 1, gap penalty = 4
+- **CDR2**: weight = 1, gap penalty = 4
+- **CDR3**: weight = 3, gap penalty = 8
+
+This reflects the biological importance of CDR3 in antigen recognition.
+
+### Position Scoring
+
+For each aligned position: `distance = max(0, 4 - BLOSUM62[aa1, aa2])`
+
+- Identical amino acids (high BLOSUM62 score) → distance ≈ 0
+- Dissimilar amino acids (low/negative BLOSUM62) → higher distance
+
+## Use Cases
+
+1. **TCR clustering**: Group similar TCRs that may recognize the same antigen
+2. **Repertoire comparison**: Compare TCR repertoires between samples
+3. **Clonotype matching**: Find similar clonotypes across datasets
+4. **Epitope specificity**: Identify TCRs with shared specificity patterns
+5. **Quality control**: Detect duplicate or highly similar sequences
+
+## Performance Notes
+
+- Written in Rust for high performance
+- Handles large datasets efficiently
+- Pairwise distance calculation is O(n²)
+- For n=1000 TCRs: ~500,000 pairwise comparisons
+
+## References
+
+- Dash et al. (2017) "Quantifiable predictive features define epitope-specific T cell receptor repertoires" *Nature*
+- Original tcrdist implementation: https://github.com/phbradley/tcr-dist
+
+## Session Info
+
+```{r sessioninfo}
+sessionInfo()
+```

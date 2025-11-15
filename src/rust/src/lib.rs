@@ -8,6 +8,7 @@ pub mod filtering;
 pub mod matching;
 pub mod scoring;
 pub mod sequence;
+pub mod tcrdist;
 pub mod utils;
 
 use extendr_api::prelude::*;
@@ -373,6 +374,106 @@ pub fn vdjdb_update_into(dir: &str) -> Result<()> {
     }
 }
 
+/// Calculate pairwise tcrdist distances between TCRs
+/// Returns a distance matrix (as a vector in column-major order for R)
+/// Pass empty strings for missing CDR sequences
+/// @export
+#[extendr]
+pub fn calculate_tcrdist(
+    cdr1_a: Vec<String>,
+    cdr2_a: Vec<String>,
+    cdr3_a: Vec<String>,
+    cdr1_b: Vec<String>,
+    cdr2_b: Vec<String>,
+    cdr3_b: Vec<String>,
+) -> Result<List> {
+    let n = cdr3_a.len();
+
+    // Validate input lengths
+    if !(cdr1_a.len() == n && cdr2_a.len() == n &&
+         cdr1_b.len() == n && cdr2_b.len() == n && cdr3_b.len() == n) {
+        return Err(extendr_api::error::Error::Other(
+            "All CDR vectors must have equal length".into()
+        ));
+    }
+
+    // Helper to convert empty string to None
+    let to_opt = |s: &str| if s.is_empty() { None } else { Some(s.to_string()) };
+
+    // Build TCR objects
+    let tcrs: Vec<tcrdist::TCR> = (0..n).map(|i| {
+        tcrdist::TCR::new(
+            to_opt(&cdr1_a[i]),
+            to_opt(&cdr2_a[i]),
+            to_opt(&cdr3_a[i]),
+            to_opt(&cdr1_b[i]),
+            to_opt(&cdr2_b[i]),
+            to_opt(&cdr3_b[i]),
+        )
+    }).collect();
+
+    // Calculate pairwise distances
+    let mut distances = Vec::with_capacity(n * n);
+    let mut i_indices = Vec::with_capacity(n * n);
+    let mut j_indices = Vec::with_capacity(n * n);
+
+    for i in 0..n {
+        for j in 0..n {
+            let dist = tcrdist::tcrdist(&tcrs[i], &tcrs[j]);
+            i_indices.push((i + 1) as i32); // 1-based for R
+            j_indices.push((j + 1) as i32);
+            distances.push(dist);
+        }
+    }
+
+    Ok(list!(
+        i = i_indices,
+        j = j_indices,
+        distance = distances,
+        n = n as i32
+    ))
+}
+
+/// Calculate tcrdist between two single TCRs
+/// Pass empty strings for missing CDR sequences
+#[extendr]
+pub fn tcrdist_single(
+    cdr1_a_1: &str,
+    cdr2_a_1: &str,
+    cdr3_a_1: &str,
+    cdr1_b_1: &str,
+    cdr2_b_1: &str,
+    cdr3_b_1: &str,
+    cdr1_a_2: &str,
+    cdr2_a_2: &str,
+    cdr3_a_2: &str,
+    cdr1_b_2: &str,
+    cdr2_b_2: &str,
+    cdr3_b_2: &str,
+) -> f64 {
+    let to_opt = |s: &str| if s.is_empty() { None } else { Some(s.to_string()) };
+
+    let tcr1 = tcrdist::TCR::new(
+        to_opt(cdr1_a_1),
+        to_opt(cdr2_a_1),
+        to_opt(cdr3_a_1),
+        to_opt(cdr1_b_1),
+        to_opt(cdr2_b_1),
+        to_opt(cdr3_b_1),
+    );
+
+    let tcr2 = tcrdist::TCR::new(
+        to_opt(cdr1_a_2),
+        to_opt(cdr2_a_2),
+        to_opt(cdr3_a_2),
+        to_opt(cdr1_b_2),
+        to_opt(cdr2_b_2),
+        to_opt(cdr3_b_2),
+    );
+
+    tcrdist::tcrdist(&tcr1, &tcr2)
+}
+
 // Register exported functions/types with R.
 extendr_module! {
     mod vdjmatchR;
@@ -387,4 +488,6 @@ extendr_module! {
     fn vdjdb_update;
     fn vdjdb_ensure_into;
     fn vdjdb_update_into;
+    fn calculate_tcrdist;
+    fn tcrdist_single;
 }

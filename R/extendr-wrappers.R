@@ -47,6 +47,17 @@ vdjdb_ensure_into <- function(dir, use_fat_db) .Call(wrap__vdjdb_ensure_into, di
 #' Download/update the VDJdb files (slim and fat) into the specified directory.
 vdjdb_update_into <- function(dir) .Call(wrap__vdjdb_update_into, dir)
 
+#' Calculate pairwise tcrdist distances between TCRs
+#' Returns a distance matrix (as a vector in column-major order for R)
+#' Pass empty strings for missing CDR sequences
+#' @export
+calculate_tcrdist <- function(cdr1_a, cdr2_a, cdr3_a, cdr1_b, cdr2_b, cdr3_b) .Call(wrap__calculate_tcrdist, cdr1_a, cdr2_a, cdr3_a, cdr1_b, cdr2_b, cdr3_b)
+
+#' Calculate tcrdist between two single TCRs
+#' Pass empty strings for missing CDR sequences
+#' @export
+tcrdist_single <- function(cdr1_a_1, cdr2_a_1, cdr3_a_1, cdr1_b_1, cdr2_b_1, cdr3_b_1, cdr1_a_2, cdr2_a_2, cdr3_a_2, cdr1_b_2, cdr2_b_2, cdr3_b_2) .Call(wrap__tcrdist_single, cdr1_a_1, cdr2_a_1, cdr3_a_1, cdr1_b_1, cdr2_b_1, cdr3_b_1, cdr1_a_2, cdr2_a_2, cdr3_a_2, cdr1_b_2, cdr2_b_2, cdr3_b_2)
+
 RDatabase <- new.env(parent = emptyenv())
 
 RDatabase$new_from_file <- function(path) .Call(wrap__RDatabase__new_from_file, path)

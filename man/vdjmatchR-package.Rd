@@ -5,6 +5,8 @@
 \alias{vdjmatchR-package}
 \title{vdjmatchR: R Interface to VDJmatch (Rust)}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 R bindings to query TCR sequences using a Rust implementation derived from vdjmatch-rs, via extendr.
 
 Provides fast TCR matching against VDJdb-formatted databases using a Rust
