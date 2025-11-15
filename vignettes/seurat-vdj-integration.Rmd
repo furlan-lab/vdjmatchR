@@ -15,8 +15,10 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  message = TRUE,
-  warning = TRUE
+  message = FALSE,
+  fig.height = 7,
+  fig.width = 7,
+  warning = FALSE
 )
 ```
 
@@ -65,7 +67,7 @@ library(magrittr)
 
 Set the path to a Seurat v5 object (RDS) and to the 10x VDJ directory (`vdj_t`).
 
-```{r params, eval=FALSE}
+```{r params}
 # Edit these to your environment
 seurat_rds <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/cds/mmcart_seu_viewmastR_CARpositive_251023.RDS"
 vdj_dir <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data/FOLDERNAME2/outs/per_sample_outs/FOLDERNAME2/vdj_t"
@@ -74,7 +76,7 @@ vdj_dir <- "/Volumes/furlan_s/user/jperalta/MMCarT_240212_reseq/FOLDERNAME1/data
 
 ## Load Seurat object
 
-```{r load-seurat, eval=FALSE}
+```{r load-seurat}
 if (nzchar(seurat_rds) && file.exists(seurat_rds)) {
   orig <- readRDS(seurat_rds)
 } else {
@@ -94,27 +96,32 @@ The function `vdj_attach_10x_vdj_v2()` reads `filtered_contig_annotations.csv` a
 maps 10x barcodes to Seurat cell names (with flexible strategies), and stores heavy tables in
 `obj@tools$vdj`. Minimal metadata (10x clonotype id/size) can be written per cell.
 
-```{r attach, eval=FALSE}
+Set `include_cdr12 = TRUE` to optionally pull in CDR1 and CDR2 amino-acid sequences when available
+in the 10x VDJ output files.
+
+```{r attach}
 
 obj <- vdj_attach_10x_vdj_v2_batch(
   orig,
   matchdf,
-  vdj_dir_template = vdj_dir)
+  vdj_dir_template = vdj_dir,
+  include_cdr12 = TRUE)  # Optional: include CDR1 and CDR2 sequences
 
-obj$vdj.cdr3_aa_both <- paste0(obj$vdj.tra.cdr3_aa, "_", obj$vdj.trb.cdr3_aa)
-obj$nomatchprior <- obj$vdj.cdr3_aa_both != obj$cdr3
+# obj$vdj.cdr3_aa_both <- paste0(obj$vdj.tra.cdr3_aa, "_", obj$vdj.trb.cdr3_aa)
+# obj$nomatchprior <- obj$vdj.cdr3_aa_both != obj$cdr3
 
 
-table(obj$nomatchprior)[2]/(table(obj$nomatchprior)[1]+table(obj$nomatchprior)[2])
-DimPlot(obj, group.by = "nomatchprior")
+# table(obj$nomatchprior)[2]/(table(obj$nomatchprior)[1]+table(obj$nomatchprior)[2])
+# DimPlot(obj, group.by = "nomatchprior")
 ```
 
 
 ### Collapse to TRA1/TRB (dominant) and optional TRA2/TRB (secondary)
 
-```{r collapse-pairs, eval=FALSE}
+```{r collapse-pairs}
 
 # Select 1 TRB and up to 2 TRA per cell; write metadata and a pairs table
+# Set include_cdr12 = TRUE to also include CDR1 and CDR2 in metadata
 obj <- vdj_collapse_pairs_seurat(
   obj,
   drop_multi_trb = TRUE,
@@ -122,8 +129,15 @@ obj <- vdj_collapse_pairs_seurat(
   alpha_support = "umis",
   require_productive = TRUE,
   write_meta = TRUE,
-  update_primary_meta = TRUE
+  update_primary_meta = TRUE,
+  include_cdr12 = TRUE  # Optional: include CDR1 and CDR2 in collapsed pairs
 )
+
+# When include_cdr12 = TRUE, the following additional metadata columns are created:
+# - vdj.tra1.cdr1_aa, vdj.tra1.cdr2_aa (primary alpha)
+# - vdj.tra2.cdr1_aa, vdj.tra2.cdr2_aa (secondary alpha, if present)
+# - vdj.trb.cdr1_aa, vdj.trb.cdr2_aa (beta chain)
+# - vdj.tra.cdr1_aa, vdj.tra.cdr2_aa (legacy fields matching TRA1)
 
 # Overall dual-TRA fraction
 if ("vdj.has_tra2" %in% colnames(obj@meta.data)) {
@@ -150,7 +164,7 @@ if (!is.null(obj@tools$vdj$pairs)) {
 
 ### Inspect attached tables and metadata
 
-```{r inspect, eval=FALSE}
+```{r inspect}
 
 cat("Contigs rows:", nrow(obj@tools$vdj$contigs), "\n")
 print(utils::head(obj@tools$vdj$contigs[ , c("barcode","chain","v_gene","j_gene","cdr3","umis","cell","sample_id")], 5))
@@ -171,7 +185,7 @@ and match them against VDJdb, producing a compact table of each cell's top hit p
 - Progress bar for large datasets (>5000 queries)
 - Configurable fuzzy matching with edit distance tolerance
 
-```{r vdjdb-match, eval=FALSE}
+```{r vdjdb-match}
 
 
 
@@ -181,7 +195,8 @@ db <- vdjdb_open_file(db_path)
 
 # Helper to build queries from metadata and get top-1 hit per query
 # For TRA: emits one query per alpha (TRA1 and TRA2 when present)
-get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
+# Optionally includes CDR1 and CDR2 if available in metadata
+get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0", include_cdr1 = TRUE, include_cdr2 = TRUE) {
   chain <- match.arg(chain)
   ch <- tolower(chain)
   md <- obj@meta.data
@@ -191,6 +206,13 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
     cols <- c(paste0("vdj.", ch, ".cdr3_aa"), paste0("vdj.", ch, ".v_gene"), paste0("vdj.", ch, ".j_gene"))
     if (!all(cols %in% colnames(md))) return(NULL)
     cdr3_col <- cols[1]; v_col <- cols[2]; j_col <- cols[3]
+
+    # Optional CDR1 and CDR2 columns
+    cdr1_col <- paste0("vdj.", ch, ".cdr1_aa")
+    cdr2_col <- paste0("vdj.", ch, ".cdr2_aa")
+    has_cdr1 <- include_cdr1 && cdr1_col %in% colnames(md)
+    has_cdr2 <- include_cdr2 && cdr2_col %in% colnames(md)
+
     keep <- which(!is.na(md[[cdr3_col]]) & nzchar(md[[cdr3_col]]))
     if (!length(keep)) return(NULL)
     queries <- data.frame(
@@ -201,34 +223,63 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
       alpha_rank = NA_integer_,
       stringsAsFactors = FALSE
     )
+
+    # Add CDR1 and CDR2 if available
+    if (has_cdr1) {
+      queries$cdr1 <- as.character(md[[cdr1_col]][keep])
+    }
+    if (has_cdr2) {
+      queries$cdr2 <- as.character(md[[cdr2_col]][keep])
+    }
   } else {
     # TRA: build from tra1 and tra2 if present
     cols1 <- c("vdj.tra1.cdr3_aa", "vdj.tra1.v_gene", "vdj.tra1.j_gene")
     cols2 <- c("vdj.tra2.cdr3_aa", "vdj.tra2.v_gene", "vdj.tra2.j_gene")
+
+    # Optional CDR1 and CDR2 columns for TRA1 and TRA2
+    cdr1_col1 <- "vdj.tra1.cdr1_aa"
+    cdr2_col1 <- "vdj.tra1.cdr2_aa"
+    cdr1_col2 <- "vdj.tra2.cdr1_aa"
+    cdr2_col2 <- "vdj.tra2.cdr2_aa"
+    has_cdr1_1 <- include_cdr1 && cdr1_col1 %in% colnames(md)
+    has_cdr2_1 <- include_cdr2 && cdr2_col1 %in% colnames(md)
+    has_cdr1_2 <- include_cdr1 && cdr1_col2 %in% colnames(md)
+    has_cdr2_2 <- include_cdr2 && cdr2_col2 %in% colnames(md)
+
     have1 <- all(cols1 %in% colnames(md))
     have2 <- all(cols2 %in% colnames(md))
     qlist <- list()
     if (have1) {
       keep1 <- which(!is.na(md[[cols1[1]]]) & nzchar(md[[cols1[1]]]))
-      if (length(keep1)) qlist[[length(qlist)+1L]] <- data.frame(
-        cell = rownames(md)[keep1],
-        cdr3 = as.character(md[[cols1[1]]][keep1]),
-        v    = as.character(md[[cols1[2]]][keep1]),
-        j    = as.character(md[[cols1[3]]][keep1]),
-        alpha_rank = 1L,
-        stringsAsFactors = FALSE
-      )
+      if (length(keep1)) {
+        q1 <- data.frame(
+          cell = rownames(md)[keep1],
+          cdr3 = as.character(md[[cols1[1]]][keep1]),
+          v    = as.character(md[[cols1[2]]][keep1]),
+          j    = as.character(md[[cols1[3]]][keep1]),
+          alpha_rank = 1L,
+          stringsAsFactors = FALSE
+        )
+        if (has_cdr1_1) q1$cdr1 <- as.character(md[[cdr1_col1]][keep1])
+        if (has_cdr2_1) q1$cdr2 <- as.character(md[[cdr2_col1]][keep1])
+        qlist[[length(qlist)+1L]] <- q1
+      }
     }
     if (have2) {
       keep2 <- which(!is.na(md[[cols2[1]]]) & nzchar(md[[cols2[1]]]))
-      if (length(keep2)) qlist[[length(qlist)+1L]] <- data.frame(
-        cell = rownames(md)[keep2],
-        cdr3 = as.character(md[[cols2[1]]][keep2]),
-        v    = as.character(md[[cols2[2]]][keep2]),
-        j    = as.character(md[[cols2[3]]][keep2]),
-        alpha_rank = 2L,
-        stringsAsFactors = FALSE
-      )
+      if (length(keep2)) {
+        q2 <- data.frame(
+          cell = rownames(md)[keep2],
+          cdr3 = as.character(md[[cols2[1]]][keep2]),
+          v    = as.character(md[[cols2[2]]][keep2]),
+          j    = as.character(md[[cols2[3]]][keep2]),
+          alpha_rank = 2L,
+          stringsAsFactors = FALSE
+        )
+        if (has_cdr1_2) q2$cdr1 <- as.character(md[[cdr1_col2]][keep2])
+        if (has_cdr2_2) q2$cdr2 <- as.character(md[[cdr2_col2]][keep2])
+        qlist[[length(qlist)+1L]] <- q2
+      }
     }
     if (!length(qlist)) return(NULL)
     queries <- do.call(rbind, qlist)
@@ -273,8 +324,210 @@ get_top_hits <- function(obj, db, chain = c("TRB", "TRA"), scope = "0,0,0,0") {
 
 
 # Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)
-top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0")
-top_tra <- get_top_hits(obj, db, chain = "TRA", scope = "0,0,0,0")
+# By default, includes CDR1 and CDR2 if available in the metadata
+top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "1,1,1,1", include_cdr1 = TRUE, include_cdr2 = TRUE)
+top_tra <- get_top_hits(obj, db, chain = "TRA", scope = "1,1,1,1", include_cdr1 = TRUE, include_cdr2 = TRUE)
+
+# To exclude CDR1/CDR2, set the parameters to FALSE:
+# top_trb <- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0", include_cdr1 = FALSE, include_cdr2 = FALSE)
+# top_tra <- get_top_hits(obj, db, chain = "TRA", scope = "0,0,0,0", include_cdr1 = FALSE, include_cdr2 = FALSE)
+
+```
+
+```{r}
+
+# Function to calculate TCRdist from Seurat object
+calculate_tcrdist_from_seurat <- function(
+  seurat,
+  use_cdr12 = TRUE,
+  subset_cells = NULL,
+  alpha_chain = "vdj.tra1",  # Can also use "vdj.tra" for legacy
+  require_complete = TRUE
+) {
+
+  # Get metadata
+  md <- seurat@meta.data
+
+  # Subset to specific cells if requested
+  if (!is.null(subset_cells)) {
+    md <- md[subset_cells, , drop = FALSE]
+  }
+
+  # Build column names based on which alpha chain to use
+  cdr3_a_col <- paste0(alpha_chain, ".cdr3_aa")
+  cdr3_b_col <- "vdj.trb.cdr3_aa"
+
+  # Check if CDR3 columns exist
+  if (!all(c(cdr3_a_col, cdr3_b_col) %in% colnames(md))) {
+    stop(sprintf("Required columns not found: %s, %s", cdr3_a_col,
+cdr3_b_col))
+  }
+
+  # CDR1/CDR2 columns (may not exist if include_cdr12 was FALSE)
+  cdr1_a_col <- paste0(alpha_chain, ".cdr1_aa")
+  cdr2_a_col <- paste0(alpha_chain, ".cdr2_aa")
+  cdr1_b_col <- "vdj.trb.cdr1_aa"
+  cdr2_b_col <- "vdj.trb.cdr2_aa"
+
+  has_cdr12 <- all(c(cdr1_a_col, cdr2_a_col, cdr1_b_col, cdr2_b_col) %in%
+colnames(md))
+
+  if (use_cdr12 && !has_cdr12) {
+    warning("CDR1/CDR2 columns not found. Set use_cdr12 = FALSE or rerun
+vdj_attach with include_cdr12 = TRUE")
+    use_cdr12 <- FALSE
+  }
+
+  # Filter to cells with complete TCR data
+  if (require_complete) {
+    keep <- !is.na(md[[cdr3_a_col]]) & !is.na(md[[cdr3_b_col]]) &
+            nzchar(md[[cdr3_a_col]]) & nzchar(md[[cdr3_b_col]])
+
+    if (use_cdr12) {
+      keep <- keep &
+              !is.na(md[[cdr1_a_col]]) & !is.na(md[[cdr2_a_col]]) &
+              !is.na(md[[cdr1_b_col]]) & !is.na(md[[cdr2_b_col]]) &
+              nzchar(md[[cdr1_a_col]]) & nzchar(md[[cdr2_a_col]]) &
+              nzchar(md[[cdr1_b_col]]) & nzchar(md[[cdr2_b_col]])
+    }
+
+    md <- md[keep, , drop = FALSE]
+
+    if (nrow(md) == 0) {
+      stop("No cells with complete TCR data found")
+    }
+
+    cat(sprintf("Calculating TCRdist for %d cells with complete TCR
+data\n", nrow(md)))
+  }
+
+  # Extract sequences
+  cdr3_a <- md[[cdr3_a_col]]
+  cdr3_b <- md[[cdr3_b_col]]
+
+  if (use_cdr12) {
+    cdr1_a <- md[[cdr1_a_col]]
+    cdr2_a <- md[[cdr2_a_col]]
+    cdr1_b <- md[[cdr1_b_col]]
+    cdr2_b <- md[[cdr2_b_col]]
+  } else {
+    # Use empty strings if CDR1/2 not available
+    cdr1_a <- rep("", nrow(md))
+    cdr2_a <- rep("", nrow(md))
+    cdr1_b <- rep("", nrow(md))
+    cdr2_b <- rep("", nrow(md))
+  }
+
+  # Calculate TCRdist
+  result <- calculate_tcrdist(
+    cdr1_a = cdr1_a,
+    cdr2_a = cdr2_a,
+    cdr3_a = cdr3_a,
+    cdr1_b = cdr1_b,
+    cdr2_b = cdr2_b,
+    cdr3_b = cdr3_b
+  )
+
+  # Convert to distance matrix
+  n <- result$n
+  dist_matrix <- matrix(result$distance, nrow = n, ncol = n)
+  rownames(dist_matrix) <- rownames(md)
+  colnames(dist_matrix) <- rownames(md)
+
+  # Return list with matrix and cell info
+  list(
+    distance_matrix = dist_matrix,
+    cells = rownames(md),
+    n_cells = n,
+    used_cdr12 = use_cdr12
+  )
+}
+
+# Example usage with the Seurat object from the vignette:
+
+# 1. Calculate TCRdist for all cells with complete TCR data (including CDR1/2)
+tcrdist_result <- calculate_tcrdist_from_seurat(
+  obj,
+  use_cdr12 = TRUE,
+  require_complete = TRUE
+)
+
+# View the distance matrix
+print(tcrdist_result$distance_matrix[1:5, 1:5])
+
+# 2. Calculate TCRdist using only CDR3 sequences
+tcrdist_cdr3only <- calculate_tcrdist_from_seurat(
+  obj,
+  use_cdr12 = FALSE,
+  require_complete = TRUE
+)
+
+# 3. Calculate for a specific subset of cells (e.g., a cluster)
+cluster_cells <- rownames(obj@meta.data)[obj@meta.data$seurat_clusters ==
+1]
+tcrdist_cluster1 <- calculate_tcrdist_from_seurat(
+  obj,
+  use_cdr12 = TRUE,
+  subset_cells = cluster_cells
+)
+
+# 4. Use the distance matrix for clustering or visualization
+library(pheatmap)
+pheatmap(
+  tcrdist_cluster1$distance_matrix,
+  clustering_distance_rows = as.dist(tcrdist_cluster1$distance_matrix),
+  clustering_distance_cols = as.dist(tcrdist_cluster1$distance_matrix),
+  main = "TCRdist Distance Matrix",
+  show_rownames = FALSE,
+  show_colnames = FALSE
+)
+
+# 5. Find nearest neighbors for each TCR
+find_tcr_neighbors <- function(dist_matrix, k = 5) {
+  neighbors <- lapply(1:nrow(dist_matrix), function(i) {
+    distances <- dist_matrix[i, ]
+    distances[i] <- Inf  # Exclude self
+    nearest_idx <- order(distances)[1:k]
+    data.frame(
+      cell = rownames(dist_matrix)[i],
+      neighbor = colnames(dist_matrix)[nearest_idx],
+      distance = distances[nearest_idx],
+      rank = 1:k,
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, neighbors)
+}
+
+neighbors <- find_tcr_neighbors(tcrdist_result$distance_matrix, k = 5)
+print(head(neighbors, 10))
+
+# 6. Identify TCR clusters based on distance threshold
+identify_tcr_clusters <- function(dist_matrix, threshold = 50) {
+  # Convert to binary adjacency (1 if distance <= threshold)
+  adj <- dist_matrix <= threshold
+  diag(adj) <- TRUE  # Each cell is in its own cluster
+
+  # Use hierarchical clustering with complete linkage
+  hc <- hclust(as.dist(dist_matrix), method = "complete")
+  clusters <- cutree(hc, h = threshold)
+
+  data.frame(
+    cell = names(clusters),
+    tcr_cluster = clusters,
+    stringsAsFactors = FALSE
+  )
+}
+
+tcr_clusters <- identify_tcr_clusters(tcrdist_result$distance_matrix,
+threshold = 50)
+
+# Add TCR clusters back to Seurat object
+obj$tcr_cluster <- NA
+obj$tcr_cluster[tcr_clusters$cell] <- tcr_clusters$tcr_cluster
+
+# Visualize TCR clusters on UMAP
+DimPlot(obj, group.by = "tcr_cluster")+NoLegend()
 
 ```
 

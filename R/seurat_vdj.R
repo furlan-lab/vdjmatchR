@@ -421,6 +421,7 @@ vdj_attach_10x_vdj_v2 <- function(
 #' @param require_high_confidence Logical; require high_confidence when column exists (default FALSE).
 #' @param write_meta Logical; write metadata columns described above (default TRUE).
 #' @param update_primary_meta Logical; if TRUE, also set `vdj.tra.*` and `vdj.trb.*` to the primary pair (default TRUE).
+#' @param include_cdr12 Logical; if TRUE, also write CDR1 and CDR2 amino-acid sequences when available in contigs (default FALSE).
 #' @return Updated Seurat object (invisible).
 #' @export
 vdj_collapse_pairs_seurat <- function(
@@ -435,7 +436,8 @@ vdj_collapse_pairs_seurat <- function(
   require_full_length = FALSE,
   require_high_confidence = FALSE,
   write_meta = TRUE,
-  update_primary_meta = TRUE
+  update_primary_meta = TRUE,
+  include_cdr12 = FALSE
 ) {
   stopifnot(!is.null(seurat))
   if (!isS4(seurat) || !all(c("meta.data", "tools") %in% slotNames(seurat))) {
@@ -570,6 +572,29 @@ vdj_collapse_pairs_seurat <- function(
       md[cell, "vdj.trb.cdr3_aa"] <- as.character(trb_best$cdr3)
       md[cell, "vdj.trb.v_gene"] <- as.character(trb_best$v_gene)
       md[cell, "vdj.trb.j_gene"] <- as.character(trb_best$j_gene)
+
+      # Optional CDR1/CDR2 for primary chains
+      if (isTRUE(include_cdr12)) {
+        # TRA1 CDR1/CDR2
+        if ("cdr1" %in% names(tra_best)) {
+          ensure_md("vdj.tra1.cdr1_aa", NA_character_)
+          md[cell, "vdj.tra1.cdr1_aa"] <- as.character(tra_best$cdr1)
+        }
+        if ("cdr2" %in% names(tra_best)) {
+          ensure_md("vdj.tra1.cdr2_aa", NA_character_)
+          md[cell, "vdj.tra1.cdr2_aa"] <- as.character(tra_best$cdr2)
+        }
+        # TRB CDR1/CDR2
+        if ("cdr1" %in% names(trb_best)) {
+          ensure_md("vdj.trb.cdr1_aa", NA_character_)
+          md[cell, "vdj.trb.cdr1_aa"] <- as.character(trb_best$cdr1)
+        }
+        if ("cdr2" %in% names(trb_best)) {
+          ensure_md("vdj.trb.cdr2_aa", NA_character_)
+          md[cell, "vdj.trb.cdr2_aa"] <- as.character(trb_best$cdr2)
+        }
+      }
+
       # Secondary
       ensure_md("vdj.tra2.cdr3_aa", NA_character_)
       ensure_md("vdj.tra2.v_gene", NA_character_)
@@ -579,8 +604,23 @@ vdj_collapse_pairs_seurat <- function(
         md[cell, "vdj.tra2.cdr3_aa"] <- as.character(tra_second$cdr3)
         md[cell, "vdj.tra2.v_gene"] <- as.character(tra_second$v_gene)
         md[cell, "vdj.tra2.j_gene"] <- as.character(tra_second$j_gene)
+        # Optional CDR1/CDR2 for TRA2
+        if (isTRUE(include_cdr12)) {
+          if ("cdr1" %in% names(tra_second)) {
+            ensure_md("vdj.tra2.cdr1_aa", NA_character_)
+            md[cell, "vdj.tra2.cdr1_aa"] <- as.character(tra_second$cdr1)
+          }
+          if ("cdr2" %in% names(tra_second)) {
+            ensure_md("vdj.tra2.cdr2_aa", NA_character_)
+            md[cell, "vdj.tra2.cdr2_aa"] <- as.character(tra_second$cdr2)
+          }
+        }
       } else {
         md[cell, c("vdj.tra2.cdr3_aa", "vdj.tra2.v_gene", "vdj.tra2.j_gene")] <- NA_character_
+        if (isTRUE(include_cdr12)) {
+          if ("vdj.tra2.cdr1_aa" %in% colnames(md)) md[cell, "vdj.tra2.cdr1_aa"] <- NA_character_
+          if ("vdj.tra2.cdr2_aa" %in% colnames(md)) md[cell, "vdj.tra2.cdr2_aa"] <- NA_character_
+        }
       }
       md[cell, "vdj.pair_qc"] <- "pass"
 
@@ -592,6 +632,17 @@ vdj_collapse_pairs_seurat <- function(
         md[cell, "vdj.tra.cdr3_aa"] <- md[cell, "vdj.tra1.cdr3_aa"]
         md[cell, "vdj.tra.v_gene"] <- md[cell, "vdj.tra1.v_gene"]
         md[cell, "vdj.tra.j_gene"] <- md[cell, "vdj.tra1.j_gene"]
+        # CDR1/CDR2 for legacy fields
+        if (isTRUE(include_cdr12)) {
+          if ("vdj.tra1.cdr1_aa" %in% colnames(md)) {
+            ensure_md("vdj.tra.cdr1_aa", NA_character_)
+            md[cell, "vdj.tra.cdr1_aa"] <- md[cell, "vdj.tra1.cdr1_aa"]
+          }
+          if ("vdj.tra1.cdr2_aa" %in% colnames(md)) {
+            ensure_md("vdj.tra.cdr2_aa", NA_character_)
+            md[cell, "vdj.tra.cdr2_aa"] <- md[cell, "vdj.tra1.cdr2_aa"]
+          }
+        }
       }
     }
   }

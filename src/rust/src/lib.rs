@@ -377,6 +377,7 @@ pub fn vdjdb_update_into(dir: &str) -> Result<()> {
 /// Calculate pairwise tcrdist distances between TCRs
 /// Returns a distance matrix (as a vector in column-major order for R)
 /// Pass empty strings for missing CDR sequences
+/// Uses parallel processing via Rayon for improved performance
 /// @export
 #[extendr]
 pub fn calculate_tcrdist(
@@ -387,6 +388,8 @@ pub fn calculate_tcrdist(
     cdr2_b: Vec<String>,
     cdr3_b: Vec<String>,
 ) -> Result<List> {
+    use rayon::prelude::*;
+
     let n = cdr3_a.len();
 
     // Validate input lengths
@@ -412,18 +415,25 @@ pub fn calculate_tcrdist(
         )
     }).collect();
 
-    // Calculate pairwise distances
-    let mut distances = Vec::with_capacity(n * n);
+    // Calculate pairwise distances using parallel processing
+    // Each row is computed in parallel using references to avoid move issues
+    let results: Vec<_> = (0..n).into_par_iter().flat_map(|i| {
+        let tcrs_ref = &tcrs; // Capture reference, not ownership
+        (0..n).map(move |j| {
+            let dist = tcrdist::tcrdist(&tcrs_ref[i], &tcrs_ref[j]);
+            ((i + 1) as i32, (j + 1) as i32, dist) // 1-based indices for R
+        }).collect::<Vec<_>>()
+    }).collect();
+
+    // Unpack results into separate vectors
     let mut i_indices = Vec::with_capacity(n * n);
     let mut j_indices = Vec::with_capacity(n * n);
+    let mut distances = Vec::with_capacity(n * n);
 
-    for i in 0..n {
-        for j in 0..n {
-            let dist = tcrdist::tcrdist(&tcrs[i], &tcrs[j]);
-            i_indices.push((i + 1) as i32); // 1-based for R
-            j_indices.push((j + 1) as i32);
-            distances.push(dist);
-        }
+    for (i_idx, j_idx, dist) in results {
+        i_indices.push(i_idx);
+        j_indices.push(j_idx);
+        distances.push(dist);
     }
 
     Ok(list!(
