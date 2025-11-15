@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vdjmatchR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,7 +161,7 @@ guarded to run only if files exist.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Set SEURAT_RDS_PATH to a Seurat v5 RDS file to run this vignette end-to-end."</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">prefixes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"[ACGT]{16}-\\d+$"</span>, <span class="st">""</span>, <span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/Cells.html" class="external-link">Cells</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">prefixes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"[ACGT]{16}-\\d+$"</span>, <span class="st">""</span>, <span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/Cells.html" class="external-link">Cells</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">folders2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^[^_]+_(.+)_$"</span>, <span class="st">"\\1"</span>, <span class="va">prefixes</span><span class="op">)</span></span>
 <span><span class="va">folders1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"_[^_]+$"</span>, <span class="st">""</span>, <span class="va">folders2</span><span class="op">)</span></span>
 <span><span class="va">matchdf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>PREFIXES<span class="op">=</span><span class="va">prefixes</span>, FOLDERNAME1<span class="op">=</span><span class="va">folders1</span>, FOLDERNAME2<span class="op">=</span><span class="va">folders2</span><span class="op">)</span></span></code></pre></div>
@@ -175,19 +175,26 @@ guarded to run only if files exist.</p>
 (with flexible strategies), and stores heavy tables in
 <code>obj@tools$vdj</code>. Minimal metadata (10x clonotype id/size) can
 be written per cell.</p>
+<p>Set <code>include_cdr12 = TRUE</code> to optionally pull in CDR1 and
+CDR2 amino-acid sequences when available in the 10x VDJ output
+files.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdj_attach_10x_vdj_v2_batch.html">vdj_attach_10x_vdj_v2_batch</a></span><span class="op">(</span></span>
 <span>  <span class="va">orig</span>,</span>
 <span>  <span class="va">matchdf</span>,</span>
-<span>  vdj_dir_template <span class="op">=</span> <span class="va">vdj_dir</span><span class="op">)</span></span>
+<span>  vdj_dir_template <span class="op">=</span> <span class="va">vdj_dir</span>,</span>
+<span>  include_cdr12 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># Optional: include CDR1 and CDR2 sequences</span></span>
 <span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.cdr3_aa_both</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.tra.cdr3_aa</span>, <span class="st">"_"</span>, <span class="va">obj</span><span class="op">$</span><span class="va">vdj.trb.cdr3_aa</span><span class="op">)</span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="va">vdj.cdr3_aa_both</span> <span class="op">!=</span> <span class="va">obj</span><span class="op">$</span><span class="va">cdr3</span></span>
 <span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">nomatchprior</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      TRUE </span></span>
+<span><span class="co">#&gt; 0.2127323</span></span>
 <span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">obj</span>, group.by <span class="op">=</span> <span class="st">"nomatchprior"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="seurat-vdj-integration_files/figure-html/attach-1.png" width="700.0000032"></p>
 <div class="section level3">
 <h3 id="collapse-to-tra1trb-dominant-and-optional-tra2trb-secondary">Collapse to TRA1/TRB (dominant) and optional TRA2/TRB
 (secondary)<a class="anchor" aria-label="anchor" href="#collapse-to-tra1trb-dominant-and-optional-tra2trb-secondary"></a>
@@ -195,6 +202,7 @@ be written per cell.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Select 1 TRB and up to 2 TRA per cell; write metadata and a pairs table</span></span>
+<span><span class="co"># Set include_cdr12 = TRUE to also include CDR1 and CDR2 in metadata</span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vdj_collapse_pairs_seurat.html">vdj_collapse_pairs_seurat</a></span><span class="op">(</span></span>
 <span>  <span class="va">obj</span>,</span>
 <span>  drop_multi_trb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -202,40 +210,100 @@ be written per cell.</p>
 <span>  alpha_support <span class="op">=</span> <span class="st">"umis"</span>,</span>
 <span>  require_productive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  write_meta <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  update_primary_meta <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  update_primary_meta <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_cdr12 <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># Optional: include CDR1 and CDR2 in collapsed pairs</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># When include_cdr12 = TRUE, the following additional metadata columns are created:</span></span>
+<span><span class="co"># - vdj.tra1.cdr1_aa, vdj.tra1.cdr2_aa (primary alpha)</span></span>
+<span><span class="co"># - vdj.tra2.cdr1_aa, vdj.tra2.cdr2_aa (secondary alpha, if present)</span></span>
+<span><span class="co"># - vdj.trb.cdr1_aa, vdj.trb.cdr2_aa (beta chain)</span></span>
+<span><span class="co"># - vdj.tra.cdr1_aa, vdj.tra.cdr2_aa (legacy fields matching TRA1)</span></span>
+<span></span>
 <span><span class="co"># Overall dual-TRA fraction</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="st">"vdj.has_tra2"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">frac_dual</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.has_tra2</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"vdj.has_tra2"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">frac_dual</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.has_tra2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Dual-TRA fraction: %.1f%%\n"</span>, <span class="fl">100</span> <span class="op">*</span> <span class="va">frac_dual</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span><span class="co">#&gt; Dual-TRA fraction: 7.7%</span></span>
 <span></span>
 <span><span class="co"># Per-cluster dual-TRA rates when cluster labels exist</span></span>
 <span><span class="va">group_col</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="st">"seurat_clusters"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span> <span class="va">group_col</span> <span class="op">&lt;-</span> <span class="st">"seurat_clusters"</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"seurat_clusters"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span> <span class="va">group_col</span> <span class="op">&lt;-</span> <span class="st">"seurat_clusters"</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">group_col</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">[[</span><span class="va">group_col</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.has_tra2</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span>, <span class="va">g</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">vdj.has_tra2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span>, <span class="va">g</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">p</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span><span class="co">#&gt;    0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15 </span></span>
+<span><span class="co">#&gt;  2.9 10.2  9.6  8.0  8.9  8.2 10.4  8.1  1.9 10.6 12.2  7.0 12.4  7.1  7.6  1.5 </span></span>
+<span><span class="co">#&gt;   16   17   18   19 </span></span>
+<span><span class="co">#&gt;  6.1  6.6  2.2 10.0</span></span>
 <span></span>
 <span><span class="co"># Preview pairs table (first 6 rows)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">tools</span><span class="op">$</span><span class="va">vdj</span><span class="op">$</span><span class="va">pairs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">tools</span><span class="op">$</span><span class="va">vdj</span><span class="op">$</span><span class="va">pairs</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt;                                          cell pair_rank          tra_cdr3</span></span>
+<span><span class="co">#&gt; 1 CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1         1       CAFPNFNKFYF</span></span>
+<span><span class="co">#&gt; 2 CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1         1    CALSEVEYGQNFVF</span></span>
+<span><span class="co">#&gt; 3 CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1         2   CVVSDPTSGTYKYIF</span></span>
+<span><span class="co">#&gt; 4 CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1         1 CAVSDFAGGTSYGKLTF</span></span>
+<span><span class="co">#&gt; 5 CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1         1   CALSRFNFGNEKLTF</span></span>
+<span><span class="co">#&gt; 6 CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1         1        CAASDYKLSF</span></span>
+<span><span class="co">#&gt;      tra_v  tra_j tra_umis tra_reads        trb_cdr3    trb_v   trb_j trb_umis</span></span>
+<span><span class="co">#&gt; 1   TRAV24 TRAJ21        5       604 CASSTHTNSYNEQFF   TRBV19 TRBJ2-1       22</span></span>
+<span><span class="co">#&gt; 2   TRAV19 TRAJ26       13      4296   CSAGGGPNHEQYF TRBV20-1 TRBJ2-7       21</span></span>
+<span><span class="co">#&gt; 3   TRAV10 TRAJ40        4      1824   CSAGGGPNHEQYF TRBV20-1 TRBJ2-7       21</span></span>
+<span><span class="co">#&gt; 4  TRAV8-4 TRAJ52       11      2123 CSALVQGESGQPQHF TRBV20-1 TRBJ1-5       13</span></span>
+<span><span class="co">#&gt; 5  TRAV9-2 TRAJ48        2       644 CASSQDRVGPGGLHF   TRBV14 TRBJ1-6       16</span></span>
+<span><span class="co">#&gt; 6 TRAV13-1 TRAJ20        7      2153    CSASEFTGELFF TRBV20-1 TRBJ2-2       19</span></span>
+<span><span class="co">#&gt;   trb_reads</span></span>
+<span><span class="co">#&gt; 1      7714</span></span>
+<span><span class="co">#&gt; 2      7395</span></span>
+<span><span class="co">#&gt; 3      7395</span></span>
+<span><span class="co">#&gt; 4      4713</span></span>
+<span><span class="co">#&gt; 5      3997</span></span>
+<span><span class="co">#&gt; 6      7541</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="inspect-attached-tables-and-metadata">Inspect attached tables and metadata<a class="anchor" aria-label="anchor" href="#inspect-attached-tables-and-metadata"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Contigs rows:"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">tools</span><span class="op">$</span><span class="va">vdj</span><span class="op">$</span><span class="va">contigs</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Contigs rows:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">tools</span><span class="op">$</span><span class="va">vdj</span><span class="op">$</span><span class="va">contigs</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Contigs rows: 255829</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">tools</span><span class="op">$</span><span class="va">vdj</span><span class="op">$</span><span class="va">contigs</span><span class="op">[</span> , <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"barcode"</span>,<span class="st">"chain"</span>,<span class="st">"v_gene"</span>,<span class="st">"j_gene"</span>,<span class="st">"cdr3"</span>,<span class="st">"umis"</span>,<span class="st">"cell"</span>,<span class="st">"sample_id"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              barcode chain     v_gene  j_gene                 cdr3 umis cell</span></span>
+<span><span class="co">#&gt; 1 AAACCTGAGAACAACT-1   TRB   TRBV10-2 TRBJ2-2      CASSGIRAPAGELFF   14 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2 AAACCTGAGAACAACT-1   TRA     TRAV16  TRAJ32     CALSGRYGGATNKLIF    4 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3 AAACCTGAGCGCCTTG-1   TRB    TRBV4-2 TRBJ2-7      CASSQGEAPSYEQYF   26 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4 AAACCTGAGCGCCTTG-1   TRA TRAV14/DV4  TRAJ44      CAMRVRTGTASKLTF    4 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5 AAACCTGAGGTGCTTT-1   TRB      TRBV2 TRBJ2-3 CASSGAGLAGDPTSTDTQYF    8 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;           sample_id</span></span>
+<span><span class="co">#&gt; 1 JP_709_707_CD3pos</span></span>
+<span><span class="co">#&gt; 2 JP_709_707_CD3pos</span></span>
+<span><span class="co">#&gt; 3 JP_709_707_CD3pos</span></span>
+<span><span class="co">#&gt; 4 JP_709_707_CD3pos</span></span>
+<span><span class="co">#&gt; 5 JP_709_707_CD3pos</span></span>
 <span></span>
 <span></span>
-<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vdj.clone_id_10x"</span>,<span class="st">"vdj.clone_size_10x"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">[</span>, <span class="va">cols</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vdj.clone_id_10x"</span>,<span class="st">"vdj.clone_size_10x"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">[</span>, <span class="va">cols</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                            vdj.clone_id_10x</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1 JP_709_707_CD3pos:clonotype1825</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1  JP_709_707_CD3pos:clonotype581</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1  JP_709_707_CD3pos:clonotype276</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACGTTGCAAACGCGA-1  JP_709_707_CD3pos:clonotype577</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1 JP_709_707_CD3pos:clonotype2287</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1  JP_709_707_CD3pos:clonotype476</span></span>
+<span><span class="co">#&gt;                                             vdj.clone_size_10x</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                  1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                  1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                  2</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACGTTGCAAACGCGA-1                  1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                  1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                  1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -258,7 +326,8 @@ edit distance tolerance</p>
 <span></span>
 <span><span class="co"># Helper to build queries from metadata and get top-1 hit per query</span></span>
 <span><span class="co"># For TRA: emits one query per alpha (TRA1 and TRA2 when present)</span></span>
-<span><span class="va">get_top_hits</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, <span class="va">chain</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRB"</span>, <span class="st">"TRA"</span><span class="op">)</span>, <span class="va">scope</span> <span class="op">=</span> <span class="st">"0,0,0,0"</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="co"># Optionally includes CDR1 and CDR2 if available in metadata</span></span>
+<span><span class="va">get_top_hits</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, <span class="va">chain</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TRB"</span>, <span class="st">"TRA"</span><span class="op">)</span>, <span class="va">scope</span> <span class="op">=</span> <span class="st">"0,0,0,0"</span>, <span class="va">include_cdr1</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">include_cdr2</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">chain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">chain</span><span class="op">)</span></span>
 <span>  <span class="va">ch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">chain</span><span class="op">)</span></span>
 <span>  <span class="va">md</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span></span>
@@ -266,49 +335,85 @@ edit distance tolerance</p>
 <span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">chain</span> <span class="op">==</span> <span class="st">"TRB"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"vdj."</span>, <span class="va">ch</span>, <span class="st">".cdr3_aa"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"vdj."</span>, <span class="va">ch</span>, <span class="st">".v_gene"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"vdj."</span>, <span class="va">ch</span>, <span class="st">".j_gene"</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span>    <span class="va">cdr3_col</span> <span class="op">&lt;-</span> <span class="va">cols</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>; <span class="va">v_col</span> <span class="op">&lt;-</span> <span class="va">cols</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>; <span class="va">j_col</span> <span class="op">&lt;-</span> <span class="va">cols</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
-<span>    <span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Optional CDR1 and CDR2 columns</span></span>
+<span>    <span class="va">cdr1_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"vdj."</span>, <span class="va">ch</span>, <span class="st">".cdr1_aa"</span><span class="op">)</span></span>
+<span>    <span class="va">cdr2_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"vdj."</span>, <span class="va">ch</span>, <span class="st">".cdr2_aa"</span><span class="op">)</span></span>
+<span>    <span class="va">has_cdr1</span> <span class="op">&lt;-</span> <span class="va">include_cdr1</span> <span class="op">&amp;&amp;</span> <span class="va">cdr1_col</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span>    <span class="va">has_cdr2</span> <span class="op">&lt;-</span> <span class="va">include_cdr2</span> <span class="op">&amp;&amp;</span> <span class="va">cdr2_col</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">keep</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span>    <span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>      cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span>,</span>
+<span>      cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span>,</span>
 <span>      cdr3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>      v    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">v_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>      j    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">j_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>      alpha_rank <span class="op">=</span> <span class="cn">NA_integer_</span>,</span>
 <span>      stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Add CDR1 and CDR2 if available</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">queries</span><span class="op">$</span><span class="va">cdr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">queries</span><span class="op">$</span><span class="va">cdr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>    <span class="co"># TRA: build from tra1 and tra2 if present</span></span>
 <span>    <span class="va">cols1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vdj.tra1.cdr3_aa"</span>, <span class="st">"vdj.tra1.v_gene"</span>, <span class="st">"vdj.tra1.j_gene"</span><span class="op">)</span></span>
 <span>    <span class="va">cols2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vdj.tra2.cdr3_aa"</span>, <span class="st">"vdj.tra2.v_gene"</span>, <span class="st">"vdj.tra2.j_gene"</span><span class="op">)</span></span>
-<span>    <span class="va">have1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols1</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">have2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols2</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Optional CDR1 and CDR2 columns for TRA1 and TRA2</span></span>
+<span>    <span class="va">cdr1_col1</span> <span class="op">&lt;-</span> <span class="st">"vdj.tra1.cdr1_aa"</span></span>
+<span>    <span class="va">cdr2_col1</span> <span class="op">&lt;-</span> <span class="st">"vdj.tra1.cdr2_aa"</span></span>
+<span>    <span class="va">cdr1_col2</span> <span class="op">&lt;-</span> <span class="st">"vdj.tra2.cdr1_aa"</span></span>
+<span>    <span class="va">cdr2_col2</span> <span class="op">&lt;-</span> <span class="st">"vdj.tra2.cdr2_aa"</span></span>
+<span>    <span class="va">has_cdr1_1</span> <span class="op">&lt;-</span> <span class="va">include_cdr1</span> <span class="op">&amp;&amp;</span> <span class="va">cdr1_col1</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span>    <span class="va">has_cdr2_1</span> <span class="op">&lt;-</span> <span class="va">include_cdr2</span> <span class="op">&amp;&amp;</span> <span class="va">cdr2_col1</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span>    <span class="va">has_cdr1_2</span> <span class="op">&lt;-</span> <span class="va">include_cdr1</span> <span class="op">&amp;&amp;</span> <span class="va">cdr1_col2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span>    <span class="va">has_cdr2_2</span> <span class="op">&lt;-</span> <span class="va">include_cdr2</span> <span class="op">&amp;&amp;</span> <span class="va">cdr2_col2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">have1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols1</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">have2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">cols2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">qlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">have1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">keep1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">keep1</span><span class="op">)</span><span class="op">)</span> <span class="va">qlist</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">qlist</span><span class="op">)</span><span class="op">+</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>        cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span>,</span>
-<span>        cdr3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        v    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        j    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        alpha_rank <span class="op">=</span> <span class="fl">1L</span>,</span>
-<span>        stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>      <span class="op">)</span></span>
+<span>      <span class="va">keep1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">keep1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">q1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>          cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span>,</span>
+<span>          cdr3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          v    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          j    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          alpha_rank <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>          stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>        <span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr1_1</span><span class="op">)</span> <span class="va">q1</span><span class="op">$</span><span class="va">cdr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_col1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr2_1</span><span class="op">)</span> <span class="va">q1</span><span class="op">$</span><span class="va">cdr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_col1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep1</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="va">qlist</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">qlist</span><span class="op">)</span><span class="op">+</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">q1</span></span>
+<span>      <span class="op">}</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">have2</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">keep2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">keep2</span><span class="op">)</span><span class="op">)</span> <span class="va">qlist</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">qlist</span><span class="op">)</span><span class="op">+</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>        cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span>,</span>
-<span>        cdr3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        v    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        j    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>        alpha_rank <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>        stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>      <span class="op">)</span></span>
+<span>      <span class="va">keep2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">keep2</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">q2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>          cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span>,</span>
+<span>          cdr3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          v    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          j    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cols2</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>          alpha_rank <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>          stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>        <span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr1_2</span><span class="op">)</span> <span class="va">q2</span><span class="op">$</span><span class="va">cdr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_col2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">has_cdr2_2</span><span class="op">)</span> <span class="va">q2</span><span class="op">$</span><span class="va">cdr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_col2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">keep2</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="va">qlist</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">qlist</span><span class="op">)</span><span class="op">+</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">q2</span></span>
+<span>      <span class="op">}</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">qlist</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span>    <span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">qlist</span><span class="op">)</span></span>
+<span>    <span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">qlist</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span></span>
 <span>  <span class="co"># Filter DB to species/gene</span></span>
@@ -317,12 +422,12 @@ edit distance tolerance</p>
 <span>  <span class="co"># Match and get top hit per query (uses parallel processing and shows progress)</span></span>
 <span>  <span class="va">hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_tcr_many_df.html">match_tcr_many_df</a></span><span class="op">(</span><span class="va">db_chain</span>, <span class="va">queries</span><span class="op">$</span><span class="va">cdr3</span>, <span class="va">queries</span><span class="op">$</span><span class="va">v</span>, <span class="va">queries</span><span class="op">$</span><span class="va">j</span>,</span>
 <span>                            scope <span class="op">=</span> <span class="va">scope</span>, top_n <span class="op">=</span> <span class="fl">1L</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Attach cell metadata back to hits</span></span>
 <span>  <span class="va">qi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">hits</span><span class="op">$</span><span class="va">query_index</span><span class="op">)</span></span>
 <span>  <span class="va">hits</span><span class="op">$</span><span class="va">cell</span> <span class="op">&lt;-</span> <span class="va">queries</span><span class="op">$</span><span class="va">cell</span><span class="op">[</span><span class="va">qi</span><span class="op">]</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"alpha_rank"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">queries</span><span class="op">)</span><span class="op">)</span> <span class="va">hits</span><span class="op">$</span><span class="va">alpha_rank</span> <span class="op">&lt;-</span> <span class="va">queries</span><span class="op">$</span><span class="va">alpha_rank</span><span class="op">[</span><span class="va">qi</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"alpha_rank"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">queries</span><span class="op">)</span><span class="op">)</span> <span class="va">hits</span><span class="op">$</span><span class="va">alpha_rank</span> <span class="op">&lt;-</span> <span class="va">queries</span><span class="op">$</span><span class="va">alpha_rank</span><span class="op">[</span><span class="va">qi</span><span class="op">]</span></span>
 <span></span>
 <span>  <span class="co"># Rename columns to more user-friendly names</span></span>
 <span>  <span class="co"># match_tcr_many_df returns: query_index, query_cdr3, query_v, query_j,</span></span>
@@ -330,10 +435,10 @@ edit distance tolerance</p>
 <span>  <span class="co">#                            antigen_epitope, antigen_gene, antigen_species,</span></span>
 <span>  <span class="co">#                            mhc_class, reference_id, vdjdb_score,</span></span>
 <span>  <span class="co">#                            score, cdr3_score, v_score, j_score, edit_distance</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"cdr3_db"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"cdr3_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_cdr3"</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"v_db"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"v_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_v"</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"j_db"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"j_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_j"</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"species"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_species"</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"cdr3_db"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"cdr3_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_cdr3"</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"v_db"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"v_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_v"</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"j_db"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"j_db"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_j"</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="st">"species"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"epitope_species"</span></span>
 <span></span>
 <span>  <span class="co"># Select and order columns</span></span>
 <span>  <span class="va">keep_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span></span>
@@ -342,7 +447,7 @@ edit distance tolerance</p>
 <span>      <span class="st">"gene"</span>, <span class="st">"antigen_epitope"</span>, <span class="st">"antigen_gene"</span>, <span class="st">"antigen_species"</span>,</span>
 <span>      <span class="st">"mhc_class"</span>, <span class="st">"reference_id"</span>, <span class="st">"vdjdb_score"</span>,</span>
 <span>      <span class="st">"score"</span>, <span class="st">"cdr3_score"</span>, <span class="st">"v_score"</span>, <span class="st">"j_score"</span>, <span class="st">"edit_distance"</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hits</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">hits</span><span class="op">[</span>, <span class="va">keep_cols</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
@@ -350,13 +455,290 @@ edit distance tolerance</p>
 <span></span>
 <span></span>
 <span><span class="co"># Match TRB and TRA chains with fuzzy matching (allows up to 3 mismatches)</span></span>
-<span><span class="va">top_trb</span> <span class="op">&lt;-</span> <span class="fu">get_top_hits</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, chain <span class="op">=</span> <span class="st">"TRB"</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span><span class="op">)</span></span>
-<span><span class="va">top_tra</span> <span class="op">&lt;-</span> <span class="fu">get_top_hits</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, chain <span class="op">=</span> <span class="st">"TRA"</span>, scope <span class="op">=</span> <span class="st">"0,0,0,0"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># By default, includes CDR1 and CDR2 if available in the metadata</span></span>
+<span><span class="va">top_trb</span> <span class="op">&lt;-</span> <span class="fu">get_top_hits</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, chain <span class="op">=</span> <span class="st">"TRB"</span>, scope <span class="op">=</span> <span class="st">"1,1,1,1"</span>, include_cdr1 <span class="op">=</span> <span class="cn">TRUE</span>, include_cdr2 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Matching 14217 TCRs against database (parallel processing enabled)</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt; Matched 14217 queries, found 1384 hits</span></span>
+<span><span class="va">top_tra</span> <span class="op">&lt;-</span> <span class="fu">get_top_hits</span><span class="op">(</span><span class="va">obj</span>, <span class="va">db</span>, chain <span class="op">=</span> <span class="st">"TRA"</span>, scope <span class="op">=</span> <span class="st">"1,1,1,1"</span>, include_cdr1 <span class="op">=</span> <span class="cn">TRUE</span>, include_cdr2 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Matching 12517 TCRs against database (parallel processing enabled)</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt; Matched 12517 queries, found 5603 hits</span></span>
+<span></span>
+<span><span class="co"># To exclude CDR1/CDR2, set the parameters to FALSE:</span></span>
+<span><span class="co"># top_trb &lt;- get_top_hits(obj, db, chain = "TRB", scope = "0,0,0,0", include_cdr1 = FALSE, include_cdr2 = FALSE)</span></span>
+<span><span class="co"># top_tra &lt;- get_top_hits(obj, db, chain = "TRA", scope = "0,0,0,0", include_cdr1 = FALSE, include_cdr2 = FALSE)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Function to calculate TCRdist from Seurat object</span></span>
+<span><span class="va">calculate_tcrdist_from_seurat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
+<span>  <span class="va">seurat</span>,</span>
+<span>  <span class="va">use_cdr12</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">subset_cells</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">alpha_chain</span> <span class="op">=</span> <span class="st">"vdj.tra1"</span>,  <span class="co"># Can also use "vdj.tra" for legacy</span></span>
+<span>  <span class="va">require_complete</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
+<span>  <span class="co"># Get metadata</span></span>
+<span>  <span class="va">md</span> <span class="op">&lt;-</span> <span class="va">seurat</span><span class="op">@</span><span class="va">meta.data</span></span>
+<span></span>
+<span>  <span class="co"># Subset to specific cells if requested</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">subset_cells</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">md</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[</span><span class="va">subset_cells</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Build column names based on which alpha chain to use</span></span>
+<span>  <span class="va">cdr3_a_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">alpha_chain</span>, <span class="st">".cdr3_aa"</span><span class="op">)</span></span>
+<span>  <span class="va">cdr3_b_col</span> <span class="op">&lt;-</span> <span class="st">"vdj.trb.cdr3_aa"</span></span>
+<span></span>
+<span>  <span class="co"># Check if CDR3 columns exist</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cdr3_a_col</span>, <span class="va">cdr3_b_col</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Required columns not found: %s, %s"</span>, <span class="va">cdr3_a_col</span>,</span>
+<span><span class="va">cdr3_b_col</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># CDR1/CDR2 columns (may not exist if include_cdr12 was FALSE)</span></span>
+<span>  <span class="va">cdr1_a_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">alpha_chain</span>, <span class="st">".cdr1_aa"</span><span class="op">)</span></span>
+<span>  <span class="va">cdr2_a_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">alpha_chain</span>, <span class="st">".cdr2_aa"</span><span class="op">)</span></span>
+<span>  <span class="va">cdr1_b_col</span> <span class="op">&lt;-</span> <span class="st">"vdj.trb.cdr1_aa"</span></span>
+<span>  <span class="va">cdr2_b_col</span> <span class="op">&lt;-</span> <span class="st">"vdj.trb.cdr2_aa"</span></span>
+<span></span>
+<span>  <span class="va">has_cdr12</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cdr1_a_col</span>, <span class="va">cdr2_a_col</span>, <span class="va">cdr1_b_col</span>, <span class="va">cdr2_b_col</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">use_cdr12</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="va">has_cdr12</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"CDR1/CDR2 columns not found. Set use_cdr12 = FALSE or rerun</span></span>
+<span><span class="st">vdj_attach with include_cdr12 = TRUE"</span><span class="op">)</span></span>
+<span>    <span class="va">use_cdr12</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Filter to cells with complete TCR data</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">require_complete</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">keep</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr3_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">use_cdr12</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">keep</span> <span class="op">&lt;-</span> <span class="va">keep</span> <span class="op">&amp;</span></span>
+<span>              <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>              <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_a_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr1_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">md</span><span class="op">[[</span><span class="va">cdr2_b_col</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">md</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[</span><span class="va">keep</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"No cells with complete TCR data found"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Calculating TCRdist for %d cells with complete TCR</span></span>
+<span><span class="st">data\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Extract sequences</span></span>
+<span>  <span class="va">cdr3_a</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr3_a_col</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">cdr3_b</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr3_b_col</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">use_cdr12</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">cdr1_a</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr1_a_col</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="va">cdr2_a</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr2_a_col</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="va">cdr1_b</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr1_b_col</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="va">cdr2_b</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[[</span><span class="va">cdr2_b_col</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="co"># Use empty strings if CDR1/2 not available</span></span>
+<span>    <span class="va">cdr1_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">cdr2_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">cdr1_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">cdr2_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Calculate TCRdist</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_tcrdist.html">calculate_tcrdist</a></span><span class="op">(</span></span>
+<span>    cdr1_a <span class="op">=</span> <span class="va">cdr1_a</span>,</span>
+<span>    cdr2_a <span class="op">=</span> <span class="va">cdr2_a</span>,</span>
+<span>    cdr3_a <span class="op">=</span> <span class="va">cdr3_a</span>,</span>
+<span>    cdr1_b <span class="op">=</span> <span class="va">cdr1_b</span>,</span>
+<span>    cdr2_b <span class="op">=</span> <span class="va">cdr2_b</span>,</span>
+<span>    cdr3_b <span class="op">=</span> <span class="va">cdr3_b</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Convert to distance matrix</span></span>
+<span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">n</span></span>
+<span>  <span class="va">dist_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">distance</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Return list with matrix and cell info</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    distance_matrix <span class="op">=</span> <span class="va">dist_matrix</span>,</span>
+<span>    cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span>,</span>
+<span>    n_cells <span class="op">=</span> <span class="va">n</span>,</span>
+<span>    used_cdr12 <span class="op">=</span> <span class="va">use_cdr12</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Example usage with the Seurat object from the vignette:</span></span>
+<span></span>
+<span><span class="co"># 1. Calculate TCRdist for all cells with complete TCR data (including CDR1/2)</span></span>
+<span><span class="va">tcrdist_result</span> <span class="op">&lt;-</span> <span class="fu">calculate_tcrdist_from_seurat</span><span class="op">(</span></span>
+<span>  <span class="va">obj</span>,</span>
+<span>  use_cdr12 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  require_complete <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Calculating TCRdist for 11256 cells with complete TCR</span></span>
+<span><span class="co">#&gt; data</span></span>
+<span></span>
+<span><span class="co"># View the distance matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tcrdist_result</span><span class="op">$</span><span class="va">distance_matrix</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                             CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                                           0</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                                         393</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                                         475</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                                         401</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                                         340</span></span>
+<span><span class="co">#&gt;                                             CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                                         393</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                                           0</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                                         382</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                                         406</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                                         331</span></span>
+<span><span class="co">#&gt;                                             CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                                         475</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                                         382</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                                           0</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                                         423</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                                         407</span></span>
+<span><span class="co">#&gt;                                             CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                                         401</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                                         406</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                                         423</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                                           0</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                                         417</span></span>
+<span><span class="co">#&gt;                                             CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1                                         340</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1                                         331</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AAAGTAGGTACCTACA-1                                         407</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTCTTCACATCCGG-1                                         417</span></span>
+<span><span class="co">#&gt; CD3pos_JP_709_707_CD3pos_AACTTTCAGGCCATAG-1                                           0</span></span>
+<span></span>
+<span><span class="co"># 2. Calculate TCRdist using only CDR3 sequences</span></span>
+<span><span class="va">tcrdist_cdr3only</span> <span class="op">&lt;-</span> <span class="fu">calculate_tcrdist_from_seurat</span><span class="op">(</span></span>
+<span>  <span class="va">obj</span>,</span>
+<span>  use_cdr12 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  require_complete <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Calculating TCRdist for 11256 cells with complete TCR</span></span>
+<span><span class="co">#&gt; data</span></span>
+<span></span>
+<span><span class="co"># 3. Calculate for a specific subset of cells (e.g., a cluster)</span></span>
+<span><span class="va">cluster_cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span><span class="op">[</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">$</span><span class="va">seurat_clusters</span> <span class="op">==</span></span>
+<span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">tcrdist_cluster1</span> <span class="op">&lt;-</span> <span class="fu">calculate_tcrdist_from_seurat</span><span class="op">(</span></span>
+<span>  <span class="va">obj</span>,</span>
+<span>  use_cdr12 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  subset_cells <span class="op">=</span> <span class="va">cluster_cells</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Calculating TCRdist for 1619 cells with complete TCR</span></span>
+<span><span class="co">#&gt; data</span></span>
+<span></span>
+<span><span class="co"># 4. Use the distance matrix for clustering or visualization</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span></span>
+<span>  <span class="va">tcrdist_cluster1</span><span class="op">$</span><span class="va">distance_matrix</span>,</span>
+<span>  clustering_distance_rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">as.dist</a></span><span class="op">(</span><span class="va">tcrdist_cluster1</span><span class="op">$</span><span class="va">distance_matrix</span><span class="op">)</span>,</span>
+<span>  clustering_distance_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">as.dist</a></span><span class="op">(</span><span class="va">tcrdist_cluster1</span><span class="op">$</span><span class="va">distance_matrix</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"TCRdist Distance Matrix"</span>,</span>
+<span>  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_colnames <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="seurat-vdj-integration_files/figure-html/unnamed-chunk-3-1.png" width="700.0000032"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># 5. Find nearest neighbors for each TCR</span></span>
+<span><span class="va">find_tcr_neighbors</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dist_matrix</span>, <span class="va">k</span> <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">neighbors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">distances</span> <span class="op">&lt;-</span> <span class="va">dist_matrix</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span></span>
+<span>    <span class="va">distances</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">Inf</span>  <span class="co"># Exclude self</span></span>
+<span>    <span class="va">nearest_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">k</span><span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>      cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>      neighbor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span><span class="op">[</span><span class="va">nearest_idx</span><span class="op">]</span>,</span>
+<span>      distance <span class="op">=</span> <span class="va">distances</span><span class="op">[</span><span class="va">nearest_idx</span><span class="op">]</span>,</span>
+<span>      rank <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">k</span>,</span>
+<span>      stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">neighbors</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">neighbors</span> <span class="op">&lt;-</span> <span class="fu">find_tcr_neighbors</span><span class="op">(</span><span class="va">tcrdist_result</span><span class="op">$</span><span class="va">distance_matrix</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">neighbors</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                                                    cell</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_GGCTCGATCTCGCTTG-1         CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_861_837_CD3pos_AGTGTCACACGGCTAC-1 CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_CATCAAGTCGGTTAAC-1         CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; IP_JP_801_639_IP_AATCGGTAGGTCATCT-1         CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GGACAAGTCCATTCTA-1         CD3pos_JP_709_707_CD3pos_AAACCTGTCATATCGG-1</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GTTCTCGGTCCGTGAC-1         CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_CGATGTATCCCTCTTT-1         CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_ATCATCTTCCACGCAG-1         CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_TTGGAACGTGTTCGAT-1         CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_817_742_CD3pos_CTTGGCTGTCCTCCAT-1 CD3pos_JP_709_707_CD3pos_AAAGCAACACTCTGTC-1</span></span>
+<span><span class="co">#&gt;                                                                                neighbor</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_GGCTCGATCTCGCTTG-1                 IP_JP_817_742_IP_GGCTCGATCTCGCTTG-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_861_837_CD3pos_AGTGTCACACGGCTAC-1 CD3pos_JP_861_837_CD3pos_AGTGTCACACGGCTAC-1</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_CATCAAGTCGGTTAAC-1                 IP_JP_806_843_IP_CATCAAGTCGGTTAAC-1</span></span>
+<span><span class="co">#&gt; IP_JP_801_639_IP_AATCGGTAGGTCATCT-1                 IP_JP_801_639_IP_AATCGGTAGGTCATCT-1</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GGACAAGTCCATTCTA-1                 IP_JP_724_738_IP_GGACAAGTCCATTCTA-1</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GTTCTCGGTCCGTGAC-1                 IP_JP_724_738_IP_GTTCTCGGTCCGTGAC-1</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_CGATGTATCCCTCTTT-1                 IP_JP_817_742_IP_CGATGTATCCCTCTTT-1</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_ATCATCTTCCACGCAG-1                 IP_JP_817_742_IP_ATCATCTTCCACGCAG-1</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_TTGGAACGTGTTCGAT-1                 IP_JP_806_843_IP_TTGGAACGTGTTCGAT-1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_817_742_CD3pos_CTTGGCTGTCCTCCAT-1 CD3pos_JP_817_742_CD3pos_CTTGGCTGTCCTCCAT-1</span></span>
+<span><span class="co">#&gt;                                             distance rank</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_GGCTCGATCTCGCTTG-1              184    1</span></span>
+<span><span class="co">#&gt; CD3pos_JP_861_837_CD3pos_AGTGTCACACGGCTAC-1      187    2</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_CATCAAGTCGGTTAAC-1              197    3</span></span>
+<span><span class="co">#&gt; IP_JP_801_639_IP_AATCGGTAGGTCATCT-1              199    4</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GGACAAGTCCATTCTA-1              200    5</span></span>
+<span><span class="co">#&gt; IP_JP_724_738_IP_GTTCTCGGTCCGTGAC-1              138    1</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_CGATGTATCCCTCTTT-1              165    2</span></span>
+<span><span class="co">#&gt; IP_JP_817_742_IP_ATCATCTTCCACGCAG-1              168    3</span></span>
+<span><span class="co">#&gt; IP_JP_806_843_IP_TTGGAACGTGTTCGAT-1              171    4</span></span>
+<span><span class="co">#&gt; CD3pos_JP_817_742_CD3pos_CTTGGCTGTCCTCCAT-1      186    5</span></span>
+<span></span>
+<span><span class="co"># 6. Identify TCR clusters based on distance threshold</span></span>
+<span><span class="va">identify_tcr_clusters</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dist_matrix</span>, <span class="va">threshold</span> <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Convert to binary adjacency (1 if distance &lt;= threshold)</span></span>
+<span>  <span class="va">adj</span> <span class="op">&lt;-</span> <span class="va">dist_matrix</span> <span class="op">&lt;=</span> <span class="va">threshold</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>  <span class="co"># Each cell is in its own cluster</span></span>
+<span></span>
+<span>  <span class="co"># Use hierarchical clustering with complete linkage</span></span>
+<span>  <span class="va">hc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">as.dist</a></span><span class="op">(</span><span class="va">dist_matrix</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"complete"</span><span class="op">)</span></span>
+<span>  <span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">hc</span>, h <span class="op">=</span> <span class="va">threshold</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span>,</span>
+<span>    tcr_cluster <span class="op">=</span> <span class="va">clusters</span>,</span>
+<span>    stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">tcr_clusters</span> <span class="op">&lt;-</span> <span class="fu">identify_tcr_clusters</span><span class="op">(</span><span class="va">tcrdist_result</span><span class="op">$</span><span class="va">distance_matrix</span>,</span>
+<span>threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add TCR clusters back to Seurat object</span></span>
+<span><span class="va">obj</span><span class="op">$</span><span class="va">tcr_cluster</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">obj</span><span class="op">$</span><span class="va">tcr_cluster</span><span class="op">[</span><span class="va">tcr_clusters</span><span class="op">$</span><span class="va">cell</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">tcr_clusters</span><span class="op">$</span><span class="va">tcr_cluster</span></span>
+<span></span>
+<span><span class="co"># Visualize TCR clusters on UMAP</span></span>
+<span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">obj</span>, group.by <span class="op">=</span> <span class="st">"tcr_cluster"</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html" class="external-link">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="seurat-vdj-integration_files/figure-html/unnamed-chunk-3-2.png" width="700.0000032"></p>
 </div>
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.3 (2025-02-28)</span></span>
 <span><span class="co">#&gt; Platform: aarch64-apple-darwin20</span></span>
@@ -376,8 +758,8 @@ edit distance tolerance</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] magrittr_2.0.3       vdjmatchR_0.0.0.9000 Seurat_5.3.0        </span></span>
-<span><span class="co">#&gt; [4] SeuratObject_5.1.0   sp_2.2-0            </span></span>
+<span><span class="co">#&gt; [1] pheatmap_1.0.12    magrittr_2.0.3     vdjmatchR_0.1.0    Seurat_5.3.0      </span></span>
+<span><span class="co">#&gt; [5] SeuratObject_5.1.0 sp_2.2-0          </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] deldir_2.0-4           pbapply_1.7-2          gridExtra_2.3         </span></span>
@@ -385,40 +767,41 @@ edit distance tolerance</p>
 <span><span class="co">#&gt;   [7] matrixStats_1.5.0      ggridges_0.5.6         compiler_4.4.3        </span></span>
 <span><span class="co">#&gt;  [10] png_0.1-8              systemfonts_1.2.2      vctrs_0.6.5           </span></span>
 <span><span class="co">#&gt;  [13] reshape2_1.4.4         stringr_1.5.1          pkgconfig_2.0.3       </span></span>
-<span><span class="co">#&gt;  [16] fastmap_1.2.0          promises_1.3.3         rmarkdown_2.29        </span></span>
-<span><span class="co">#&gt;  [19] ragg_1.4.0             purrr_1.0.4            xfun_0.52             </span></span>
-<span><span class="co">#&gt;  [22] cachem_1.1.0           jsonlite_2.0.0         goftest_1.2-3         </span></span>
-<span><span class="co">#&gt;  [25] later_1.4.2            spatstat.utils_3.1-4   irlba_2.3.5.1         </span></span>
-<span><span class="co">#&gt;  [28] parallel_4.4.3         cluster_2.1.8.1        R6_2.6.1              </span></span>
-<span><span class="co">#&gt;  [31] ica_1.0-3              spatstat.data_3.1-6    stringi_1.8.7         </span></span>
-<span><span class="co">#&gt;  [34] bslib_0.9.0            RColorBrewer_1.1-3     reticulate_1.42.0     </span></span>
-<span><span class="co">#&gt;  [37] spatstat.univar_3.1-3  parallelly_1.45.0      lmtest_0.9-40         </span></span>
-<span><span class="co">#&gt;  [40] jquerylib_0.1.4        scattermore_1.2        Rcpp_1.0.14           </span></span>
-<span><span class="co">#&gt;  [43] knitr_1.50             tensor_1.5.1           future.apply_1.20.0   </span></span>
-<span><span class="co">#&gt;  [46] zoo_1.8-14             sctransform_0.4.2      httpuv_1.6.16         </span></span>
-<span><span class="co">#&gt;  [49] Matrix_1.7-3           splines_4.4.3          igraph_2.1.4          </span></span>
-<span><span class="co">#&gt;  [52] tidyselect_1.2.1       abind_1.4-8            dichromat_2.0-0.1     </span></span>
-<span><span class="co">#&gt;  [55] yaml_2.3.10            spatstat.random_3.4-1  spatstat.explore_3.4-3</span></span>
-<span><span class="co">#&gt;  [58] codetools_0.2-20       miniUI_0.1.2           listenv_0.9.1         </span></span>
-<span><span class="co">#&gt;  [61] lattice_0.22-7         tibble_3.3.0           plyr_1.8.9            </span></span>
-<span><span class="co">#&gt;  [64] shiny_1.10.0           ROCR_1.0-11            evaluate_1.0.4        </span></span>
-<span><span class="co">#&gt;  [67] Rtsne_0.17             future_1.58.0          fastDummies_1.7.5     </span></span>
-<span><span class="co">#&gt;  [70] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       </span></span>
-<span><span class="co">#&gt;  [73] fitdistrplus_1.2-2     pillar_1.10.2          KernSmooth_2.23-26    </span></span>
-<span><span class="co">#&gt;  [76] plotly_4.11.0          generics_0.1.4         RcppHNSW_0.6.0        </span></span>
-<span><span class="co">#&gt;  [79] ggplot2_3.5.2          scales_1.4.0           globals_0.18.0        </span></span>
-<span><span class="co">#&gt;  [82] xtable_1.8-4           glue_1.8.0             lazyeval_0.2.2        </span></span>
-<span><span class="co">#&gt;  [85] tools_4.4.3            data.table_1.17.6      RSpectra_0.16-2       </span></span>
-<span><span class="co">#&gt;  [88] RANN_2.6.2             fs_1.6.6               dotCall64_1.2         </span></span>
-<span><span class="co">#&gt;  [91] cowplot_1.1.3          grid_4.4.3             tidyr_1.3.1           </span></span>
-<span><span class="co">#&gt;  [94] colorspace_2.1-1       nlme_3.1-168           patchwork_1.3.1       </span></span>
-<span><span class="co">#&gt;  [97] cli_3.6.5              spatstat.sparse_3.1-0  textshaping_1.0.0     </span></span>
-<span><span class="co">#&gt; [100] spam_2.11-1            viridisLite_0.4.2      dplyr_1.1.4           </span></span>
-<span><span class="co">#&gt; [103] uwot_0.2.3             gtable_0.3.6           sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [106] digest_0.6.37          progressr_0.15.1       ggrepel_0.9.6         </span></span>
-<span><span class="co">#&gt; [109] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     </span></span>
-<span><span class="co">#&gt; [112] pkgdown_2.1.1          lifecycle_1.0.4        httr_1.4.7            </span></span>
-<span><span class="co">#&gt; [115] mime_0.13              MASS_7.3-65</span></span></code></pre></div>
+<span><span class="co">#&gt;  [16] fastmap_1.2.0          labeling_0.4.3         promises_1.3.3        </span></span>
+<span><span class="co">#&gt;  [19] rmarkdown_2.29         ragg_1.4.0             purrr_1.0.4           </span></span>
+<span><span class="co">#&gt;  [22] xfun_0.52              cachem_1.1.0           jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [25] goftest_1.2-3          later_1.4.2            spatstat.utils_3.1-4  </span></span>
+<span><span class="co">#&gt;  [28] irlba_2.3.5.1          parallel_4.4.3         cluster_2.1.8.1       </span></span>
+<span><span class="co">#&gt;  [31] R6_2.6.1               ica_1.0-3              spatstat.data_3.1-6   </span></span>
+<span><span class="co">#&gt;  [34] stringi_1.8.7          bslib_0.9.0            RColorBrewer_1.1-3    </span></span>
+<span><span class="co">#&gt;  [37] reticulate_1.42.0      spatstat.univar_3.1-3  parallelly_1.45.0     </span></span>
+<span><span class="co">#&gt;  [40] lmtest_0.9-40          jquerylib_0.1.4        scattermore_1.2       </span></span>
+<span><span class="co">#&gt;  [43] Rcpp_1.0.14            knitr_1.50             tensor_1.5.1          </span></span>
+<span><span class="co">#&gt;  [46] future.apply_1.20.0    zoo_1.8-14             sctransform_0.4.2     </span></span>
+<span><span class="co">#&gt;  [49] httpuv_1.6.16          Matrix_1.7-3           splines_4.4.3         </span></span>
+<span><span class="co">#&gt;  [52] igraph_2.1.4           tidyselect_1.2.1       abind_1.4-8           </span></span>
+<span><span class="co">#&gt;  [55] dichromat_2.0-0.1      yaml_2.3.10            spatstat.random_3.4-1 </span></span>
+<span><span class="co">#&gt;  [58] spatstat.explore_3.4-3 codetools_0.2-20       miniUI_0.1.2          </span></span>
+<span><span class="co">#&gt;  [61] listenv_0.9.1          lattice_0.22-7         tibble_3.3.0          </span></span>
+<span><span class="co">#&gt;  [64] plyr_1.8.9             withr_3.0.2            shiny_1.10.0          </span></span>
+<span><span class="co">#&gt;  [67] ROCR_1.0-11            evaluate_1.0.4         Rtsne_0.17            </span></span>
+<span><span class="co">#&gt;  [70] future_1.58.0          fastDummies_1.7.5      desc_1.4.3            </span></span>
+<span><span class="co">#&gt;  [73] survival_3.8-3         polyclip_1.10-7        fitdistrplus_1.2-2    </span></span>
+<span><span class="co">#&gt;  [76] pillar_1.10.2          KernSmooth_2.23-26     plotly_4.11.0         </span></span>
+<span><span class="co">#&gt;  [79] generics_0.1.4         RcppHNSW_0.6.0         ggplot2_3.5.2         </span></span>
+<span><span class="co">#&gt;  [82] scales_1.4.0           globals_0.18.0         xtable_1.8-4          </span></span>
+<span><span class="co">#&gt;  [85] glue_1.8.0             lazyeval_0.2.2         tools_4.4.3           </span></span>
+<span><span class="co">#&gt;  [88] data.table_1.17.6      RSpectra_0.16-2        RANN_2.6.2            </span></span>
+<span><span class="co">#&gt;  [91] fs_1.6.6               dotCall64_1.2          cowplot_1.1.3         </span></span>
+<span><span class="co">#&gt;  [94] grid_4.4.3             tidyr_1.3.1            colorspace_2.1-1      </span></span>
+<span><span class="co">#&gt;  [97] nlme_3.1-168           patchwork_1.3.1        cli_3.6.5             </span></span>
+<span><span class="co">#&gt; [100] spatstat.sparse_3.1-0  textshaping_1.0.0      spam_2.11-1           </span></span>
+<span><span class="co">#&gt; [103] viridisLite_0.4.2      dplyr_1.1.4            uwot_0.2.3            </span></span>
+<span><span class="co">#&gt; [106] gtable_0.3.6           sass_0.4.10            digest_0.6.37         </span></span>
+<span><span class="co">#&gt; [109] progressr_0.15.1       ggrepel_0.9.6          htmlwidgets_1.6.4     </span></span>
+<span><span class="co">#&gt; [112] farver_2.1.2           htmltools_0.5.8.1      pkgdown_2.1.1         </span></span>
+<span><span class="co">#&gt; [115] lifecycle_1.0.4        httr_1.4.7             mime_0.13             </span></span>
+<span><span class="co">#&gt; [118] MASS_7.3-65</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
